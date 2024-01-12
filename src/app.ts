@@ -2,7 +2,10 @@ import 'reflect-metadata';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { Server, createServer } from 'https';
 import { readFileSync } from 'fs';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+
+import TYPES from '@/types.inversify';
+import { ILogger } from '@/common/services/logger.interface';
 
 @injectable()
 export default class App {
@@ -10,7 +13,7 @@ export default class App {
 	port: number;
 	server: Server;
 
-	constructor() {
+	constructor(@inject(TYPES.LoggerService) private logger: ILogger) {
 		this.app = express();
 		this.port = 8000;
 	}
@@ -22,16 +25,24 @@ export default class App {
 	}
 
 	init(): void {
-		this.useRoutes();
-		this.server = createServer(
-			{
-				key: readFileSync('key.pem'),
-				cert: readFileSync('cert.pem'),
-			},
-			this.app,
-		);
-		this.server.listen(this.port, () => {
-			console.log(`The server is running on port ${this.port}`);
-		});
+		try {
+			this.useRoutes();
+			this.server = createServer(
+				{
+					key: readFileSync('key.pem'),
+					cert: readFileSync('cert.pem'),
+				},
+				this.app,
+			);
+			this.server.listen(this.port, () => {
+				this.logger.log(`The server is running on port ${this.port}`);
+			});
+		} catch (err) {
+			if (err instanceof Error) {
+				this.logger.err(`Failed to start the server.`, err.message);
+				return;
+			}
+			this.logger.err(`Failed to start the server`);
+		}
 	}
 }

@@ -2,10 +2,13 @@ import 'reflect-metadata';
 import { Container, ContainerModule, interfaces } from 'inversify';
 
 import App from '@/app';
+import { LoggerService } from '@/common/services/logger.service';
 import TYPES from '@/types.inversify';
+import { ILogger } from '@/common/services/logger.interface';
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.App).to(App);
+	bind<ILogger>(TYPES.LoggerService).to(LoggerService);
 });
 
 function bootstrap(): void {
