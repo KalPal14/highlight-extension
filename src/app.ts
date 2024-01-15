@@ -6,6 +6,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@/types.inversify';
 import { ILogger } from '@/common/services/logger.interface';
+import { IUsersController } from '@/users/users.controller.interface';
 
 @injectable()
 export default class App {
@@ -13,36 +14,29 @@ export default class App {
 	port: number;
 	server: Server;
 
-	constructor(@inject(TYPES.LoggerService) private logger: ILogger) {
+	constructor(
+		@inject(TYPES.LoggerService) private logger: ILogger,
+		@inject(TYPES.UsersController) private usersController: IUsersController,
+	) {
 		this.app = express();
 		this.port = 8000;
 	}
 
 	useRoutes(): void {
-		this.app.get('/', (req: Request, res: Response, next: NextFunction) => {
-			res.status(200).send('Hello!!!');
-		});
+		this.app.use('/users', this.usersController.router);
 	}
 
 	init(): void {
-		try {
-			this.useRoutes();
-			this.server = createServer(
-				{
-					key: readFileSync('key.pem'),
-					cert: readFileSync('cert.pem'),
-				},
-				this.app,
-			);
-			this.server.listen(this.port, () => {
-				this.logger.log(`The server is running on port ${this.port}`);
-			});
-		} catch (err) {
-			if (err instanceof Error) {
-				this.logger.err(`Failed to start the server.`, err.message);
-				return;
-			}
-			this.logger.err(`Failed to start the server`);
-		}
+		this.useRoutes();
+		this.server = createServer(
+			{
+				key: readFileSync('key.pem'),
+				cert: readFileSync('cert.pem'),
+			},
+			this.app,
+		);
+		this.server.listen(this.port, () => {
+			this.logger.log(`The server is running on port ${this.port}`);
+		});
 	}
 }
