@@ -18,9 +18,10 @@ export class UsersController extends BaseController implements IUsersController 
 		]);
 	}
 
-	async test(req: Request, res: Response, next: NextFunction): Promise<void> {
+	async test({ body }: Request, res: Response, next: NextFunction): Promise<void> {
 		this.ok(res, {
 			msg: 'TEST!!!',
+			body,
 		});
 	}
 }
