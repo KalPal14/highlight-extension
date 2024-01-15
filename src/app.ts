@@ -1,8 +1,9 @@
 import 'reflect-metadata';
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express } from 'express';
 import { Server, createServer } from 'https';
 import { readFileSync } from 'fs';
 import { inject, injectable } from 'inversify';
+import bodyParser from 'body-parser';
 
 import TYPES from '@/types.inversify';
 import { ILogger } from '@/common/services/logger.interface';
@@ -22,11 +23,16 @@ export default class App {
 		this.port = 8000;
 	}
 
+	useMiddleware(): void {
+		this.app.use(bodyParser.json());
+	}
+
 	useRoutes(): void {
 		this.app.use('/users', this.usersController.router);
 	}
 
 	init(): void {
+		this.useMiddleware();
 		this.useRoutes();
 		this.server = createServer(
 			{
