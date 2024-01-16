@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import TYPES from '@/types.inversify';
 import { HTTPError } from './http-error.class';
-import { ILogger } from '@/common/services/logger.service.interface';
+import { ILogger } from '@/services/logger.service.interface';
 import { IExceptionFilter } from './exception.filter.interface';
 
 @injectable()

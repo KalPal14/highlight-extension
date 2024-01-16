@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 import { BaseController } from '@/common/base.controller';
 import TYPES from '@/types.inversify';
 import { IUsersController } from './users.controller.interface';
-import { IConfigService } from '@/common/services/config.service.interface';
+import { IConfigService } from '@/services/config.service.interface';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
