@@ -6,7 +6,7 @@ import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
 
 import TYPES from '@/types.inversify';
-import { ILogger } from '@/common/services/logger.interface';
+import { ILogger } from '@/common/services/logger.service.interface';
 import { IUsersController } from '@/users/users.controller.interface';
 
 @injectable()

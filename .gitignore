@@ -3,3 +3,4 @@
 /dist
 key.pem
 cert.pem
+.env
