@@ -8,6 +8,7 @@ import bodyParser from 'body-parser';
 import TYPES from '@/types.inversify';
 import { ILogger } from '@/common/services/logger.service.interface';
 import { IUsersController } from '@/users/users.controller.interface';
+import { IExceptionFilter } from '@/errors/exception.filter.interface';
 
 @injectable()
 export default class App {
@@ -18,6 +19,7 @@ export default class App {
 	constructor(
 		@inject(TYPES.LoggerService) private logger: ILogger,
 		@inject(TYPES.UsersController) private usersController: IUsersController,
+		@inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
 	) {
 		this.app = express();
 		this.port = 8000;
@@ -31,9 +33,14 @@ export default class App {
 		this.app.use('/users', this.usersController.router);
 	}
 
+	useExceptions(): void {
+		this.app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
+	}
+
 	init(): void {
 		this.useMiddleware();
 		this.useRoutes();
+		this.useExceptions();
 		this.server = createServer(
 			{
 				key: readFileSync('key.pem'),
