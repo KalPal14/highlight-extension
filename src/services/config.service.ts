@@ -8,15 +8,20 @@ import { ILogger } from './logger.service.interface';
 
 @injectable()
 export class ConfigService implements IConfigService {
+	protected envFile: string;
 	env: DotenvParseOutput;
 
 	constructor(@inject(TYPES.LoggerService) private loggerService: ILogger) {
-		const result: DotenvConfigOutput = config();
+		this.envFile = process.env.NODE_ENV || '.env.dev';
+
+		const result: DotenvConfigOutput = config({ path: this.envFile });
 
 		if (result.error || !result.parsed) {
-			this.loggerService.err('[ConfigService] Failed to parse .env file. It may be missing.');
+			this.loggerService.err(
+				`[ConfigService] Failed to parse ${this.envFile} file. It may be missing.`,
+			);
 		} else {
-			this.loggerService.log('[ConfigService] .env file parsed successfully');
+			this.loggerService.log(`[ConfigService] ${this.envFile} file parsed successfully`);
 			this.env = result.parsed;
 		}
 	}
@@ -25,7 +30,9 @@ export class ConfigService implements IConfigService {
 		if (this.env[key]) {
 			return this.env[key];
 		}
-		this.loggerService.err(`[ConfigService] There is no variable with the key ${key} in .env`);
-		return new Error(`.env does not have the value you are trying to get`);
+		this.loggerService.err(
+			`[ConfigService] There is no variable with the key ${key} in ${this.envFile}`,
+		);
+		return new Error(`${this.envFile} does not have the value you are trying to get`);
 	}
 }
