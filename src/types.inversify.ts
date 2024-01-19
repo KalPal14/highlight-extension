@@ -5,6 +5,8 @@ const TYPES = {
 	ConfigService: Symbol('ConfigService'),
 	ExceptionFilter: Symbol('ExceptionFilter'),
 	PrismaService: Symbol('PrismaService'),
+	UsersService: Symbol('UsersService'),
+	UsersRepository: Symbol('UsersRepository'),
 };
 
 export default TYPES;
