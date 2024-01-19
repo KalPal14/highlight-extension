@@ -6,6 +6,7 @@ import { BaseController } from '@/common/base.controller';
 import TYPES from '@/types.inversify';
 import { IUsersController } from './users.controller.interface';
 import { IUsersService } from './users.service.interface';
+import { USERS_PATH } from '@/constants/routes/users';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -13,7 +14,7 @@ export class UsersController extends BaseController implements IUsersController 
 		super();
 		this.bindRoutes([
 			{
-				path: '/test',
+				path: USERS_PATH.test,
 				method: 'get',
 				func: this.test,
 			},
