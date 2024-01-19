@@ -10,6 +10,7 @@ import { ILogger } from '@/services/logger.service.interface';
 import { IUsersController } from '@/users/users.controller.interface';
 import { IExceptionFilter } from '@/errors/exception.filter.interface';
 import { IPrismaService } from '@/services/prisma.service.interface';
+import { IConfigService } from '@/services/config.service.interface';
 
 @injectable()
 export default class App {
@@ -22,6 +23,7 @@ export default class App {
 		@inject(TYPES.UsersController) private usersController: IUsersController,
 		@inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
 		@inject(TYPES.PrismaService) private prismaService: IPrismaService,
+		@inject(TYPES.ConfigService) private configService: IConfigService,
 	) {
 		this.app = express();
 		this.port = 8000;
