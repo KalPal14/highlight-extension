@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
 
+import { USERS_ROUTER_PATH } from '@/constants/routes/users';
 import TYPES from '@/types.inversify';
 import { ILogger } from '@/services/logger.service.interface';
 import { IUsersController } from '@/users/users.controller.interface';
@@ -34,7 +35,7 @@ export default class App {
 	}
 
 	useRoutes(): void {
-		this.app.use('/users', this.usersController.router);
+		this.app.use(USERS_ROUTER_PATH, this.usersController.router);
 	}
 
 	useExceptions(): void {
@@ -56,5 +57,9 @@ export default class App {
 		this.server.listen(this.port, () => {
 			this.logger.log(`The server is running on port ${this.port}`);
 		});
+	}
+
+	close(): void {
+		this.server.close();
 	}
 }
