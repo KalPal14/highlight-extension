@@ -3,23 +3,23 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
-	const alice = await prisma.user.upsert({
-		where: { email: 'alice@prisma.io' },
+	const alex = await prisma.user.upsert({
+		where: { email: 'alex@test.com' },
 		update: {},
 		create: {
-			email: 'alice@prisma.io',
-			name: 'Alice',
+			email: 'alex@test.com',
+			name: 'Alex',
 		},
 	});
 	const bob = await prisma.user.upsert({
-		where: { email: 'bob@prisma.io' },
+		where: { email: 'bob@test.com' },
 		update: {},
 		create: {
-			email: 'bob@prisma.io',
+			email: 'bob@test.com',
 			name: 'Bob',
 		},
 	});
-	console.log({ alice, bob });
+	console.log({ alex, bob });
 }
 
 main()

@@ -1,19 +1,9 @@
-export interface IUSERS_SPEC {
-	id: number;
-	email: string;
-	name: string;
+export const enum USER_SPEC {
+	id = 1,
+	email = 'alex@test.com',
+	name = 'Alex',
 
-	wrongId: number;
-	wrongEmail: string;
-	wrongName: string;
+	wrongId = 500,
+	wrongEmail = 'wrong@test.com',
+	wrongName = 'Wrong',
 }
-
-export const USERS_SPEC: IUSERS_SPEC = {
-	id: 1,
-	email: 'alex@gmai.com',
-	name: 'Alex',
-
-	wrongId: 500,
-	wrongEmail: 'wrong@gmail.com',
-	wrongName: 'Wrong',
-};
