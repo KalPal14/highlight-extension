@@ -7,13 +7,20 @@
 		"dev": "nodemon",
 		"dev:inspect": "node -r ts-node/register/transpile-only -r tsconfig-paths/register --inspect-brk=0.0.0.0:9229 src/main.ts",
 		"start": "ts-node --files -r tsconfig-paths/register src/main.ts",
-		"build": "tsc",
 		"start:test": "NODE_ENV=.env.test ts-node --files -r tsconfig-paths/register src/main.ts",
-		"migrate:dev": "dotenv -e .env.dev npx prisma migrate dev",
-		"migrate:test": "dotenv -e .env.test npx prisma migrate dev",
-		"prisma:generate": "npx prisma generate",
+		"build": "tsc",
 		"lint": "eslint ./src/**",
-		"lint:fix": "eslint ./src/** --fix"
+		"lint:fix": "eslint ./src/** --fix",
+		"prisma:generate": "npx prisma generate",
+		"migrate-db:dev": "dotenv -e .env.dev npx prisma migrate dev",
+		"migrate-db:test": "dotenv -e .env.test npx prisma migrate dev",
+		"reset-db:dev": "dotenv -e .env.dev  prisma migrate reset",
+		"reset-db:test": "dotenv -e .env.test  prisma migrate reset",
+		"seed-db:dev": "dotenv -e .env.dev npx prisma db seed",
+		"seed-db:test": "dotenv -e .env.test npx prisma db seed"
+	},
+	"prisma": {
+		"seed": "ts-node prisma/seed.ts"
 	},
 	"author": "",
 	"license": "ISC",
