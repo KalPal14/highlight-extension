@@ -7,6 +7,8 @@ import TYPES from '@/types.inversify';
 import { IUsersController } from './users.controller.interface';
 import { IUsersService } from './users.service.interface';
 import { USERS_PATH } from '@/constants/routes/users';
+import { UsersTestDto } from './dto/users-test.dto';
+import { ValidateMiddleware } from '@/middlewares/validate.middleware';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -17,14 +19,20 @@ export class UsersController extends BaseController implements IUsersController 
 				path: USERS_PATH.test,
 				method: 'get',
 				func: this.test,
+				middlewares: [new ValidateMiddleware(UsersTestDto)],
 			},
 		]);
 	}
 
-	async test({ body }: Request, res: Response, next: NextFunction): Promise<void> {
+	async test(
+		{ body }: Request<{}, {}, UsersTestDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
 		const users = await this.usersService.test();
 
 		this.ok(res, {
+			body,
 			users,
 		});
 	}
