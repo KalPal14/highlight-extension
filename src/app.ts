@@ -5,13 +5,13 @@ import { readFileSync } from 'fs';
 import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
 
-import { USERS_ROUTER_PATH } from '@/constants/routes/users';
+import { USERS_ROUTER_PATH } from '@/common/constants/routes/users';
 import TYPES from '@/types.inversify';
-import { ILogger } from '@/services/logger.service.interface';
+import { ILogger } from '@/common/services/logger.service.interface';
 import { IUsersController } from '@/users/users.controller.interface';
 import { IExceptionFilter } from '@/errors/exception.filter.interface';
-import { IPrismaService } from '@/services/prisma.service.interface';
-import { IConfigService } from '@/services/config.service.interface';
+import { IPrismaService } from '@/common/services/prisma.service.interface';
+import { IConfigService } from '@/common/services/config.service.interface';
 
 @injectable()
 export default class App {

@@ -6,9 +6,9 @@ import { BaseController } from '@/common/base.controller';
 import TYPES from '@/types.inversify';
 import { IUsersController } from './users.controller.interface';
 import { IUsersService } from './users.service.interface';
-import { USERS_PATH } from '@/constants/routes/users';
+import { USERS_PATH } from '@/common/constants/routes/users';
 import { UsersTestDto } from './dto/users-test.dto';
-import { ValidateMiddleware } from '@/middlewares/validate.middleware';
+import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {

@@ -3,8 +3,8 @@ import request from 'supertest';
 
 import { app } from '@/main';
 import App from '@/app';
-import { USER_SPEC } from '@/constants/spec/users';
-import { USERS_FULL_PATH } from '@/constants/routes/users';
+import { USER_SPEC } from '@/common/constants/spec/users';
+import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 
 let application: App;
 

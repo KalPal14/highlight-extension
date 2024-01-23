@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import TYPES from '@/types.inversify';
 import { IUsersService } from './users.service.interface';
 import { IUsersRepository } from './users.repository.interface';
-import { USER_SPEC } from '@/constants/spec/users';
+import { USER_SPEC } from '@/common/constants/spec/users';
 
 const usersRepositoryMock: IUsersRepository = {
 	getAllUsers: jest.fn(),
