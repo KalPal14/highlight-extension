@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { User } from '@prisma/client';
 
 import TYPES from '@/types.inversify';
-import { IPrismaService } from '@/services/prisma.service.interface';
+import { IPrismaService } from '@/common/services/prisma.service.interface';
 import { IUsersRepository } from './users.repository.interface';
 
 @injectable()
