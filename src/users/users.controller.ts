@@ -7,8 +7,9 @@ import TYPES from '@/types.inversify';
 import { IUsersController } from './users.controller.interface';
 import { IUsersService } from './users.service.interface';
 import { USERS_PATH } from '@/common/constants/routes/users';
-import { UsersTestDto } from './dto/users-test.dto';
+import { UsersRegisterDto } from './dto/users-register.dto';
 import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
+import { HTTPError } from '@/errors/http-error.class';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -16,24 +17,46 @@ export class UsersController extends BaseController implements IUsersController 
 		super();
 		this.bindRoutes([
 			{
-				path: USERS_PATH.test,
-				method: 'get',
-				func: this.test,
-				middlewares: [new ValidateMiddleware(UsersTestDto)],
+				path: USERS_PATH.login,
+				method: 'post',
+				func: this.login,
+				// middlewares: [new ValidateMiddleware(UsersTestDto)],
+			},
+			{
+				path: USERS_PATH.register,
+				method: 'post',
+				func: this.register,
+				middlewares: [new ValidateMiddleware(UsersRegisterDto)],
+			},
+			{
+				path: USERS_PATH.logout,
+				method: 'post',
+				func: this.logout,
+				// middlewares: [new ValidateMiddleware(UsersTestDto)],
 			},
 		]);
 	}
 
-	async test(
-		{ body }: Request<{}, {}, UsersTestDto>,
+	async login({ body }: Request, res: Response, next: NextFunction): Promise<void> {
+		this.ok(res, 'login');
+	}
+
+	async register(
+		{ body }: Request<{}, {}, UsersRegisterDto>,
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		const users = await this.usersService.test();
+		const result = await this.usersService.createUser(body);
 
-		this.ok(res, {
-			body,
-			users,
-		});
+		if (result instanceof HTTPError) {
+			next(result);
+			return;
+		}
+
+		this.created(res, result);
+	}
+
+	async logout({ body }: Request, res: Response, next: NextFunction): Promise<void> {
+		this.ok(res, 'logout');
 	}
 }

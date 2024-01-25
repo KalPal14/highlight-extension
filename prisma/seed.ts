@@ -1,22 +1,28 @@
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcryptjs';
+
+import { USER_SPEC } from '../src/common/constants/spec/users';
 
 const prisma = new PrismaClient();
+const salt = Number(process.env.SALT);
 
 async function main(): Promise<void> {
-	const alex = await prisma.user.upsert({
-		where: { email: 'alex@test.com' },
+	const alex = await prisma.userModel.upsert({
+		where: { email: USER_SPEC.email },
 		update: {},
 		create: {
-			email: 'alex@test.com',
-			name: 'Alex',
+			email: USER_SPEC.email,
+			username: USER_SPEC.username,
+			password: await hash(USER_SPEC.password, salt),
 		},
 	});
-	const bob = await prisma.user.upsert({
+	const bob = await prisma.userModel.upsert({
 		where: { email: 'bob@test.com' },
 		update: {},
 		create: {
 			email: 'bob@test.com',
-			name: 'Bob',
+			username: 'bob_test',
+			password: await hash('123123', salt),
 		},
 	});
 	console.log({ alex, bob });

@@ -13,13 +13,24 @@ beforeAll(async () => {
 });
 
 describe('Users', () => {
-	it('users test', async () => {
-		const res = await request(application.app).get(USERS_FULL_PATH.test);
+	it('Registration - wrong: user already exists', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: USER_SPEC.email,
+			username: USER_SPEC.username,
+			password: USER_SPEC.password,
+		});
 
-		expect(res.statusCode).toBe(200);
-		expect(res.body.users).toHaveLength(2);
-		expect(res.body.users[0].id).toBe(USER_SPEC.id);
-		expect(res.body.users[0].email).toBe(USER_SPEC.email);
+		expect(res.statusCode).toBe(422);
+	});
+
+	it('Registration - wrong: invalid request body', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: USER_SPEC.email,
+			username: USER_SPEC.invalidFormatUsername,
+			password: USER_SPEC.password,
+		});
+
+		expect(res.statusCode).toBe(422);
 	});
 });
 

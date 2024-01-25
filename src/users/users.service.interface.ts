@@ -1,5 +1,7 @@
-import { User } from '@prisma/client';
+import { UserModel } from '@prisma/client';
+
+import { UsersRegisterDto } from './dto/users-register.dto';
 
 export interface IUsersService {
-	test: () => Promise<User[]>;
+	createUser: (user: UsersRegisterDto) => Promise<UserModel | Error>;
 }
