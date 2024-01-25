@@ -1,6 +1,6 @@
-import { Matches, IsEmail, IsString } from 'class-validator';
+import { IsEmail, Matches, IsString } from 'class-validator';
 
-export class UsersTestDto {
+export class UsersRegisterDto {
 	@IsEmail({}, { message: 'Enter a valid email' })
 	email: string;
 
@@ -10,4 +10,7 @@ export class UsersTestDto {
 	})
 	@IsString({ message: 'The username field is required.' })
 	username: string;
+
+	@IsString({ message: 'Password field is required' })
+	password: string;
 }
