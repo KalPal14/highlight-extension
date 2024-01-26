@@ -10,10 +10,9 @@ import { IUsersService } from './users.service.interface';
 import { USERS_PATH } from '@/common/constants/routes/users';
 import { UsersRegisterDto } from './dto/users-register.dto';
 import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
-import { HTTPError } from '@/errors/http-error.class';
 import { IConfigService } from '@/common/services/config.service.interface';
-import { User } from './user.entity';
 import { UserModel } from '@prisma/client';
+import { UsersLoginDto } from './dto/users-login.dto';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -27,7 +26,7 @@ export class UsersController extends BaseController implements IUsersController 
 				path: USERS_PATH.login,
 				method: 'post',
 				func: this.login,
-				// middlewares: [new ValidateMiddleware(UsersTestDto)],
+				middlewares: [new ValidateMiddleware(UsersLoginDto)],
 			},
 			{
 				path: USERS_PATH.register,
@@ -63,7 +62,16 @@ export class UsersController extends BaseController implements IUsersController 
 	}
 
 	async login({ body }: Request, res: Response, next: NextFunction): Promise<void> {
-		this.ok(res, 'login');
+		const result = await this.usersService.validateUser(body);
+
+		if (result instanceof Error) {
+			next(result);
+			return;
+		}
+
+		this.signJwt(result)
+			.then((jwt) => this.ok(res, { jwt }))
+			.catch((err) => this.send(res, 500, { err }));
 	}
 
 	async register(
@@ -79,16 +87,8 @@ export class UsersController extends BaseController implements IUsersController 
 		}
 
 		this.signJwt(result)
-			.then((jwt) =>
-				this.created(res, {
-					jwt,
-				}),
-			)
-			.catch((err) =>
-				this.send(res, 500, {
-					err,
-				}),
-			);
+			.then((jwt) => this.created(res, { jwt }))
+			.catch((err) => this.send(res, 500, { err }));
 	}
 
 	async logout({ body }: Request, res: Response, next: NextFunction): Promise<void> {
