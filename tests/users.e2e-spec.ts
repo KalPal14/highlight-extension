@@ -26,8 +26,55 @@ describe('Users', () => {
 	it('Registration - wrong: invalid request body', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.register).send({
 			email: USER_SPEC.email,
-			username: USER_SPEC.invalidFormatUsername,
+			username: USER_SPEC.invalidUsername,
 			password: USER_SPEC.password,
+		});
+
+		expect(res.statusCode).toBe(422);
+	});
+
+	it('Login - success: by email', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.email,
+			password: USER_SPEC.password,
+		});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body.jwt).toBeDefined();
+	});
+
+	it('Login - success: by username', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.username,
+			password: USER_SPEC.password,
+		});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body.jwt).toBeDefined();
+	});
+
+	it('Login - wrong: invalid email', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.wrongEmail,
+			password: USER_SPEC.password,
+		});
+
+		expect(res.statusCode).toBe(422);
+	});
+
+	it('Login - wrong: invalid username', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.wrongUsername,
+			password: USER_SPEC.password,
+		});
+
+		expect(res.statusCode).toBe(422);
+	});
+
+	it('Login - wrong: invalid password', async () => {
+		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.username,
+			password: USER_SPEC.wrongPassword,
 		});
 
 		expect(res.statusCode).toBe(422);

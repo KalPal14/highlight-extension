@@ -6,7 +6,7 @@ import TYPES from '@/types.inversify';
 import { IUsersService } from './users.service.interface';
 import { IUsersRepository } from './users.repository.interface';
 import { IConfigService } from '@/common/services/config.service.interface';
-import { USER_SPEC } from '@/common/constants/spec/users';
+import { RIGHT_USER_MODEL, USER_SPEC } from '@/common/constants/spec/users';
 import { User } from './user.entity';
 import { UserModel } from '@prisma/client';
 import { HTTPError } from '@/errors/http-error.class';
@@ -103,5 +103,70 @@ describe('Users Service', () => {
 		});
 
 		expect(result).toBeInstanceOf(HTTPError);
+	});
+
+	it('validate user - success: by email', async () => {
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(RIGHT_USER_MODEL);
+
+		const result = await usersService.validateUser({
+			userIdentifier: USER_SPEC.email,
+			password: USER_SPEC.password,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		if (result instanceof Error) return;
+		expect(result.id).toBe(USER_SPEC.id);
+		expect(result.username).toBe(USER_SPEC.username);
+		expect(result.password).toBeDefined();
+		expect(result.password).not.toBe(USER_SPEC.password);
+	});
+
+	it('validate user - success: by username', async () => {
+		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(RIGHT_USER_MODEL);
+
+		const result = await usersService.validateUser({
+			userIdentifier: USER_SPEC.username,
+			password: USER_SPEC.password,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		if (result instanceof Error) return;
+		expect(result.id).toBe(USER_SPEC.id);
+		expect(result.email).toBe(USER_SPEC.email);
+		expect(result.password).toBeDefined();
+		expect(result.password).not.toBe(USER_SPEC.password);
+	});
+
+	it('validate user - wrong: invalid mail', async () => {
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
+
+		const result = await usersService.validateUser({
+			userIdentifier: USER_SPEC.wrongEmail,
+			password: USER_SPEC.password,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+	});
+
+	it('validate user - wrong: invalid username', async () => {
+		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
+
+		const result = await usersService.validateUser({
+			userIdentifier: USER_SPEC.wrongUsername,
+			password: USER_SPEC.password,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+	});
+
+	it('validate user - wrong: invalid password', async () => {
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(RIGHT_USER_MODEL);
+
+		const result = await usersService.validateUser({
+			userIdentifier: USER_SPEC.email,
+			password: USER_SPEC.wrongPassword,
+		});
+
+		expect(result).toBeInstanceOf(Error);
 	});
 });

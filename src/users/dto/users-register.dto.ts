@@ -1,10 +1,12 @@
 import { IsEmail, Matches, IsString } from 'class-validator';
 
+import { USERNAME } from '@/common/constants/regexp';
+
 export class UsersRegisterDto {
 	@IsEmail({}, { message: 'Enter a valid email' })
 	email: string;
 
-	@Matches(/^[a-zA-Z0-9_-]+$/g, {
+	@Matches(USERNAME, {
 		message:
 			'The username field can only contain uppercase and lowercase letters, as well as the characters - and _',
 	})
