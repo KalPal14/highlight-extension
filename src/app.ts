@@ -34,13 +34,7 @@ export default class App {
 
 	useMiddleware(): void {
 		const jwtSecret = this.configService.get('JWT_KEY');
-		if (jwtSecret instanceof Error) {
-			throw new Error(jwtSecret.message);
-		}
 		const cookieSecret = this.configService.get('COOCKIE_KEY');
-		if (cookieSecret instanceof Error) {
-			throw new Error(cookieSecret.message);
-		}
 
 		this.app.use(bodyParser.json());
 		this.app.use(cookieParser(cookieSecret));

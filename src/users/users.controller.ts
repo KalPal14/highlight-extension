@@ -103,10 +103,6 @@ export class UsersController extends BaseController implements IUsersController 
 	private async generateJwt({ id, email, username }: UserModel): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const jwtKey = this.configService.get('JWT_KEY');
-			if (jwtKey instanceof Error) {
-				reject(jwtKey.message);
-				return;
-			}
 
 			sign(
 				{ id, email, username },
