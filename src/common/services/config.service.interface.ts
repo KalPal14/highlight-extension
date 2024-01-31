@@ -1,3 +1,3 @@
 export interface IConfigService {
-	get: (key: string) => string | Error;
+	get: (key: string) => string;
 }

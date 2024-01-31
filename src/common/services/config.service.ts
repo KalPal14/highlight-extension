@@ -26,13 +26,13 @@ export class ConfigService implements IConfigService {
 		}
 	}
 
-	get(key: string): string | Error {
+	get(key: string): string {
 		if (this.env[key]) {
 			return this.env[key];
 		}
 		this.loggerService.err(
 			`[ConfigService] There is no variable with the key ${key} in ${this.envFile}`,
 		);
-		return new Error(`${this.envFile} does not have the value you are trying to get`);
+		throw new Error(`${this.envFile} does not have the value you are trying to get`);
 	}
 }
