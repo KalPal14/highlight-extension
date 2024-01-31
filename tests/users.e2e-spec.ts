@@ -38,9 +38,10 @@ describe('Users', () => {
 			userIdentifier: USER_SPEC.email,
 			password: USER_SPEC.password,
 		});
+		const cookies = res.headers['set-cookie'][0];
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body.jwt).toBeDefined();
+		expect(cookies).toContain('token=');
 	});
 
 	it('Login - success: by username', async () => {
@@ -48,9 +49,10 @@ describe('Users', () => {
 			userIdentifier: USER_SPEC.username,
 			password: USER_SPEC.password,
 		});
+		const cookies = res.headers['set-cookie'][0];
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body.jwt).toBeDefined();
+		expect(cookies).toContain('token=');
 	});
 
 	it('Login - wrong: invalid email', async () => {
@@ -78,6 +80,29 @@ describe('Users', () => {
 		});
 
 		expect(res.statusCode).toBe(422);
+	});
+
+	it('Logout - success', async () => {
+		const loginRes = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.username,
+			password: USER_SPEC.password,
+		});
+		const cookies = loginRes.headers['set-cookie'][0];
+
+		const res = await request(application.app).post(USERS_FULL_PATH.logout).set('Cookie', cookies);
+
+		expect(res.statusCode).toBe(200);
+	});
+
+	it('Logout - wrong: user is not authorized', async () => {
+		await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: USER_SPEC.username,
+			password: USER_SPEC.password,
+		});
+
+		const res = await request(application.app).post(USERS_FULL_PATH.logout);
+
+		expect(res.statusCode).toBe(401);
 	});
 });
 
