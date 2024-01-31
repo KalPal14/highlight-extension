@@ -4,6 +4,7 @@ import { Server, createServer } from 'https';
 import { readFileSync } from 'fs';
 import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
 import { USERS_ROUTER_PATH } from '@/common/constants/routes/users';
 import TYPES from '@/types.inversify';
@@ -12,6 +13,7 @@ import { IUsersController } from '@/users/users.controller.interface';
 import { IExceptionFilter } from '@/errors/exception.filter.interface';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
 import { IConfigService } from '@/common/services/config.service.interface';
+import { JwtAuthMiddleware } from './common/middlewares/jwt-auth.middleware';
 
 @injectable()
 export default class App {
@@ -31,7 +33,20 @@ export default class App {
 	}
 
 	useMiddleware(): void {
+		const jwtSecret = this.configService.get('JWT_KEY');
+		if (jwtSecret instanceof Error) {
+			throw new Error(jwtSecret.message);
+		}
+		const cookieSecret = this.configService.get('COOCKIE_KEY');
+		if (cookieSecret instanceof Error) {
+			throw new Error(cookieSecret.message);
+		}
+
 		this.app.use(bodyParser.json());
+		this.app.use(cookieParser(cookieSecret));
+
+		const jwtAuthMiddleware = new JwtAuthMiddleware(jwtSecret);
+		this.app.use(jwtAuthMiddleware.execute.bind(jwtAuthMiddleware));
 	}
 
 	useRoutes(): void {
