@@ -1,12 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
-import { USER_SPEC } from '../src/common/constants/spec/users';
+import { USER_SPEC } from '../../src/common/constants/spec/users';
 
-const prisma = new PrismaClient();
 const salt = Number(process.env.SALT);
 
-async function main(): Promise<void> {
+export async function usersSeed(prisma: PrismaClient): Promise<void> {
 	const alex = await prisma.userModel.upsert({
 		where: { email: USER_SPEC.email },
 		update: {},
@@ -27,13 +26,3 @@ async function main(): Promise<void> {
 	});
 	console.log({ alex, bob });
 }
-
-main()
-	.then(async () => {
-		await prisma.$disconnect();
-	})
-	.catch(async (e) => {
-		console.error(e);
-		await prisma.$disconnect();
-		process.exit(1);
-	});
