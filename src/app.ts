@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import { USERS_ROUTER_PATH } from '@/common/constants/routes/users';
+import { HIGHLIGHTS_ROUTER_PATH } from '@/common/constants/routes/highlights';
 import TYPES from '@/types.inversify';
 import { ILogger } from '@/common/services/logger.service.interface';
 import { IUsersController } from '@/users/users.controller.interface';
@@ -14,6 +15,7 @@ import { IExceptionFilter } from '@/errors/exception.filter.interface';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
 import { IConfigService } from '@/common/services/config.service.interface';
 import { JwtAuthMiddleware } from './common/middlewares/jwt-auth.middleware';
+import { IHighlightsController } from '@/highlights/highlights.controller.interface';
 
 @injectable()
 export default class App {
@@ -27,6 +29,7 @@ export default class App {
 		@inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
 		@inject(TYPES.PrismaService) private prismaService: IPrismaService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
+		@inject(TYPES.HighlightsController) private highlightsController: IHighlightsController,
 	) {
 		this.app = express();
 		this.port = 8000;
@@ -45,13 +48,14 @@ export default class App {
 
 	useRoutes(): void {
 		this.app.use(USERS_ROUTER_PATH, this.usersController.router);
+		this.app.use(HIGHLIGHTS_ROUTER_PATH, this.highlightsController.router);
 	}
 
 	useExceptions(): void {
 		this.app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
 	}
 
-	async init(): Promise<void> {
+	async init(port?: number): Promise<void> {
 		this.useMiddleware();
 		this.useRoutes();
 		this.useExceptions();
@@ -63,8 +67,8 @@ export default class App {
 			},
 			this.app,
 		);
-		this.server.listen(this.port, () => {
-			this.logger.log(`The server is running on port ${this.port}`);
+		this.server.listen(port || this.port, () => {
+			this.logger.log(`The server is running on port ${port || this.port}`);
 		});
 	}
 

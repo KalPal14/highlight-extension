@@ -6,7 +6,7 @@ import { USER_SPEC } from '../../src/common/constants/spec/users';
 const salt = Number(process.env.SALT);
 
 export async function usersSeed(prisma: PrismaClient): Promise<void> {
-	const alex = await prisma.userModel.upsert({
+	const user1 = await prisma.userModel.upsert({
 		where: { email: USER_SPEC.email },
 		update: {},
 		create: {
@@ -15,7 +15,7 @@ export async function usersSeed(prisma: PrismaClient): Promise<void> {
 			password: await hash(USER_SPEC.password, salt),
 		},
 	});
-	const bob = await prisma.userModel.upsert({
+	const user2 = await prisma.userModel.upsert({
 		where: { email: 'bob@test.com' },
 		update: {},
 		create: {
@@ -24,5 +24,5 @@ export async function usersSeed(prisma: PrismaClient): Promise<void> {
 			password: await hash('123123', salt),
 		},
 	});
-	console.log({ alex, bob });
+	console.log({ user1, user2 });
 }

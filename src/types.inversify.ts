@@ -7,6 +7,11 @@ const TYPES = {
 	PrismaService: Symbol('PrismaService'),
 	UsersService: Symbol('UsersService'),
 	UsersRepository: Symbol('UsersRepository'),
+	PagesRepository: Symbol('PagesRepository'),
+	PagesServise: Symbol('PagesServise'),
+	HighlightsController: Symbol('HighlightsController'),
+	HighlightsRepository: Symbol('HighlightsRepository'),
+	HighlightsService: Symbol('HighlightsService'),
 };
 
 export default TYPES;
