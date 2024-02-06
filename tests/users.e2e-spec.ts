@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import request from 'supertest';
 
-import { app } from '@/main';
+import { bootstrap } from '@/main';
 import App from '@/app';
 import { USER_SPEC } from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
@@ -9,7 +9,7 @@ import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 let application: App;
 
 beforeAll(async () => {
-	application = await app;
+	application = await bootstrap(8052);
 });
 
 describe('Users', () => {

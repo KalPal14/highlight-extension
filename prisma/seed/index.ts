@@ -1,11 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 
 import { usersSeed } from './users.seed';
+import { pagesSeed } from './pages.seed';
+import { highlightsSeed } from './highlights.seed';
 
 const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
-	usersSeed(prisma);
+	await usersSeed(prisma);
+	await pagesSeed(prisma);
+	await highlightsSeed(prisma);
 }
 
 main()
