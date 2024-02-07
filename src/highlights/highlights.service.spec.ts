@@ -104,6 +104,7 @@ describe('Highlights Service', () => {
 
 		expect(result).toEqual(RIGHT_HIGHLIGHT);
 	});
+
 	it('update highlight - success', async () => {
 		highlightsRepository.findById = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
 		highlightsRepository.update = jest.fn().mockImplementation(
@@ -123,6 +124,7 @@ describe('Highlights Service', () => {
 		if (result instanceof Error) return;
 		expect(result).toEqual(UPDATED_HIGHLIGHT);
 	});
+
 	it('update highlight - wrong: no highlight with this ID', async () => {
 		highlightsRepository.findById = jest.fn().mockReturnValue(null);
 		highlightsRepository.update = jest.fn().mockImplementation(
