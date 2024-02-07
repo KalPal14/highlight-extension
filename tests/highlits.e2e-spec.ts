@@ -5,7 +5,11 @@ import { bootstrap } from '@/main';
 import App from '@/app';
 import { HIGHLIGHTS_FULL_PATH } from '@/common/constants/routes/highlights';
 import { RIGHT_PAGE, INVALID_PAGE } from '@/common/constants/spec/pages';
-import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
+import {
+	RIGHT_HIGHLIGHT,
+	UPDATED_HIGHLIGHT,
+	WRONG_HIGHLIGHT,
+} from '@/common/constants/spec/highlights';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 import { RIGHT_USER } from '@/common/constants/spec/users';
 
@@ -59,6 +63,32 @@ describe('Highlits', () => {
 		expect(res.statusCode).toBe(201);
 		expect(res.body.text).toBe(RIGHT_HIGHLIGHT.text);
 		expect(res.body.pageId).toBe(RIGHT_HIGHLIGHT.pageId);
+	});
+	it('update highlight - success', async () => {
+		const res = await request(application.app)
+			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', UPDATED_HIGHLIGHT.id.toString()))
+			.set('Cookie', cookies)
+			.send({
+				note: UPDATED_HIGHLIGHT.note as string | undefined,
+				text: UPDATED_HIGHLIGHT.text,
+				color: UPDATED_HIGHLIGHT.color,
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual(UPDATED_HIGHLIGHT);
+	});
+	it('update highlight - wrong: update a non-existent highlight', async () => {
+		const res = await request(application.app)
+			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', WRONG_HIGHLIGHT.id!.toString()))
+			.set('Cookie', cookies)
+			.send({
+				note: UPDATED_HIGHLIGHT.note as string | undefined,
+				text: UPDATED_HIGHLIGHT.text,
+				color: UPDATED_HIGHLIGHT.color,
+			});
+
+		expect(res.statusCode).toBe(422);
+		expect(res.body.err).toBe('There is no highlight with this ID');
 	});
 });
 
