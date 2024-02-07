@@ -7,11 +7,11 @@ import { IPagesServise } from '@/pages/pages.service.interface';
 import { IHighlightsService } from './highlights.service.interface';
 import TYPES from '@/types.inversify';
 import { HighlightsService } from './highlights.service';
-import { PAGE_SPEC, RIGHT_PAGE_MODEL } from '@/common/constants/spec/pages';
+import { RIGHT_PAGE } from '@/common/constants/spec/pages';
 import { Highlight } from './highlight.entity';
 import { HighlightModel } from '@prisma/client';
-import { HIGHLIGHT_SPEC, RIGHT_HIGHLIGHT_MODEL } from '@/common/constants/spec/highlights';
-import { USER_SPEC } from '@/common/constants/spec/users';
+import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
+import { RIGHT_USER_JWT } from '@/common/constants/spec/users';
 
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
@@ -47,10 +47,10 @@ beforeAll(() => {
 describe('Highlights Service', () => {
 	it('create highlight - success: highlight without note for new page', async () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
-		pagesServise.createPage = jest.fn().mockReturnValue(RIGHT_PAGE_MODEL);
+		pagesServise.createPage = jest.fn().mockReturnValue(RIGHT_PAGE);
 		highlightsRepository.create = jest.fn().mockImplementation(
 			(highlight: Highlight): HighlightModel => ({
-				id: HIGHLIGHT_SPEC.id,
+				id: RIGHT_HIGHLIGHT.id,
 				pageId: highlight.pageId,
 				text: highlight.text,
 				color: highlight.color,
@@ -60,28 +60,24 @@ describe('Highlights Service', () => {
 
 		const result = await highlightsService.createHighlight(
 			{
-				pageUrl: PAGE_SPEC.url,
-				text: HIGHLIGHT_SPEC.text,
-				color: HIGHLIGHT_SPEC.color,
+				pageUrl: RIGHT_PAGE.url,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
 			},
-			{
-				id: USER_SPEC.id,
-				username: USER_SPEC.username,
-				email: USER_SPEC.email,
-			},
+			RIGHT_USER_JWT,
 		);
 
 		expect(result).toEqual({
-			...RIGHT_HIGHLIGHT_MODEL,
+			...RIGHT_HIGHLIGHT,
 			note: null,
 		});
 	});
 	it('create highlight - success: highlight with note for an existing page', async () => {
-		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE_MODEL);
+		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
 		pagesServise.createPage = jest.fn().mockReturnValue(Error);
 		highlightsRepository.create = jest.fn().mockImplementation(
 			(highlight: Highlight): HighlightModel => ({
-				id: HIGHLIGHT_SPEC.id,
+				id: RIGHT_HIGHLIGHT.id,
 				pageId: highlight.pageId,
 				text: highlight.text,
 				color: highlight.color,
@@ -91,18 +87,14 @@ describe('Highlights Service', () => {
 
 		const result = await highlightsService.createHighlight(
 			{
-				pageUrl: PAGE_SPEC.url,
-				text: HIGHLIGHT_SPEC.text,
-				color: HIGHLIGHT_SPEC.color,
-				note: HIGHLIGHT_SPEC.note,
+				pageUrl: RIGHT_PAGE.url,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+				note: RIGHT_HIGHLIGHT.note as string,
 			},
-			{
-				id: USER_SPEC.id,
-				username: USER_SPEC.username,
-				email: USER_SPEC.email,
-			},
+			RIGHT_USER_JWT,
 		);
 
-		expect(result).toEqual(RIGHT_HIGHLIGHT_MODEL);
+		expect(result).toEqual(RIGHT_HIGHLIGHT);
 	});
 });

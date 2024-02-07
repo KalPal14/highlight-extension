@@ -3,7 +3,7 @@ import request from 'supertest';
 
 import { bootstrap } from '@/main';
 import App from '@/app';
-import { USER_SPEC } from '@/common/constants/spec/users';
+import { RIGHT_USER, WRONG_USER, INVALID_USER } from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 
 let application: App;
@@ -15,9 +15,9 @@ beforeAll(async () => {
 describe('Users', () => {
 	it('Registration - wrong: user already exists', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.register).send({
-			email: USER_SPEC.email,
-			username: USER_SPEC.username,
-			password: USER_SPEC.password,
+			email: RIGHT_USER.email,
+			username: RIGHT_USER.username,
+			password: RIGHT_USER.password,
 		});
 
 		expect(res.statusCode).toBe(422);
@@ -25,9 +25,9 @@ describe('Users', () => {
 
 	it('Registration - wrong: invalid request body', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.register).send({
-			email: USER_SPEC.email,
-			username: USER_SPEC.invalidUsername,
-			password: USER_SPEC.password,
+			email: RIGHT_USER.email,
+			username: INVALID_USER.username,
+			password: RIGHT_USER.password,
 		});
 
 		expect(res.statusCode).toBe(422);
@@ -35,8 +35,8 @@ describe('Users', () => {
 
 	it('Login - success: by email', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.email,
-			password: USER_SPEC.password,
+			userIdentifier: RIGHT_USER.email,
+			password: RIGHT_USER.password,
 		});
 		const cookies = res.headers['set-cookie'][0];
 
@@ -46,8 +46,8 @@ describe('Users', () => {
 
 	it('Login - success: by username', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.username,
-			password: USER_SPEC.password,
+			userIdentifier: RIGHT_USER.username,
+			password: RIGHT_USER.password,
 		});
 		const cookies = res.headers['set-cookie'][0];
 
@@ -57,8 +57,8 @@ describe('Users', () => {
 
 	it('Login - wrong: invalid email', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.wrongEmail,
-			password: USER_SPEC.password,
+			userIdentifier: WRONG_USER.email,
+			password: RIGHT_USER.password,
 		});
 
 		expect(res.statusCode).toBe(422);
@@ -66,8 +66,8 @@ describe('Users', () => {
 
 	it('Login - wrong: invalid username', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.wrongUsername,
-			password: USER_SPEC.password,
+			userIdentifier: WRONG_USER.username,
+			password: RIGHT_USER.password,
 		});
 
 		expect(res.statusCode).toBe(422);
@@ -75,8 +75,8 @@ describe('Users', () => {
 
 	it('Login - wrong: invalid password', async () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.username,
-			password: USER_SPEC.wrongPassword,
+			userIdentifier: RIGHT_USER.username,
+			password: WRONG_USER.password,
 		});
 
 		expect(res.statusCode).toBe(422);
@@ -84,8 +84,8 @@ describe('Users', () => {
 
 	it('Logout - success', async () => {
 		const loginRes = await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.username,
-			password: USER_SPEC.password,
+			userIdentifier: RIGHT_USER.username,
+			password: RIGHT_USER.password,
 		});
 		const cookies = loginRes.headers['set-cookie'][0];
 
@@ -96,8 +96,8 @@ describe('Users', () => {
 
 	it('Logout - wrong: user is not authorized', async () => {
 		await request(application.app).post(USERS_FULL_PATH.login).send({
-			userIdentifier: USER_SPEC.username,
-			password: USER_SPEC.password,
+			userIdentifier: RIGHT_USER.username,
+			password: RIGHT_USER.password,
 		});
 
 		const res = await request(application.app).post(USERS_FULL_PATH.logout);
