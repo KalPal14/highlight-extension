@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction, Router } from 'express';
+import { Router } from 'express';
 
-import { HighlightModel } from '@prisma/client';
+import { TController } from '@/common/types/controller.type';
 import { CreateHighlightDto } from './dto/create-highlight.dto';
 
 export interface IHighlightsController {
 	router: Router;
 
-	createHighlight: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+	createHighlight: TController<{}, {}, CreateHighlightDto>;
 }

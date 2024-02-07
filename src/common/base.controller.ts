@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Response, Router } from 'express';
 import { injectable } from 'inversify';
 
-import { IRouteController } from './route.interface';
+import { IRouteController } from './types/route.interface';
 
 @injectable()
 export abstract class BaseController {
