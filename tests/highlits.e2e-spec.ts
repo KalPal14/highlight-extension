@@ -64,6 +64,7 @@ describe('Highlits', () => {
 		expect(res.body.text).toBe(RIGHT_HIGHLIGHT.text);
 		expect(res.body.pageId).toBe(RIGHT_HIGHLIGHT.pageId);
 	});
+
 	it('update highlight - success', async () => {
 		const res = await request(application.app)
 			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', UPDATED_HIGHLIGHT.id.toString()))
@@ -77,6 +78,7 @@ describe('Highlits', () => {
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual(UPDATED_HIGHLIGHT);
 	});
+
 	it('update highlight - wrong: update a non-existent highlight', async () => {
 		const res = await request(application.app)
 			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', WRONG_HIGHLIGHT.id!.toString()))
