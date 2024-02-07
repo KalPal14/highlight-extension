@@ -10,11 +10,18 @@ import { HighlightsService } from './highlights.service';
 import { RIGHT_PAGE } from '@/common/constants/spec/pages';
 import { Highlight } from './highlight.entity';
 import { HighlightModel } from '@prisma/client';
-import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
+import {
+	RIGHT_HIGHLIGHT,
+	UPDATED_HIGHLIGHT,
+	WRONG_HIGHLIGHT,
+} from '@/common/constants/spec/highlights';
 import { RIGHT_USER_JWT } from '@/common/constants/spec/users';
+import { UpdateHighlightDto } from './dto/update-highlight.dto';
 
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
+	update: jest.fn(),
+	findById: jest.fn(),
 };
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
@@ -96,5 +103,41 @@ describe('Highlights Service', () => {
 		);
 
 		expect(result).toEqual(RIGHT_HIGHLIGHT);
+	});
+	it('update highlight - success', async () => {
+		highlightsRepository.findById = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
+		highlightsRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: UpdateHighlightDto): HighlightModel => ({
+				...RIGHT_HIGHLIGHT,
+				...payload,
+			}),
+		);
+
+		const result = await highlightsService.updateHighlight(RIGHT_HIGHLIGHT.id, {
+			note: UPDATED_HIGHLIGHT.note as string | undefined,
+			text: UPDATED_HIGHLIGHT.text,
+			color: UPDATED_HIGHLIGHT.color,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		if (result instanceof Error) return;
+		expect(result).toEqual(UPDATED_HIGHLIGHT);
+	});
+	it('update highlight - wrong: no highlight with this ID', async () => {
+		highlightsRepository.findById = jest.fn().mockReturnValue(null);
+		highlightsRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: UpdateHighlightDto): HighlightModel => ({
+				...RIGHT_HIGHLIGHT,
+				...payload,
+			}),
+		);
+
+		const result = await highlightsService.updateHighlight(WRONG_HIGHLIGHT.id!, {
+			note: UPDATED_HIGHLIGHT.note as string | undefined,
+			text: UPDATED_HIGHLIGHT.text,
+			color: UPDATED_HIGHLIGHT.color,
+		});
+
+		expect(result).toBeInstanceOf(Error);
 	});
 });

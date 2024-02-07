@@ -6,6 +6,7 @@ import { Highlight } from './highlight.entity';
 import { IHighlightsRepository } from './highlights.repository.interface';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
 import TYPES from '@/types.inversify';
+import { UpdateHighlightDto } from './dto/update-highlight.dto';
 
 @injectable()
 export class HighlightsRepository implements IHighlightsRepository {
@@ -19,6 +20,21 @@ export class HighlightsRepository implements IHighlightsRepository {
 				note,
 				color,
 			},
+		});
+	}
+
+	async update(id: number, payload: UpdateHighlightDto): Promise<HighlightModel> {
+		return await this.prismaService.client.highlightModel.update({
+			where: { id },
+			data: {
+				...payload,
+			},
+		});
+	}
+
+	async findById(id: number): Promise<HighlightModel | null> {
+		return await this.prismaService.client.highlightModel.findFirst({
+			where: { id },
 		});
 	}
 }

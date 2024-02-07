@@ -9,6 +9,7 @@ import { IPagesRepository } from '@/pages/pages.repository.interface';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { IPagesServise } from '@/pages/pages.service.interface';
 import { Highlight } from './highlight.entity';
+import { UpdateHighlightDto } from './dto/update-highlight.dto';
 
 @injectable()
 export class HighlightsService implements IHighlightsService {
@@ -30,5 +31,14 @@ export class HighlightsService implements IHighlightsService {
 
 		const newHighlight = new Highlight(existingPage.id, text, color, note);
 		return await this.highlightsRepository.create(newHighlight);
+	}
+
+	async updateHighlight(id: number, payload: UpdateHighlightDto): Promise<HighlightModel | Error> {
+		const existingHighlight = await this.highlightsRepository.findById(id);
+		if (!existingHighlight) {
+			return Error('There is no highlight with this ID');
+		}
+
+		return await this.highlightsRepository.update(id, payload);
 	}
 }
