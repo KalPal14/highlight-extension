@@ -1,9 +1,13 @@
-import { Request, Response, NextFunction, Router } from 'express';
+import { Router } from 'express';
+
+import { TController } from '@/common/types/controller.type';
+import { UsersLoginDto } from './dto/users-login.dto';
+import { UsersRegisterDto } from './dto/users-register.dto';
 
 export interface IUsersController {
 	router: Router;
 
-	login: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-	register: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-	logout: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+	login: TController<{}, {}, UsersLoginDto>;
+	register: TController<{}, {}, UsersRegisterDto>;
+	logout: TController;
 }
