@@ -7,9 +7,9 @@ import TYPES from '@/types.inversify';
 import { PagesServise } from './pages.service';
 import { Page } from './page.entity';
 import { PageModel } from '@prisma/client';
-import { PAGE_SPEC, RIGHT_PAGE_MODEL } from '@/common/constants/spec/pages';
-import { HIGHLIGHT_SPEC } from '@/common/constants/spec/highlights';
-import { USER_SPEC } from '@/common/constants/spec/users';
+import { RIGHT_PAGE } from '@/common/constants/spec/pages';
+import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
+import { RIGHT_USER_JWT } from '@/common/constants/spec/users';
 
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
@@ -33,7 +33,7 @@ describe('Pages Servise', () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
 		pagesRepository.create = jest.fn().mockImplementation(
 			(page: Page): PageModel => ({
-				id: PAGE_SPEC.id,
+				id: RIGHT_PAGE.id,
 				userId: page.userId,
 				url: page.url,
 			}),
@@ -41,29 +41,25 @@ describe('Pages Servise', () => {
 
 		const result = await pagesServise.createPage(
 			{
-				pageUrl: PAGE_SPEC.url,
-				text: HIGHLIGHT_SPEC.text,
-				color: HIGHLIGHT_SPEC.color,
+				pageUrl: RIGHT_PAGE.url,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
 			},
-			{
-				id: USER_SPEC.id,
-				email: USER_SPEC.email,
-				username: USER_SPEC.username,
-			},
+			RIGHT_USER_JWT,
 		);
 
 		expect(result).not.toBeInstanceOf(Error);
 		if (result instanceof Error) return;
-		expect(result.id).toBe(PAGE_SPEC.id);
-		expect(result.userId).toBe(PAGE_SPEC.userId);
-		expect(result.url).toBe(PAGE_SPEC.url);
+		expect(result.id).toBe(RIGHT_PAGE.id);
+		expect(result.userId).toBe(RIGHT_PAGE.userId);
+		expect(result.url).toBe(RIGHT_PAGE.url);
 	});
 
 	it('create page - wrong: this user already has a page with the same url', async () => {
-		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE_MODEL);
+		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
 		pagesRepository.create = jest.fn().mockImplementation(
 			(page: Page): PageModel => ({
-				id: PAGE_SPEC.id,
+				id: RIGHT_PAGE.id,
 				userId: page.userId,
 				url: page.url,
 			}),
@@ -71,15 +67,11 @@ describe('Pages Servise', () => {
 
 		const result = await pagesServise.createPage(
 			{
-				pageUrl: PAGE_SPEC.url,
-				text: HIGHLIGHT_SPEC.text,
-				color: HIGHLIGHT_SPEC.color,
+				pageUrl: RIGHT_PAGE.url,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
 			},
-			{
-				id: USER_SPEC.id,
-				email: USER_SPEC.email,
-				username: USER_SPEC.username,
-			},
+			RIGHT_USER_JWT,
 		);
 
 		expect(result).toBeInstanceOf(Error);

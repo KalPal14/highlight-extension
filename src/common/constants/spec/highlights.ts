@@ -1,25 +1,21 @@
 import { HighlightModel } from '@prisma/client';
 
-import { PAGE_SPEC } from './pages';
+import { RIGHT_PAGE, WRONG_PAGE } from './pages';
 
-export const HIGHLIGHT_SPEC = {
+export const RIGHT_HIGHLIGHT: HighlightModel = {
 	id: 1,
-	pageId: PAGE_SPEC.id,
+	pageId: RIGHT_PAGE.id,
 	text: 'one-to-many relation between User and Post',
 	color: '#ff1500',
 	note: 'those modules between which the connection is established in the example',
-
-	wrongId: 500,
-	wrongPageId: PAGE_SPEC.wrongId,
-	wrongText: 'wrong!!! wrong!!!',
-
-	invalidColor: 'green',
 };
 
-export const RIGHT_HIGHLIGHT_MODEL: HighlightModel = {
-	id: HIGHLIGHT_SPEC.id,
-	pageId: HIGHLIGHT_SPEC.pageId,
-	text: HIGHLIGHT_SPEC.text,
-	color: HIGHLIGHT_SPEC.color,
-	note: HIGHLIGHT_SPEC.note,
+export const WRONG_HIGHLIGHT: Partial<HighlightModel> = {
+	id: 500,
+	pageId: WRONG_PAGE.id,
+	text: 'wrong!!! wrong!!!',
+};
+
+export const INVALID_HIGHLIGHT: Partial<HighlightModel> = {
+	color: 'green',
 };
