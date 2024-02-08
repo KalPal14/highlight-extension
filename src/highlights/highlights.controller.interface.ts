@@ -9,4 +9,5 @@ export interface IHighlightsController {
 
 	createHighlight: TController<{}, {}, CreateHighlightDto>;
 	updateHighlight: TController<{ id: string }, {}, UpdateHighlightDto>;
+	deleteHighlight: TController<{ id: string }>;
 }

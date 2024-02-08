@@ -22,6 +22,7 @@ const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
 	findById: jest.fn(),
+	delete: jest.fn(),
 };
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
@@ -139,6 +140,22 @@ describe('Highlights Service', () => {
 			text: UPDATED_HIGHLIGHT.text,
 			color: UPDATED_HIGHLIGHT.color,
 		});
+
+		expect(result).toBeInstanceOf(Error);
+	});
+	it('delete highlight - success', async () => {
+		highlightsRepository.findById = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
+		highlightsRepository.delete = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
+
+		const result = await highlightsService.deleteHighlight(RIGHT_HIGHLIGHT.id);
+
+		expect(result).toEqual(RIGHT_HIGHLIGHT);
+	});
+	it('delete highlight - wrong:  no highlight with this ID', async () => {
+		highlightsRepository.findById = jest.fn().mockReturnValue(null);
+		highlightsRepository.delete = jest.fn();
+
+		const result = await highlightsService.deleteHighlight(RIGHT_HIGHLIGHT.id);
 
 		expect(result).toBeInstanceOf(Error);
 	});

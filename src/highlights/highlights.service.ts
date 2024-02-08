@@ -41,4 +41,13 @@ export class HighlightsService implements IHighlightsService {
 
 		return await this.highlightsRepository.update(id, payload);
 	}
+
+	async deleteHighlight(id: number): Promise<HighlightModel | Error> {
+		const existingHighlight = await this.highlightsRepository.findById(id);
+		if (!existingHighlight) {
+			return Error('There is no highlight with this ID');
+		}
+
+		return await this.highlightsRepository.delete(id);
+	}
 }

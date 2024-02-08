@@ -29,6 +29,12 @@ export class HighlightsController extends BaseController implements IHighlightsC
 				func: this.updateHighlight,
 				middlewares: [new AuthGuard(), new ValidateMiddleware(UpdateHighlightDto)],
 			},
+			{
+				path: HIGHLIGHTS_PATH.delete,
+				method: 'delete',
+				func: this.deleteHighlight,
+				middlewares: [new AuthGuard()],
+			},
 		]);
 	}
 
@@ -56,6 +62,20 @@ export class HighlightsController extends BaseController implements IHighlightsC
 		}
 
 		const result = await this.highlightsService.updateHighlight(Number(params.id), body);
+
+		if (result instanceof Error) {
+			return next(new HTTPError(422, result.message));
+		}
+
+		this.ok(res, result);
+	}
+
+	async deleteHighlight(
+		{ params }: Request<{ id: string }>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.highlightsService.deleteHighlight(Number(params.id));
 
 		if (result instanceof Error) {
 			return next(new HTTPError(422, result.message));

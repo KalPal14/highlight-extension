@@ -37,4 +37,10 @@ export class HighlightsRepository implements IHighlightsRepository {
 			where: { id },
 		});
 	}
+
+	async delete(id: number): Promise<HighlightModel> {
+		return await this.prismaService.client.highlightModel.delete({
+			where: { id },
+		});
+	}
 }
