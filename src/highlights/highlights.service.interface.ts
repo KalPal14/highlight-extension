@@ -9,4 +9,5 @@ export interface IHighlightsService {
 		user: IJwtPayload,
 	) => Promise<HighlightModel>;
 	updateHighlight: (id: number, payload: UpdateHighlightDto) => Promise<HighlightModel | Error>;
+	deleteHighlight: (id: number) => Promise<HighlightModel | Error>;
 }

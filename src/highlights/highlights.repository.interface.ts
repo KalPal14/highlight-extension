@@ -6,4 +6,5 @@ export interface IHighlightsRepository {
 	create: (highlight: Highlight) => Promise<HighlightModel>;
 	update: (id: number, payload: UpdateHighlightDto) => Promise<HighlightModel>;
 	findById: (id: number) => Promise<HighlightModel | null>;
+	delete: (id: number) => Promise<HighlightModel>;
 }

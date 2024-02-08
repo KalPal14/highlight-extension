@@ -92,6 +92,34 @@ describe('Highlits', () => {
 		expect(res.statusCode).toBe(422);
 		expect(res.body.err).toBe('There is no highlight with this ID');
 	});
+
+	it('delete highlight - success', async () => {
+		const createHighlightRes = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.set('Cookie', cookies)
+			.send({
+				pageUrl: RIGHT_PAGE.url,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			});
+		const highlightId = createHighlightRes.body.id;
+		console.log(highlightId);
+		const res = await request(application.app)
+			.delete(HIGHLIGHTS_FULL_PATH.delete.replace(':id', highlightId.toString()))
+			.set('Cookie', cookies);
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual(createHighlightRes.body);
+	});
+
+	it('delete highlight - wrong: non-existent highlight', async () => {
+		const res = await request(application.app)
+			.delete(HIGHLIGHTS_FULL_PATH.delete.replace(':id', WRONG_HIGHLIGHT.id!.toString()))
+			.set('Cookie', cookies);
+
+		expect(res.statusCode).toBe(422);
+		expect(res.body.err).toBe('There is no highlight with this ID');
+	});
 });
 
 afterAll(() => {
