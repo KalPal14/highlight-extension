@@ -36,7 +36,7 @@ export class PagesController extends BaseController implements IPagesController 
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		const result = await this.pagesServise.getPageInfo(body, user);
+		const result = await this.pagesServise.getPageInfo(body.url, user.id);
 
 		if (!result) {
 			return next(new HTTPError(404, 'There is no such page'));

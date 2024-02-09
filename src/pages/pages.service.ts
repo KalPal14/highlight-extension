@@ -7,7 +7,6 @@ import { IPagesServise, TPageInfo } from './pages.service.interface';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { Page } from './page.entity';
 import { IPagesRepository } from './pages.repository.interface';
-import { GetPageDto } from './dto/get-page.dto';
 
 @injectable()
 export class PagesServise implements IPagesServise {
@@ -26,8 +25,8 @@ export class PagesServise implements IPagesServise {
 		return await this.pagesRepository.create(newPage);
 	}
 
-	async getPageInfo({ url }: GetPageDto, { id }: IJwtPayload): Promise<PageModel | null> {
-		return await this.pagesRepository.findByUrl(url, id, true);
+	async getPageInfo(url: string, userId: number): Promise<PageModel | null> {
+		return await this.pagesRepository.findByUrl(url, userId, true);
 	}
 
 	async getPagesInfo(userId: number): Promise<TPageInfo[]> {
