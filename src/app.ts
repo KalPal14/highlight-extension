@@ -16,6 +16,8 @@ import { IPrismaService } from '@/common/services/prisma.service.interface';
 import { IConfigService } from '@/common/services/config.service.interface';
 import { JwtAuthMiddleware } from './common/middlewares/jwt-auth.middleware';
 import { IHighlightsController } from '@/highlights/highlights.controller.interface';
+import { PAGES_ROUTER_PATH } from './common/constants/routes/pages';
+import { IPagesController } from './pages/pagea.controller.interface';
 
 @injectable()
 export default class App {
@@ -30,6 +32,7 @@ export default class App {
 		@inject(TYPES.PrismaService) private prismaService: IPrismaService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.HighlightsController) private highlightsController: IHighlightsController,
+		@inject(TYPES.PagesController) private pagesController: IPagesController,
 	) {
 		this.app = express();
 		this.port = 8000;
@@ -49,6 +52,7 @@ export default class App {
 	useRoutes(): void {
 		this.app.use(USERS_ROUTER_PATH, this.usersController.router);
 		this.app.use(HIGHLIGHTS_ROUTER_PATH, this.highlightsController.router);
+		this.app.use(PAGES_ROUTER_PATH, this.pagesController.router);
 	}
 
 	useExceptions(): void {

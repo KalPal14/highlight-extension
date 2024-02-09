@@ -3,5 +3,9 @@ import { Page } from './page.entity';
 
 export interface IPagesRepository {
 	create: (page: Page) => Promise<PageModel>;
-	findByUrl: (url: string, userId: number) => Promise<PageModel | null>;
+	findByUrl: (
+		url: string,
+		userId: number,
+		includeHighlights?: boolean,
+	) => Promise<PageModel | null>;
 }
