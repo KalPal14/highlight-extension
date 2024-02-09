@@ -27,9 +27,12 @@ const highlightsRepositoryMock: IHighlightsRepository = {
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
 	findByUrl: jest.fn(),
+	findAll: jest.fn(),
 };
 const pagesServiseMock: IPagesServise = {
 	createPage: jest.fn(),
+	getPageInfo: jest.fn(),
+	getPagesInfo: jest.fn(),
 };
 
 const container = new Container();

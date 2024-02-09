@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import { PageModel } from '@prisma/client';
 
-import { IPagesRepository } from './pages.repository.interface';
+import { IPagesRepository, TDeepPageModel } from './pages.repository.interface';
 import { Page } from './page.entity';
 import TYPES from '@/types.inversify';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
@@ -29,6 +29,17 @@ export class PagesRepository implements IPagesRepository {
 			where: {
 				userId,
 				url,
+			},
+			include: {
+				highlights: includeHighlights,
+			},
+		});
+	}
+
+	async findAll(userId: number, includeHighlights: boolean = false): Promise<TDeepPageModel[]> {
+		return await this.prismaService.client.pageModel.findMany({
+			where: {
+				userId,
 			},
 			include: {
 				highlights: includeHighlights,

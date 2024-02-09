@@ -9,11 +9,12 @@ import { Page } from './page.entity';
 import { PageModel } from '@prisma/client';
 import { RIGHT_PAGE } from '@/common/constants/spec/pages';
 import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
-import { RIGHT_USER_JWT } from '@/common/constants/spec/users';
+import { RIGHT_USER, RIGHT_USER_JWT } from '@/common/constants/spec/users';
 
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
 	findByUrl: jest.fn(),
+	findAll: jest.fn(),
 };
 
 const container = new Container();
@@ -75,5 +76,50 @@ describe('Pages Servise', () => {
 		);
 
 		expect(result).toBeInstanceOf(Error);
+	});
+
+	it('get pages info - success: user without highlights', async () => {
+		pagesRepository.findAll = jest.fn().mockReturnValue([]);
+
+		const result = await pagesServise.getPagesInfo(RIGHT_USER.id);
+
+		expect(result).toHaveLength(0);
+	});
+
+	it('get pages info - success: user with highlights', async () => {
+		pagesRepository.findAll = jest.fn().mockReturnValue([
+			{
+				...RIGHT_PAGE,
+				highlights: [
+					RIGHT_HIGHLIGHT,
+					{
+						...RIGHT_HIGHLIGHT,
+						note: null,
+					},
+				],
+			},
+			{
+				...RIGHT_PAGE,
+				highlights: [RIGHT_HIGHLIGHT],
+			},
+		]);
+
+		const result = await pagesServise.getPagesInfo(RIGHT_USER.id);
+
+		expect(result).toHaveLength(2);
+		expect(result[0]).toEqual({
+			id: RIGHT_PAGE.id,
+			userId: RIGHT_PAGE.userId,
+			url: RIGHT_PAGE.url,
+			highlightsCount: 2,
+			notesCount: 1,
+		});
+		expect(result[1]).toEqual({
+			id: RIGHT_PAGE.id,
+			userId: RIGHT_PAGE.userId,
+			url: RIGHT_PAGE.url,
+			highlightsCount: 1,
+			notesCount: 1,
+		});
 	});
 });
