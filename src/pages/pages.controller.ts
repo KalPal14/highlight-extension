@@ -22,6 +22,12 @@ export class PagesController extends BaseController implements IPagesController 
 				func: this.getPage,
 				middlewares: [new AuthGuard(), new ValidateMiddleware(GetPageDto)],
 			},
+			{
+				path: PAGES_PATH.getPages,
+				method: 'get',
+				func: this.getPages,
+				middlewares: [new AuthGuard()],
+			},
 		]);
 	}
 
@@ -35,6 +41,12 @@ export class PagesController extends BaseController implements IPagesController 
 		if (!result) {
 			return next(new HTTPError(404, 'There is no such page'));
 		}
+
+		this.ok(res, result);
+	}
+
+	async getPages({ user }: Request, res: Response, next: NextFunction): Promise<void> {
+		const result = await this.pagesServise.getPagesInfo(user.id);
 
 		this.ok(res, result);
 	}

@@ -3,7 +3,7 @@ import { PageModel } from '@prisma/client';
 
 import { CreateHighlightDto } from '@/highlights/dto/create-highlight.dto';
 import TYPES from '@/types.inversify';
-import { IPagesServise } from './pages.service.interface';
+import { IPagesServise, TPageInfo } from './pages.service.interface';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { Page } from './page.entity';
 import { IPagesRepository } from './pages.repository.interface';
@@ -28,5 +28,19 @@ export class PagesServise implements IPagesServise {
 
 	async getPageInfo({ url }: GetPageDto, { id }: IJwtPayload): Promise<PageModel | null> {
 		return await this.pagesRepository.findByUrl(url, id, true);
+	}
+
+	async getPagesInfo(userId: number): Promise<TPageInfo[]> {
+		const pages = await this.pagesRepository.findAll(userId, true);
+		return pages.map(({ id, userId, url, highlights }) => {
+			const highlightsWithNote = highlights.filter(({ note }) => note);
+			return {
+				id,
+				userId,
+				url,
+				highlightsCount: highlights.length,
+				notesCount: highlightsWithNote.length,
+			};
+		});
 	}
 }

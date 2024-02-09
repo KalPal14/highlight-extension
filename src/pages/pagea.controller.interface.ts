@@ -7,4 +7,5 @@ export interface IPagesController {
 	router: Router;
 
 	getPage: TController<{}, {}, GetPageDto>;
+	getPages: TController;
 }
