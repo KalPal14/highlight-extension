@@ -20,11 +20,18 @@ export class PagesRepository implements IPagesRepository {
 		});
 	}
 
-	async findByUrl(url: string, userId: number): Promise<PageModel | null> {
+	async findByUrl(
+		url: string,
+		userId: number,
+		includeHighlights: boolean = false,
+	): Promise<PageModel | null> {
 		return await this.prismaService.client.pageModel.findFirst({
 			where: {
 				userId,
 				url,
+			},
+			include: {
+				highlights: includeHighlights,
 			},
 		});
 	}

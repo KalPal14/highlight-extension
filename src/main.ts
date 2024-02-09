@@ -27,6 +27,8 @@ import { HighlightsRepository } from '@/highlights/highlights.repository';
 import { IHighlightsRepository } from '@/highlights/highlights.repository.interface';
 import { HighlightsService } from '@/highlights/highlights.service';
 import { IHighlightsService } from '@/highlights/highlights.service.interface';
+import { IPagesController } from '@/pages/pagea.controller.interface';
+import { PagesController } from '@/pages/pages.controller';
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.App).to(App);
@@ -45,6 +47,7 @@ const userBindings = new ContainerModule((bind: interfaces.Bind) => {
 const pageBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IPagesRepository>(TYPES.PagesRepository).to(PagesRepository);
 	bind<IPagesServise>(TYPES.PagesServise).to(PagesServise);
+	bind<IPagesController>(TYPES.PagesController).to(PagesController);
 });
 
 const highlightBindings = new ContainerModule((bind: interfaces.Bind) => {

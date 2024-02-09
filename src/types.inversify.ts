@@ -12,6 +12,7 @@ const TYPES = {
 	HighlightsController: Symbol('HighlightsController'),
 	HighlightsRepository: Symbol('HighlightsRepository'),
 	HighlightsService: Symbol('HighlightsService'),
+	PagesController: Symbol('PagesController'),
 };
 
 export default TYPES;
