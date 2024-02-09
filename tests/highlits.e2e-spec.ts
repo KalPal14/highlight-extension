@@ -66,8 +66,17 @@ describe('Highlits', () => {
 	});
 
 	it('update highlight - success', async () => {
+		const createHighlightRes = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.set('Cookie', cookies)
+			.send({
+				pageUrl: RIGHT_PAGE.url,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			});
+		const highlightId = createHighlightRes.body.id;
 		const res = await request(application.app)
-			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', UPDATED_HIGHLIGHT.id.toString()))
+			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', highlightId.toString()))
 			.set('Cookie', cookies)
 			.send({
 				note: UPDATED_HIGHLIGHT.note as string | undefined,
@@ -76,7 +85,10 @@ describe('Highlits', () => {
 			});
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body).toEqual(UPDATED_HIGHLIGHT);
+		expect(res.body).toEqual({
+			...UPDATED_HIGHLIGHT,
+			id: highlightId,
+		});
 	});
 
 	it('update highlight - wrong: update a non-existent highlight', async () => {
