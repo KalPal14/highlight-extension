@@ -115,7 +115,6 @@ describe('Highlits', () => {
 				color: RIGHT_HIGHLIGHT.color,
 			});
 		const highlightId = createHighlightRes.body.id;
-		console.log(highlightId);
 		const res = await request(application.app)
 			.delete(HIGHLIGHTS_FULL_PATH.delete.replace(':id', highlightId.toString()))
 			.set('Cookie', cookies);

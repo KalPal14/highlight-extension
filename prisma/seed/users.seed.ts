@@ -13,6 +13,7 @@ export async function usersSeed(prisma: PrismaClient): Promise<void> {
 			email: RIGHT_USER.email,
 			username: RIGHT_USER.username,
 			password: await hash(RIGHT_USER.password, salt),
+			colors: [],
 		},
 	});
 	const user2 = await prisma.userModel.upsert({
@@ -22,6 +23,7 @@ export async function usersSeed(prisma: PrismaClient): Promise<void> {
 			email: 'bob@test.com',
 			username: 'bob_test',
 			password: await hash('123123', salt),
+			colors: [],
 		},
 	});
 	console.log({ user1, user2 });

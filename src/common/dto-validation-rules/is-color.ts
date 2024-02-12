@@ -11,3 +11,7 @@ export class IsColor implements ValidatorConstraintInterface {
 		return isRgbColor(fieldValue) || isHexColor(fieldValue);
 	}
 }
+
+export function isColor(value: string): boolean {
+	return isRgbColor(value) || isHexColor(value);
+}

@@ -10,6 +10,7 @@ import { IUsersRepository } from './users.repository.interface';
 import { IConfigService } from '@/common/services/config.service.interface';
 import { HTTPError } from '@/errors/http-error.class';
 import { UsersLoginDto } from './dto/users-login.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -56,5 +57,9 @@ export class UsersService implements IUsersService {
 			return new HTTPError(422, 'Incorrect password');
 		}
 		return existingUser;
+	}
+
+	async updateUser(id: number, payload: UpdateUserDto): Promise<UserModel> {
+		return await this.usersRepository.update(id, payload);
 	}
 }

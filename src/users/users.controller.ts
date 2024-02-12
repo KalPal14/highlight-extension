@@ -15,6 +15,7 @@ import { UserModel } from '@prisma/client';
 import { UsersLoginDto } from './dto/users-login.dto';
 import { AuthGuard } from '@/common/middlewares/auth.guard';
 import { HTTPError } from '@/errors/http-error.class';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -44,7 +45,27 @@ export class UsersController extends BaseController implements IUsersController 
 				func: this.logout,
 				middlewares: [new AuthGuard()],
 			},
+			{
+				path: USERS_PATH.updateUser,
+				method: 'patch',
+				func: this.updateUser,
+				middlewares: [new AuthGuard(), new ValidateMiddleware(UpdateUserDto)],
+			},
 		]);
+	}
+
+	async updateUser(
+		{ body, user }: Request<{}, {}, UpdateUserDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		if (!Object.keys(body).length) {
+			return next(new HTTPError(422, 'User change data is empty'));
+		}
+
+		const result = await this.usersService.updateUser(Number(user.id), body);
+
+		this.ok(res, result);
 	}
 
 	async login({ body }: Request, res: Response, next: NextFunction): Promise<void> {
@@ -95,7 +116,7 @@ export class UsersController extends BaseController implements IUsersController 
 					secure: true,
 					maxAge: this.sessionTime * 1000,
 				});
-				sendFunc(res, { result });
+				sendFunc(res, { ...result });
 			})
 			.catch((err) => this.send(res, 500, { err }));
 	}
