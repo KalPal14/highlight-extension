@@ -17,6 +17,7 @@ model UserModel {
   email    String      @unique
   password String
   pages    PageModel[]
+  colors   String[]
 }
 
 model PageModel {

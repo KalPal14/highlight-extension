@@ -3,7 +3,13 @@ import request from 'supertest';
 
 import { bootstrap } from '@/main';
 import App from '@/app';
-import { RIGHT_USER, WRONG_USER, INVALID_USER } from '@/common/constants/spec/users';
+import {
+	RIGHT_USER,
+	WRONG_USER,
+	INVALID_USER,
+	GET_NEW_USER,
+	GET_UPDATED_USER,
+} from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 
 let application: App;
@@ -103,6 +109,64 @@ describe('Users', () => {
 		const res = await request(application.app).post(USERS_FULL_PATH.logout);
 
 		expect(res.statusCode).toBe(401);
+	});
+
+	it('Update user - success', async () => {
+		const NEW_USER = GET_NEW_USER();
+		const UPDATED_USER = GET_UPDATED_USER();
+		const regRes = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: NEW_USER.email,
+			username: NEW_USER.username,
+			password: NEW_USER.password,
+		});
+		const cookies = regRes.headers['set-cookie'][0];
+
+		const res = await request(application.app)
+			.patch(USERS_FULL_PATH.updateUser)
+			.set('Cookie', cookies)
+			.send({
+				colors: UPDATED_USER.colors,
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual({
+			id: regRes.body.id,
+			password: regRes.body.password,
+			email: NEW_USER.email,
+			username: NEW_USER.username,
+			colors: UPDATED_USER.colors,
+		});
+	});
+
+	it('Update user - wrong: user is not authorized', async () => {
+		const UPDATED_USER = GET_UPDATED_USER();
+
+		const res = await request(application.app).patch(USERS_FULL_PATH.updateUser).send({
+			colors: UPDATED_USER.colors,
+		});
+
+		expect(res.statusCode).toBe(401);
+		expect(res.body.err).toBeDefined();
+	});
+
+	it('Update user - wrong: incorrect data format', async () => {
+		const NEW_USER = GET_NEW_USER();
+		const regRes = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: NEW_USER.email,
+			username: NEW_USER.username,
+			password: NEW_USER.password,
+		});
+		const cookies = regRes.headers['set-cookie'][0];
+
+		const res = await request(application.app)
+			.patch(USERS_FULL_PATH.updateUser)
+			.set('Cookie', cookies)
+			.send({
+				colors: INVALID_USER.colors,
+			});
+
+		expect(res.statusCode).toBe(422);
+		expect(res.body[0].property).toBeDefined();
 	});
 });
 

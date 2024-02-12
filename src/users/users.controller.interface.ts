@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { TController } from '@/common/types/controller.type';
 import { UsersLoginDto } from './dto/users-login.dto';
 import { UsersRegisterDto } from './dto/users-register.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 export interface IUsersController {
 	router: Router;
@@ -10,4 +11,6 @@ export interface IUsersController {
 	login: TController<{}, {}, UsersLoginDto>;
 	register: TController<{}, {}, UsersRegisterDto>;
 	logout: TController;
+
+	updateUser: TController<{}, {}, UpdateUserDto>;
 }

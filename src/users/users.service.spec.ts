@@ -15,6 +15,7 @@ const usersRepositoryMock: IUsersRepository = {
 	findByEmail: jest.fn(),
 	findByUsername: jest.fn(),
 	create: jest.fn(),
+	update: jest.fn(),
 };
 
 const configServiceMock: IConfigService = {
@@ -46,6 +47,7 @@ describe('Users Service', () => {
 				email: user.email,
 				username: user.username,
 				password: user.password,
+				colors: RIGHT_USER.colors,
 			}),
 		);
 
@@ -72,6 +74,7 @@ describe('Users Service', () => {
 				email: user.email,
 				username: user.username,
 				password: user.password,
+				colors: RIGHT_USER.colors,
 			}),
 		);
 
@@ -93,6 +96,7 @@ describe('Users Service', () => {
 				email: user.email,
 				username: user.username,
 				password: user.password,
+				colors: RIGHT_USER.colors,
 			}),
 		);
 
