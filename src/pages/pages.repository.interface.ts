@@ -1,9 +1,6 @@
-import { HighlightModel, PageModel } from '@prisma/client';
+import { PageModel } from '@prisma/client';
 import { Page } from './page.entity';
-
-export type TDeepPageModel = PageModel & {
-	highlights: HighlightModel[];
-};
+import { TPageDeepModel } from './page-deep-model.interface';
 
 export interface IPagesRepository {
 	create: (page: Page) => Promise<PageModel>;
@@ -11,6 +8,6 @@ export interface IPagesRepository {
 		url: string,
 		userId: number,
 		includeHighlights?: boolean,
-	) => Promise<PageModel | null>;
-	findAll: (userId: number, includeHighlights?: boolean) => Promise<TDeepPageModel[]>;
+	) => Promise<TPageDeepModel | null>;
+	findAll: (userId: number, includeHighlights?: boolean) => Promise<TPageDeepModel[]>;
 }
