@@ -31,7 +31,7 @@ export class PagesServise implements IPagesServise {
 
 	async getPagesInfo(userId: number): Promise<TPageInfo[]> {
 		const pages = await this.pagesRepository.findAll(userId, true);
-		return pages.map(({ id, userId, url, highlights }) => {
+		return pages.map(({ id, userId, url, highlights = [] }) => {
 			const highlightsWithNote = highlights.filter(({ note }) => note);
 			return {
 				id,
