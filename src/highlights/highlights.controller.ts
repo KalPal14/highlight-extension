@@ -7,7 +7,7 @@ import { CreateHighlightDto } from './dto/create-highlight.dto';
 import TYPES from '@/types.inversify';
 import { HIGHLIGHTS_PATH } from '@/common/constants/routes/highlights';
 import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
-import { AuthGuard } from '@/common/middlewares/auth.guard';
+import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
 import { IHighlightsService } from './highlights.service.interface';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
@@ -21,19 +21,19 @@ export class HighlightsController extends BaseController implements IHighlightsC
 				path: HIGHLIGHTS_PATH.create,
 				method: 'post',
 				func: this.createHighlight,
-				middlewares: [new AuthGuard(), new ValidateMiddleware(CreateHighlightDto)],
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(CreateHighlightDto)],
 			},
 			{
 				path: HIGHLIGHTS_PATH.update,
 				method: 'patch',
 				func: this.updateHighlight,
-				middlewares: [new AuthGuard(), new ValidateMiddleware(UpdateHighlightDto)],
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateHighlightDto)],
 			},
 			{
 				path: HIGHLIGHTS_PATH.delete,
 				method: 'delete',
 				func: this.deleteHighlight,
-				middlewares: [new AuthGuard()],
+				middlewares: [new RouteGuard('user')],
 			},
 		]);
 	}

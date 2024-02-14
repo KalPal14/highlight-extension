@@ -13,7 +13,7 @@ import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
 import { IConfigService } from '@/common/services/config.service.interface';
 import { UserModel } from '@prisma/client';
 import { UsersLoginDto } from './dto/users-login.dto';
-import { AuthGuard } from '@/common/middlewares/auth.guard';
+import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -31,25 +31,25 @@ export class UsersController extends BaseController implements IUsersController 
 				path: USERS_PATH.login,
 				method: 'post',
 				func: this.login,
-				middlewares: [new ValidateMiddleware(UsersLoginDto)],
+				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(UsersLoginDto)],
 			},
 			{
 				path: USERS_PATH.register,
 				method: 'post',
 				func: this.register,
-				middlewares: [new ValidateMiddleware(UsersRegisterDto)],
+				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(UsersRegisterDto)],
 			},
 			{
 				path: USERS_PATH.logout,
 				method: 'post',
 				func: this.logout,
-				middlewares: [new AuthGuard()],
+				middlewares: [new RouteGuard('user')],
 			},
 			{
 				path: USERS_PATH.updateUser,
 				method: 'patch',
 				func: this.updateUser,
-				middlewares: [new AuthGuard(), new ValidateMiddleware(UpdateUserDto)],
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateUserDto)],
 			},
 		]);
 	}

@@ -6,7 +6,7 @@ import { IPagesController } from './pagea.controller.interface';
 import TYPES from '@/types.inversify';
 import { IPagesServise } from './pages.service.interface';
 import { PAGES_PATH } from '@/common/constants/routes/pages';
-import { AuthGuard } from '@/common/middlewares/auth.guard';
+import { RouteGuard } from '@/common/middlewares/route.guard';
 import { GetPageDto } from './dto/get-page.dto';
 import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
 import { HTTPError } from '@/errors/http-error.class';
@@ -20,13 +20,13 @@ export class PagesController extends BaseController implements IPagesController 
 				path: PAGES_PATH.getPage,
 				method: 'get',
 				func: this.getPage,
-				middlewares: [new AuthGuard(), new ValidateMiddleware(GetPageDto)],
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(GetPageDto)],
 			},
 			{
 				path: PAGES_PATH.getPages,
 				method: 'get',
 				func: this.getPages,
-				middlewares: [new AuthGuard()],
+				middlewares: [new RouteGuard('user')],
 			},
 		]);
 	}
