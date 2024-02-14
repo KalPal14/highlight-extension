@@ -88,6 +88,23 @@ describe('Users', () => {
 		expect(res.statusCode).toBe(422);
 	});
 
+	it('Login - wrong: user is already logged in', async () => {
+		const resFirstLogin = await request(application.app).post(USERS_FULL_PATH.login).send({
+			userIdentifier: RIGHT_USER.username,
+			password: RIGHT_USER.password,
+		});
+		const cookies = resFirstLogin.headers['set-cookie'][0];
+		const res = await request(application.app)
+			.post(USERS_FULL_PATH.login)
+			.set('Cookie', cookies)
+			.send({
+				userIdentifier: RIGHT_USER.username,
+				password: RIGHT_USER.password,
+			});
+
+		expect(res.statusCode).toBe(401);
+	});
+
 	it('Logout - success', async () => {
 		const loginRes = await request(application.app).post(USERS_FULL_PATH.login).send({
 			userIdentifier: RIGHT_USER.username,
