@@ -6,6 +6,7 @@ export class User {
 	constructor(
 		private readonly _username: string,
 		private readonly _email: string,
+		private _colors: string[] = [],
 		passwordHash?: string,
 	) {
 		if (passwordHash) {
@@ -21,6 +22,9 @@ export class User {
 	}
 	get email(): string {
 		return this._email;
+	}
+	get colors(): string[] {
+		return this._colors;
 	}
 
 	async setPassword(password: string, salt: number): Promise<void> {

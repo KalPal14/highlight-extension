@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import request from 'supertest';
+import bcryptjs from 'bcryptjs';
 
 import { bootstrap } from '@/main';
 import App from '@/app';
@@ -9,6 +10,7 @@ import {
 	INVALID_USER,
 	GET_NEW_USER,
 	GET_UPDATED_USER,
+	UPDATED_USER,
 } from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 
@@ -184,6 +186,28 @@ describe('Users', () => {
 
 		expect(res.statusCode).toBe(422);
 		expect(res.body[0].property).toBeDefined();
+	});
+
+	it('Change password - success', async () => {
+		const hashSpy = jest.spyOn(bcryptjs, 'hash');
+		const NEW_USER = GET_NEW_USER();
+		const regRes = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: NEW_USER.email,
+			username: NEW_USER.username,
+			password: NEW_USER.password,
+		});
+		const cookies = regRes.headers['set-cookie'][0];
+
+		const res = await request(application.app)
+			.patch(USERS_FULL_PATH.changePassword)
+			.set('Cookie', cookies)
+			.send({
+				password: NEW_USER.password,
+				newPassword: UPDATED_USER.password,
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body.msg).toBeDefined();
 	});
 });
 

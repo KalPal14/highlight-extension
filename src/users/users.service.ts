@@ -11,6 +11,8 @@ import { IConfigService } from '@/common/services/config.service.interface';
 import { HTTPError } from '@/errors/http-error.class';
 import { UsersLoginDto } from './dto/users-login.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -51,7 +53,12 @@ export class UsersService implements IUsersService {
 			}
 		}
 
-		const user = new User(existingUser.username, existingUser.email, existingUser.password);
+		const user = new User(
+			existingUser.username,
+			existingUser.email,
+			existingUser.colors,
+			existingUser.password,
+		);
 		const isPasswordTrue = await user.comperePassword(password);
 		if (!isPasswordTrue) {
 			return new HTTPError(422, 'Incorrect password');
@@ -61,5 +68,25 @@ export class UsersService implements IUsersService {
 
 	async updateUser(id: number, payload: UpdateUserDto): Promise<UserModel> {
 		return await this.usersRepository.update(id, payload);
+	}
+
+	async changePassword(
+		{ id, email, username }: IJwtPayload,
+		{ password, newPassword }: ChangePasswordDto,
+	): Promise<UserModel | Error> {
+		const validatedUser = await this.validateUser({ userIdentifier: email || username, password });
+		if (validatedUser instanceof Error) {
+			return Error(validatedUser.message);
+		}
+		if (password === newPassword) {
+			return Error('The new password cannot be the same as the old one');
+		}
+
+		const user = new User(validatedUser.username, validatedUser.email, validatedUser.colors);
+		const salt = this.configService.get('SALT');
+		await user.setPassword(newPassword, Number(salt));
+		return await this.usersRepository.update(id, {
+			password: user.password,
+		});
 	}
 }

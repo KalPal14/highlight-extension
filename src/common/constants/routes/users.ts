@@ -5,6 +5,7 @@ export const USERS_PATH = {
 	register: '/register',
 	logout: '/logout',
 	updateUser: '/update-user',
+	changePassword: '/change-password',
 };
 
 export const USERS_FULL_PATH = {
@@ -12,4 +13,5 @@ export const USERS_FULL_PATH = {
 	register: USERS_ROUTER_PATH + USERS_PATH.register,
 	logout: USERS_ROUTER_PATH + USERS_PATH.logout,
 	updateUser: USERS_ROUTER_PATH + USERS_PATH.updateUser,
+	changePassword: USERS_ROUTER_PATH + USERS_PATH.changePassword,
 };
