@@ -13,6 +13,7 @@ import { UsersLoginDto } from './dto/users-login.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
+import { ChangeEmailDto } from './dto/change-email.dto';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -87,6 +88,25 @@ export class UsersService implements IUsersService {
 		await user.setPassword(newPassword, Number(salt));
 		return await this.usersRepository.update(id, {
 			password: user.password,
+		});
+	}
+
+	async changeEmail(
+		{ id, email }: IJwtPayload,
+		{ newEmail }: ChangeEmailDto,
+	): Promise<UserModel | Error> {
+		if (newEmail === email) {
+			return Error('The new email cannot be the same as the old one');
+		}
+		const isNewEmailExisting = await this.usersRepository.findByEmail(newEmail);
+		if (isNewEmailExisting) {
+			return Error(
+				`You cannot change your email to ${newEmail}. An account with this email already exists`,
+			);
+		}
+
+		return await this.usersRepository.update(id, {
+			email: newEmail,
 		});
 	}
 }

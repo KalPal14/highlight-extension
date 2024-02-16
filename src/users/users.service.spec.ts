@@ -252,4 +252,64 @@ describe('Users Service', () => {
 			expect(result.message).toBeDefined();
 		}
 	});
+
+	it('change email - success', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changeEmail(RIGHT_USER_JWT, {
+			newEmail: UPDATED_USER.email,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		if (result instanceof Error) return;
+		expect(result.username).toBe(RIGHT_USER.username);
+		expect(result.email).toBe(UPDATED_USER.email);
+	});
+
+	it('change email - wrong: same email and newEmail', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changeEmail(RIGHT_USER_JWT, {
+			newEmail: RIGHT_USER.email,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBeDefined();
+		}
+	});
+
+	it('change email - wrong: there is already another account with a new email', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(UPDATED_USER);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changeEmail(RIGHT_USER_JWT, {
+			newEmail: UPDATED_USER.email,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBeDefined();
+		}
+	});
 });

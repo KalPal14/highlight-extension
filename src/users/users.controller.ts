@@ -17,6 +17,7 @@ import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -57,6 +58,12 @@ export class UsersController extends BaseController implements IUsersController 
 				method: 'patch',
 				func: this.changePassword,
 				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangePasswordDto)],
+			},
+			{
+				path: USERS_PATH.changeEmail,
+				method: 'patch',
+				func: this.changeEmail,
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangeEmailDto)],
 			},
 		]);
 	}
@@ -127,6 +134,20 @@ export class UsersController extends BaseController implements IUsersController 
 		this.ok(res, {
 			msg: 'Password successfully changed',
 		});
+	}
+
+	async changeEmail(
+		{ user, body }: Request<{}, {}, ChangeEmailDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.usersService.changeEmail(user, body);
+
+		if (result instanceof Error) {
+			return next(new HTTPError(422, result.message));
+		}
+
+		this.signJwtAndSendUser(res, result, this.ok.bind(this));
 	}
 
 	private signJwtAndSendUser(
