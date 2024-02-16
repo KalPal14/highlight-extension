@@ -16,6 +16,7 @@ import { UsersLoginDto } from './dto/users-login.dto';
 import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -50,6 +51,12 @@ export class UsersController extends BaseController implements IUsersController 
 				method: 'patch',
 				func: this.updateUser,
 				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateUserDto)],
+			},
+			{
+				path: USERS_PATH.changePassword,
+				method: 'patch',
+				func: this.changePassword,
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangePasswordDto)],
 			},
 		]);
 	}
@@ -103,6 +110,23 @@ export class UsersController extends BaseController implements IUsersController 
 		} catch {
 			next(new HTTPError(500, 'Failed to log out'));
 		}
+	}
+
+	async changePassword(
+		{ user, body }: Request<{}, {}, ChangePasswordDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.usersService.changePassword(user, body);
+
+		if (result instanceof Error) {
+			next(new HTTPError(422, result.message));
+			return;
+		}
+
+		this.ok(res, {
+			msg: 'Password successfully changed',
+		});
 	}
 
 	private signJwtAndSendUser(

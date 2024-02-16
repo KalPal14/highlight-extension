@@ -38,7 +38,7 @@ export class UsersRepository implements IUsersRepository {
 		});
 	}
 
-	async update(id: number, payload: UpdateUserDto): Promise<UserModel> {
+	async update(id: number, payload: Partial<User>): Promise<UserModel> {
 		return await this.prismaService.client.userModel.update({
 			where: { id },
 			data: {

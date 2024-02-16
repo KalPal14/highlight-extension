@@ -1,12 +1,18 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
+import bcryptjs from 'bcryptjs';
 
 import { UsersService } from './users.service';
 import TYPES from '@/types.inversify';
 import { IUsersService } from './users.service.interface';
 import { IUsersRepository } from './users.repository.interface';
 import { IConfigService } from '@/common/services/config.service.interface';
-import { RIGHT_USER, WRONG_USER } from '@/common/constants/spec/users';
+import {
+	RIGHT_USER,
+	WRONG_USER,
+	UPDATED_USER,
+	RIGHT_USER_JWT,
+} from '@/common/constants/spec/users';
 import { User } from './user.entity';
 import { UserModel } from '@prisma/client';
 import { HTTPError } from '@/errors/http-error.class';
@@ -178,5 +184,72 @@ describe('Users Service', () => {
 		});
 
 		expect(result).toBeInstanceOf(Error);
+	});
+
+	it('change password - success', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(USER);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+		const hashSpy = jest.spyOn(bcryptjs, 'hash');
+
+		const result = await usersService.changePassword(RIGHT_USER_JWT, {
+			password: RIGHT_USER.password,
+			newPassword: UPDATED_USER.password,
+		});
+		const hashSpyResult = await hashSpy.mock.results[1].value;
+
+		expect(result).not.toBeInstanceOf(Error);
+		if (result instanceof Error) return;
+		expect(result).toEqual({
+			...USER,
+			password: hashSpyResult,
+		});
+	});
+
+	it('change password - wrong: same password and old password', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(USER);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changePassword(RIGHT_USER_JWT, {
+			password: RIGHT_USER.password,
+			newPassword: RIGHT_USER.password,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBeDefined();
+		}
+	});
+
+	it('change password - wrong: wrong old password', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(USER);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changePassword(RIGHT_USER_JWT, {
+			password: WRONG_USER.password,
+			newPassword: UPDATED_USER.password,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBeDefined();
+		}
 	});
 });
