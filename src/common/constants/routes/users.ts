@@ -6,6 +6,7 @@ export const USERS_PATH = {
 	logout: '/logout',
 	updateUser: '/update-user',
 	changePassword: '/change-password',
+	changeEmail: '/change-email',
 };
 
 export const USERS_FULL_PATH = {
@@ -14,4 +15,5 @@ export const USERS_FULL_PATH = {
 	logout: USERS_ROUTER_PATH + USERS_PATH.logout,
 	updateUser: USERS_ROUTER_PATH + USERS_PATH.updateUser,
 	changePassword: USERS_ROUTER_PATH + USERS_PATH.changePassword,
+	changeEmail: USERS_ROUTER_PATH + USERS_PATH.changeEmail,
 };
