@@ -18,6 +18,7 @@ import { HTTPError } from '@/errors/http-error.class';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { ChangeUsernameDto } from './dto/change-username.dto';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -64,6 +65,12 @@ export class UsersController extends BaseController implements IUsersController 
 				method: 'patch',
 				func: this.changeEmail,
 				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangeEmailDto)],
+			},
+			{
+				path: USERS_PATH.changeUsername,
+				method: 'patch',
+				func: this.changeUsername,
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangeUsernameDto)],
 			},
 		]);
 	}
@@ -142,6 +149,20 @@ export class UsersController extends BaseController implements IUsersController 
 		next: NextFunction,
 	): Promise<void> {
 		const result = await this.usersService.changeEmail(user, body);
+
+		if (result instanceof Error) {
+			return next(new HTTPError(422, result.message));
+		}
+
+		this.signJwtAndSendUser(res, result, this.ok.bind(this));
+	}
+
+	async changeUsername(
+		{ user, body }: Request<{}, {}, ChangeUsernameDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.usersService.changeUsername(user, body);
 
 		if (result instanceof Error) {
 			return next(new HTTPError(422, result.message));

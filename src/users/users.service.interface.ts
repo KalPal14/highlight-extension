@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { ChangeUsernameDto } from './dto/change-username.dto';
 
 export interface IUsersService {
 	createUser: (user: UsersRegisterDto) => Promise<UserModel | Error>;
@@ -14,4 +15,5 @@ export interface IUsersService {
 
 	changePassword: (user: IJwtPayload, payload: ChangePasswordDto) => Promise<UserModel | Error>;
 	changeEmail: (user: IJwtPayload, payload: ChangeEmailDto) => Promise<UserModel | Error>;
+	changeUsername: (user: IJwtPayload, payload: ChangeUsernameDto) => Promise<UserModel | Error>;
 }
