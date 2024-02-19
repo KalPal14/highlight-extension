@@ -7,6 +7,7 @@ export const USERS_PATH = {
 	updateUser: '/update-user',
 	changePassword: '/change-password',
 	changeEmail: '/change-email',
+	changeUsername: '/change-username',
 };
 
 export const USERS_FULL_PATH = {
@@ -16,4 +17,5 @@ export const USERS_FULL_PATH = {
 	updateUser: USERS_ROUTER_PATH + USERS_PATH.updateUser,
 	changePassword: USERS_ROUTER_PATH + USERS_PATH.changePassword,
 	changeEmail: USERS_ROUTER_PATH + USERS_PATH.changeEmail,
+	changeUsername: USERS_ROUTER_PATH + USERS_PATH.changeUsername,
 };

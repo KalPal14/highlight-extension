@@ -312,4 +312,64 @@ describe('Users Service', () => {
 			expect(result.message).toBeDefined();
 		}
 	});
+
+	it('change username - success', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changeUsername(RIGHT_USER_JWT, {
+			newUsername: UPDATED_USER.username,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		if (result instanceof Error) return;
+		expect(result.username).toBe(UPDATED_USER.username);
+		expect(result.email).toBe(RIGHT_USER.email);
+	});
+
+	it('change username - wrong: same username and newUsername', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changeUsername(RIGHT_USER_JWT, {
+			newUsername: RIGHT_USER.username,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBeDefined();
+		}
+	});
+
+	it('change username - wrong: there is already another account with a new username', async () => {
+		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
+		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(UPDATED_USER);
+		usersRepository.update = jest.fn().mockImplementation(
+			(id: number, payload: Partial<User>): UserModel => ({
+				...USER,
+				...payload,
+			}),
+		);
+
+		const result = await usersService.changeUsername(RIGHT_USER_JWT, {
+			newUsername: UPDATED_USER.username,
+		});
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBeDefined();
+		}
+	});
 });

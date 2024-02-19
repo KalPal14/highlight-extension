@@ -14,6 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { ChangeUsernameDto } from './dto/change-username.dto';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -107,6 +108,25 @@ export class UsersService implements IUsersService {
 
 		return await this.usersRepository.update(id, {
 			email: newEmail,
+		});
+	}
+
+	async changeUsername(
+		{ id, username }: IJwtPayload,
+		{ newUsername }: ChangeUsernameDto,
+	): Promise<UserModel | Error> {
+		if (newUsername === username) {
+			return Error('The new username cannot be the same as the old one');
+		}
+		const isNewUsernameExisting = await this.usersRepository.findByUsername(newUsername);
+		if (isNewUsernameExisting) {
+			return Error(
+				`You cannot change your username to ${newUsername}. An account with this username already exists`,
+			);
+		}
+
+		return await this.usersRepository.update(id, {
+			username: newUsername,
 		});
 	}
 }

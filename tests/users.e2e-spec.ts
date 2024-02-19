@@ -235,6 +235,32 @@ describe('Users', () => {
 		});
 		expect(newCookies).not.toBe(cookies);
 	});
+
+	it('Change username - success', async () => {
+		const NEW_USER = GET_NEW_USER();
+		const UPDATED_USER = GET_UPDATED_USER();
+		const regRes = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: NEW_USER.email,
+			username: NEW_USER.username,
+			password: NEW_USER.password,
+		});
+		const cookies = regRes.headers['set-cookie'][0];
+
+		const res = await request(application.app)
+			.patch(USERS_FULL_PATH.changeUsername)
+			.set('Cookie', cookies)
+			.send({
+				newUsername: UPDATED_USER.username,
+			});
+		const newCookies = res.headers['set-cookie'][0];
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual({
+			...regRes.body,
+			username: UPDATED_USER.username,
+		});
+		expect(newCookies).not.toBe(cookies);
+	});
 });
 
 afterAll(() => {

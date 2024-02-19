@@ -6,6 +6,7 @@ import { UsersRegisterDto } from './dto/users-register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { ChangeUsernameDto } from './dto/change-username.dto';
 
 export interface IUsersController {
 	router: Router;
@@ -18,4 +19,5 @@ export interface IUsersController {
 
 	changePassword: TController<{}, {}, ChangePasswordDto>;
 	changeEmail: TController<{}, {}, ChangeEmailDto>;
+	changeUsername: TController<{}, {}, ChangeUsernameDto>;
 }
