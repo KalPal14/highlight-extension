@@ -181,6 +181,7 @@ export class UsersController extends BaseController implements IUsersController 
 				res.cookie('token', jwt, {
 					secure: true,
 					maxAge: this.sessionTime * 1000,
+					sameSite: 'none',
 				});
 				sendFunc(res, { ...result });
 			})
