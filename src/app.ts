@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import cors from 'cors';
 import express, { Express } from 'express';
 import { Server, createServer } from 'https';
 import { readFileSync } from 'fs';
@@ -42,6 +43,14 @@ export default class App {
 		const jwtSecret = this.configService.get('JWT_KEY');
 		const cookieSecret = this.configService.get('COOCKIE_KEY');
 
+		this.app.use(
+			cors({
+				origin: 'http://localhost:3000',
+				credentials: true,
+				methods: ['GET', 'PATCH', 'POST', 'DELETE'],
+				allowedHeaders: ['Content-Type'],
+			}),
+		);
 		this.app.use(bodyParser.json());
 		this.app.use(cookieParser(cookieSecret));
 
