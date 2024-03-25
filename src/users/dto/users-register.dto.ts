@@ -1,4 +1,4 @@
-import { IsEmail, Matches, IsString } from 'class-validator';
+import { IsEmail, Matches, IsString, MinLength } from 'class-validator';
 
 import { USERNAME } from '@/common/constants/regexp';
 
@@ -8,11 +8,10 @@ export class UsersRegisterDto {
 
 	@Matches(USERNAME, {
 		message:
-			'The username field can only contain uppercase and lowercase letters, as well as the characters - and _',
+			'The username field must contain only uppercase and lowercase letters, as well as the symbols - and _.',
 	})
-	@IsString({ message: 'The username field is required.' })
 	username: string;
 
-	@IsString({ message: 'Password field is required' })
+	@MinLength(6, { message: 'Password must contain at least 6 characters' })
 	password: string;
 }
