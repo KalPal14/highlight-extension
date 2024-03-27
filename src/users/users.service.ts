@@ -105,9 +105,7 @@ export class UsersService implements IUsersService {
 		}
 		const isNewEmailExisting = await this.usersRepository.findByEmail(newEmail);
 		if (isNewEmailExisting) {
-			return Error(
-				`You cannot change your email to ${newEmail}. An account with this email already exists`,
-			);
+			return Error(`An account with this email already exists`);
 		}
 
 		return await this.usersRepository.update(id, {
@@ -124,9 +122,7 @@ export class UsersService implements IUsersService {
 		}
 		const isNewUsernameExisting = await this.usersRepository.findByUsername(newUsername);
 		if (isNewUsernameExisting) {
-			return Error(
-				`You cannot change your username to ${newUsername}. An account with this username already exists`,
-			);
+			return Error(` An account with this username already exists`);
 		}
 
 		return await this.usersRepository.update(id, {

@@ -11,7 +11,6 @@ import { USERS_PATH } from '@/common/constants/routes/users';
 import { UsersRegisterDto } from './dto/users-register.dto';
 import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
 import { IConfigService } from '@/common/services/config.service.interface';
-import { UserModel } from '@prisma/client';
 import { UsersLoginDto } from './dto/users-login.dto';
 import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
@@ -21,6 +20,7 @@ import { ChangeEmailDto } from './dto/change-email.dto';
 import { ChangeUsernameDto } from './dto/change-username.dto';
 import { hideEmail } from '@/common/helpers/hide-email.helper';
 import { TEmail } from '@/common/types/email.type';
+import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -176,7 +176,9 @@ export class UsersController extends BaseController implements IUsersController 
 			return next(new HTTPError(422, result.message));
 		}
 
-		this.signJwtAndSendUser(res, result, this.ok.bind(this));
+		this.signJwtAndSendUser(res, result, this.ok.bind(this), {
+			email: result.email,
+		});
 	}
 
 	async changeUsername(
@@ -190,27 +192,30 @@ export class UsersController extends BaseController implements IUsersController 
 			return next(new HTTPError(422, result.message));
 		}
 
-		this.signJwtAndSendUser(res, result, this.ok.bind(this));
+		this.signJwtAndSendUser(res, result, this.ok.bind(this), {
+			username: result.username,
+		});
 	}
 
 	private signJwtAndSendUser(
 		res: Response,
-		result: UserModel,
+		jwtPayload: IJwtPayload,
 		sendFunc: (res: Response, msg: any) => void,
+		msg?: unknown,
 	): void {
-		this.generateJwt(result)
+		this.generateJwt(jwtPayload)
 			.then((jwt) => {
 				res.cookie('token', jwt, {
 					secure: true,
 					maxAge: this.sessionTime * 1000,
 					sameSite: 'none',
 				});
-				sendFunc(res, { ...result });
+				sendFunc(res, msg ? { ...msg } : jwtPayload);
 			})
 			.catch((err) => this.send(res, 500, { err }));
 	}
 
-	private async generateJwt({ id, email, username }: UserModel): Promise<string> {
+	private async generateJwt({ id, email, username }: IJwtPayload): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const jwtKey = this.configService.get('JWT_KEY');
 
