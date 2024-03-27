@@ -231,7 +231,6 @@ describe('Users', () => {
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual({
-			...regRes.body,
 			email: UPDATED_USER.email,
 		});
 		expect(newCookies).not.toBe(cookies);
@@ -257,7 +256,6 @@ describe('Users', () => {
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual({
-			...regRes.body,
 			username: UPDATED_USER.username,
 		});
 		expect(newCookies).not.toBe(cookies);
