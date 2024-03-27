@@ -13,6 +13,7 @@ import {
 	UPDATED_USER,
 } from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
+import { hideEmail } from '@/common/helpers/hide-email.helper';
 
 let application: App;
 
@@ -260,6 +261,27 @@ describe('Users', () => {
 			username: UPDATED_USER.username,
 		});
 		expect(newCookies).not.toBe(cookies);
+	});
+
+	it('Get User Info - success', async () => {
+		const NEW_USER = GET_NEW_USER();
+		const regRes = await request(application.app).post(USERS_FULL_PATH.register).send({
+			email: NEW_USER.email,
+			username: NEW_USER.username,
+			password: NEW_USER.password,
+		});
+		const cookies = regRes.headers['set-cookie'][0];
+
+		const res = await request(application.app)
+			.get(USERS_FULL_PATH.getUserInfo)
+			.set('Cookie', cookies);
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual({
+			id: regRes.body.id,
+			email: hideEmail(regRes.body.email),
+			username: regRes.body.username,
+		});
 	});
 });
 
