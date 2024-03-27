@@ -28,6 +28,14 @@ export class UsersRepository implements IUsersRepository {
 		});
 	}
 
+	async findById(id: number): Promise<UserModel | null> {
+		return await this.prismaService.client.userModel.findFirst({
+			where: {
+				id,
+			},
+		});
+	}
+
 	async create({ email, username, password }: User): Promise<UserModel> {
 		return this.prismaService.client.userModel.create({
 			data: {

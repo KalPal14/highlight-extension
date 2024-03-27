@@ -1,7 +1,7 @@
 import { UserModel } from '@prisma/client';
 
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
-import { random } from '@/common/random';
+import { random } from '@/common/helpers/random.helper';
 
 type TExtendedUserModel = UserModel & {
 	passwordHash: string;

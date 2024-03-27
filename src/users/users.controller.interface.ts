@@ -15,8 +15,9 @@ export interface IUsersController {
 	register: TController<{}, {}, UsersRegisterDto>;
 	logout: TController;
 
-	updateUser: TController<{}, {}, UpdateUserDto>;
+	getUserInfo: TController;
 
+	updateUser: TController<{}, {}, UpdateUserDto>;
 	changePassword: TController<{}, {}, ChangePasswordDto>;
 	changeEmail: TController<{}, {}, ChangeEmailDto>;
 	changeUsername: TController<{}, {}, ChangeUsernameDto>;

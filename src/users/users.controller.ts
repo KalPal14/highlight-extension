@@ -19,6 +19,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { ChangeUsernameDto } from './dto/change-username.dto';
+import { hideEmail } from '@/common/helpers/hide-email.helper';
+import { TEmail } from '@/common/types/email.type';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -72,7 +74,27 @@ export class UsersController extends BaseController implements IUsersController 
 				func: this.changeUsername,
 				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangeUsernameDto)],
 			},
+			{
+				path: USERS_PATH.getUserInfo,
+				method: 'get',
+				func: this.getUserInfo,
+				middlewares: [new RouteGuard('user')],
+			},
 		]);
+	}
+
+	async getUserInfo({ user }: Request, res: Response, next: NextFunction): Promise<void> {
+		const result = await this.usersService.getUserInfo(user.id);
+
+		if (!result) {
+			return next(new HTTPError(404, 'User information not found'));
+		}
+
+		this.ok(res, {
+			id: result.id,
+			email: hideEmail(result.email as TEmail),
+			username: result.username,
+		});
 	}
 
 	async updateUser(

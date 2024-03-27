@@ -20,6 +20,7 @@ import { HTTPError } from '@/errors/http-error.class';
 const usersRepositoryMock: IUsersRepository = {
 	findByEmail: jest.fn(),
 	findByUsername: jest.fn(),
+	findById: jest.fn(),
 	create: jest.fn(),
 	update: jest.fn(),
 };

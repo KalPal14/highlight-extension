@@ -23,6 +23,10 @@ export class UsersService implements IUsersService {
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 	) {}
 
+	async getUserInfo(id: number): Promise<UserModel | null> {
+		return await this.usersRepository.findById(id);
+	}
+
 	async createUser({ username, email, password }: UsersRegisterDto): Promise<UserModel | Error> {
 		const newUser = new User(username, email);
 		const salt = this.configService.get('SALT');
