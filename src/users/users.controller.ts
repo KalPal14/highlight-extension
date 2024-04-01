@@ -157,6 +157,10 @@ export class UsersController extends BaseController implements IUsersController 
 		const result = await this.usersService.changePassword(user, body);
 
 		if (result instanceof Error) {
+			if (result.message === 'Incorrect password') {
+				next(new HTTPError(422, 'The current password is incorrect'));
+				return;
+			}
 			next(new HTTPError(422, result.message));
 			return;
 		}
