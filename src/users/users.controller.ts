@@ -94,6 +94,7 @@ export class UsersController extends BaseController implements IUsersController 
 			id: result.id,
 			email: hideEmail(result.email as TEmail),
 			username: result.username,
+			passwordUpdatedAt: result.passwordUpdatedAt,
 		});
 	}
 
@@ -161,7 +162,7 @@ export class UsersController extends BaseController implements IUsersController 
 		}
 
 		this.ok(res, {
-			msg: 'Password successfully changed',
+			passwordUpdatedAt: result.passwordUpdatedAt,
 		});
 	}
 

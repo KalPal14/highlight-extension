@@ -152,6 +152,7 @@ describe('Users', () => {
 		expect(res.body).toEqual({
 			id: regRes.body.id,
 			password: regRes.body.password,
+			passwordUpdatedAt: NEW_USER.passwordUpdatedAt,
 			email: NEW_USER.email,
 			username: NEW_USER.username,
 			colors: UPDATED_USER.colors,
@@ -208,7 +209,7 @@ describe('Users', () => {
 			});
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body.msg).toBeDefined();
+		expect(res.body.passwordUpdatedAt).toBeDefined();
 	});
 
 	it('Change email - success', async () => {
@@ -279,6 +280,7 @@ describe('Users', () => {
 			id: regRes.body.id,
 			email: hideEmail(regRes.body.email),
 			username: regRes.body.username,
+			passwordUpdatedAt: NEW_USER.passwordUpdatedAt,
 		});
 	});
 });

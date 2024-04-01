@@ -54,6 +54,7 @@ describe('Users Service', () => {
 				email: user.email,
 				username: user.username,
 				password: user.password,
+				passwordUpdatedAt: RIGHT_USER.passwordUpdatedAt,
 				colors: RIGHT_USER.colors,
 			}),
 		);
@@ -81,6 +82,7 @@ describe('Users Service', () => {
 				email: user.email,
 				username: user.username,
 				password: user.password,
+				passwordUpdatedAt: RIGHT_USER.passwordUpdatedAt,
 				colors: RIGHT_USER.colors,
 			}),
 		);
@@ -103,6 +105,7 @@ describe('Users Service', () => {
 				email: user.email,
 				username: user.username,
 				password: user.password,
+				passwordUpdatedAt: RIGHT_USER.passwordUpdatedAt,
 				colors: RIGHT_USER.colors,
 			}),
 		);
@@ -197,18 +200,21 @@ describe('Users Service', () => {
 			}),
 		);
 		const hashSpy = jest.spyOn(bcryptjs, 'hash');
+		const userRepoUpdateSpy = jest.spyOn(usersRepository, 'update');
 
 		const result = await usersService.changePassword(RIGHT_USER_JWT, {
 			password: RIGHT_USER.password,
 			newPassword: UPDATED_USER.password,
 		});
 		const hashSpyResult = await hashSpy.mock.results[1].value;
+		const { passwordUpdatedAt } = userRepoUpdateSpy.mock.calls[0][1];
 
 		expect(result).not.toBeInstanceOf(Error);
 		if (result instanceof Error) return;
 		expect(result).toEqual({
 			...USER,
 			password: hashSpyResult,
+			passwordUpdatedAt: passwordUpdatedAt,
 		});
 	});
 

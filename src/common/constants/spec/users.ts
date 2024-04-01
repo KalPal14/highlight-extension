@@ -1,7 +1,8 @@
 import { UserModel } from '@prisma/client';
 
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
-import { random } from '@/common/helpers/random.helper';
+//prism seed does not work if there is import via alias @/
+import { random } from '../../helpers/random.helper';
 
 type TExtendedUserModel = UserModel & {
 	passwordHash: string;
@@ -12,6 +13,7 @@ export const RIGHT_USER: TExtendedUserModel = {
 	email: 'alex@test.com',
 	username: 'alex_test',
 	password: '123123',
+	passwordUpdatedAt: null,
 	passwordHash: '$2a$13$kk2.WnMMchuXJEETn1dak.fQDgjLMu.3mO44dGv50C5qx1/oP.9wa',
 	colors: [],
 };
@@ -21,6 +23,7 @@ export const UPDATED_USER: TExtendedUserModel = {
 	email: 'updated@test.com',
 	username: 'updated_updated',
 	password: '123123123',
+	passwordUpdatedAt: new Date(),
 	passwordHash: '$2a$13$kk2.WnMMchuXJEETn1dak.fQDgjLMu.3mO44dGv50C5qx1/oP.9wa',
 	colors: ['#ff4455', '#000', '#777'],
 };
@@ -29,6 +32,7 @@ export const GET_NEW_USER = (): Omit<TExtendedUserModel, 'id' | 'passwordHash'> 
 	email: `new_${random()}@test.com`,
 	username: `new_new_${random()}`,
 	password: '123123',
+	passwordUpdatedAt: null,
 	colors: [],
 });
 
@@ -36,6 +40,7 @@ export const GET_UPDATED_USER = (): Omit<TExtendedUserModel, 'id' | 'passwordHas
 	email: `updated_${random()}@test.com`,
 	username: `updated_updated_${random()}`,
 	password: '123123123',
+	passwordUpdatedAt: new Date(),
 	colors: ['#ff4455', '#000', '#777'],
 });
 
@@ -44,6 +49,7 @@ export const WRONG_USER: TExtendedUserModel = {
 	email: 'wrong@test.com',
 	username: 'wrong_name',
 	password: 'wrong_password',
+	passwordUpdatedAt: null,
 	passwordHash: '$2a$13$kk2.WnMMchuXJEETn1dak.fQDgjLMu.3mO44dGv50C5qx1/oP.9w4',
 	colors: [],
 };

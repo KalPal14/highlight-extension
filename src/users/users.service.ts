@@ -63,6 +63,7 @@ export class UsersService implements IUsersService {
 			existingUser.username,
 			existingUser.email,
 			existingUser.colors,
+			existingUser.passwordUpdatedAt,
 			existingUser.password,
 		);
 		const isPasswordTrue = await user.comperePassword(password);
@@ -93,6 +94,7 @@ export class UsersService implements IUsersService {
 		await user.setPassword(newPassword, Number(salt));
 		return await this.usersRepository.update(id, {
 			password: user.password,
+			passwordUpdatedAt: new Date(),
 		});
 	}
 
