@@ -7,6 +7,7 @@ export class User {
 		private readonly _username: string,
 		private readonly _email: string,
 		private _colors: string[] = [],
+		private _passwordUpdatedAt: Date | null = null,
 		passwordHash?: string,
 	) {
 		if (passwordHash) {
@@ -25,6 +26,9 @@ export class User {
 	}
 	get colors(): string[] {
 		return this._colors;
+	}
+	get passwordUpdatedAt(): Date | null {
+		return this._passwordUpdatedAt;
 	}
 
 	async setPassword(password: string, salt: number): Promise<void> {
