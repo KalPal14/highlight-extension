@@ -14,6 +14,7 @@ import {
 } from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 import { hideEmail } from '@/common/helpers/hide-email.helper';
+import { TEmail } from '@/common/types/email.type';
 
 let application: App;
 
@@ -151,11 +152,10 @@ describe('Users', () => {
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual({
 			id: regRes.body.id,
-			password: regRes.body.password,
 			passwordUpdatedAt: NEW_USER.passwordUpdatedAt,
-			email: NEW_USER.email,
+			email: hideEmail(NEW_USER.email as TEmail),
 			username: NEW_USER.username,
-			colors: UPDATED_USER.colors,
+			colors: UPDATED_USER.colors.map((color) => ({ color })),
 		});
 	});
 
@@ -281,6 +281,7 @@ describe('Users', () => {
 			email: hideEmail(regRes.body.email),
 			username: regRes.body.username,
 			passwordUpdatedAt: NEW_USER.passwordUpdatedAt,
+			colors: NEW_USER.colors.map((color) => ({ color })),
 		});
 	});
 });

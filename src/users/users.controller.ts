@@ -21,6 +21,8 @@ import { ChangeUsernameDto } from './dto/change-username.dto';
 import { hideEmail } from '@/common/helpers/hide-email.helper';
 import { TEmail } from '@/common/types/email.type';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
+import { UserModel } from '@prisma/client';
+import IUserInfo from './user-info.interface';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
@@ -83,6 +85,18 @@ export class UsersController extends BaseController implements IUsersController 
 		]);
 	}
 
+	layoutUserInfoRes(user: UserModel): IUserInfo {
+		return {
+			id: user.id,
+			email: hideEmail(user.email as TEmail),
+			username: user.username,
+			passwordUpdatedAt: user.passwordUpdatedAt,
+			colors: user.colors.map((color) => ({
+				color,
+			})),
+		};
+	}
+
 	async getUserInfo({ user }: Request, res: Response, next: NextFunction): Promise<void> {
 		const result = await this.usersService.getUserInfo(user.id);
 
@@ -90,12 +104,7 @@ export class UsersController extends BaseController implements IUsersController 
 			return next(new HTTPError(404, 'User information not found'));
 		}
 
-		this.ok(res, {
-			id: result.id,
-			email: hideEmail(result.email as TEmail),
-			username: result.username,
-			passwordUpdatedAt: result.passwordUpdatedAt,
-		});
+		this.ok(res, this.layoutUserInfoRes(result));
 	}
 
 	async updateUser(
@@ -109,7 +118,7 @@ export class UsersController extends BaseController implements IUsersController 
 
 		const result = await this.usersService.updateUser(Number(user.id), body);
 
-		this.ok(res, result);
+		this.ok(res, this.layoutUserInfoRes(result));
 	}
 
 	async login({ body }: Request, res: Response, next: NextFunction): Promise<void> {
