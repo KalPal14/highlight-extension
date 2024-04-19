@@ -14,7 +14,7 @@ import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 import { RIGHT_USER } from '@/common/constants/spec/users';
 
 let application: App;
-let cookies: string;
+let jwt: string;
 
 beforeAll(async () => {
 	application = await bootstrap(8051);
@@ -23,7 +23,7 @@ beforeAll(async () => {
 		userIdentifier: RIGHT_USER.username,
 		password: RIGHT_USER.password,
 	});
-	cookies = loginRes.headers['set-cookie'][0];
+	jwt = loginRes.body.jwt;
 });
 
 describe('Highlits', () => {
@@ -40,7 +40,7 @@ describe('Highlits', () => {
 	it('create highlight - wrong: incorrect input data format', async () => {
 		const res = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: INVALID_PAGE.url,
 				text: RIGHT_HIGHLIGHT.text,
@@ -53,7 +53,7 @@ describe('Highlits', () => {
 	it('create highlight - success: for an existing page', async () => {
 		const res = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: RIGHT_PAGE.url,
 				text: RIGHT_HIGHLIGHT.text,
@@ -68,7 +68,7 @@ describe('Highlits', () => {
 	it('update highlight - success', async () => {
 		const createHighlightRes = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: RIGHT_PAGE.url,
 				text: RIGHT_HIGHLIGHT.text,
@@ -77,7 +77,7 @@ describe('Highlits', () => {
 		const highlightId = createHighlightRes.body.id;
 		const res = await request(application.app)
 			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', highlightId.toString()))
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				note: UPDATED_HIGHLIGHT.note as string | undefined,
 				text: UPDATED_HIGHLIGHT.text,
@@ -94,7 +94,7 @@ describe('Highlits', () => {
 	it('update highlight - wrong: update a non-existent highlight', async () => {
 		const res = await request(application.app)
 			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', WRONG_HIGHLIGHT.id!.toString()))
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				note: UPDATED_HIGHLIGHT.note as string | undefined,
 				text: UPDATED_HIGHLIGHT.text,
@@ -108,7 +108,7 @@ describe('Highlits', () => {
 	it('delete highlight - success', async () => {
 		const createHighlightRes = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: RIGHT_PAGE.url,
 				text: RIGHT_HIGHLIGHT.text,
@@ -117,7 +117,7 @@ describe('Highlits', () => {
 		const highlightId = createHighlightRes.body.id;
 		const res = await request(application.app)
 			.delete(HIGHLIGHTS_FULL_PATH.delete.replace(':id', highlightId.toString()))
-			.set('Cookie', cookies);
+			.set('Authorization', `Bearer ${jwt}`);
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual(createHighlightRes.body);
@@ -126,7 +126,7 @@ describe('Highlits', () => {
 	it('delete highlight - wrong: non-existent highlight', async () => {
 		const res = await request(application.app)
 			.delete(HIGHLIGHTS_FULL_PATH.delete.replace(':id', WRONG_HIGHLIGHT.id!.toString()))
-			.set('Cookie', cookies);
+			.set('Authorization', `Bearer ${jwt}`);
 
 		expect(res.statusCode).toBe(422);
 		expect(res.body.err).toBe('There is no highlight with this ID');

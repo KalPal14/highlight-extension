@@ -8,7 +8,8 @@ export class JwtAuthMiddleware implements IMiddleware {
 	constructor(private secret: string) {}
 
 	execute(req: Request, res: Response, next: NextFunction): void {
-		const jwt = req.cookies.token;
+		if (!req.headers.authorization) return next();
+		const jwt = req.headers.authorization.split(' ')[1];
 		if (!jwt) return next();
 		verify(
 			jwt,

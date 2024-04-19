@@ -48,10 +48,9 @@ describe('Users', () => {
 			userIdentifier: RIGHT_USER.email,
 			password: RIGHT_USER.password,
 		});
-		const cookies = res.headers['set-cookie'][0];
 
 		expect(res.statusCode).toBe(200);
-		expect(cookies).toContain('token=');
+		expect(res.body.jwt).toBeDefined();
 	});
 
 	it('Login - success: by username', async () => {
@@ -59,10 +58,9 @@ describe('Users', () => {
 			userIdentifier: RIGHT_USER.username,
 			password: RIGHT_USER.password,
 		});
-		const cookies = res.headers['set-cookie'][0];
 
 		expect(res.statusCode).toBe(200);
-		expect(cookies).toContain('token=');
+		expect(res.body.jwt).toBeDefined();
 	});
 
 	it('Login - wrong: invalid email', async () => {
@@ -97,10 +95,9 @@ describe('Users', () => {
 			userIdentifier: RIGHT_USER.username,
 			password: RIGHT_USER.password,
 		});
-		const cookies = resFirstLogin.headers['set-cookie'][0];
 		const res = await request(application.app)
 			.post(USERS_FULL_PATH.login)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${resFirstLogin.body.jwt}`)
 			.send({
 				userIdentifier: RIGHT_USER.username,
 				password: RIGHT_USER.password,
@@ -114,9 +111,10 @@ describe('Users', () => {
 			userIdentifier: RIGHT_USER.username,
 			password: RIGHT_USER.password,
 		});
-		const cookies = loginRes.headers['set-cookie'][0];
 
-		const res = await request(application.app).post(USERS_FULL_PATH.logout).set('Cookie', cookies);
+		const res = await request(application.app)
+			.post(USERS_FULL_PATH.logout)
+			.set('Authorization', `Bearer ${loginRes.body.jwt}`);
 
 		expect(res.statusCode).toBe(200);
 	});
@@ -140,16 +138,16 @@ describe('Users', () => {
 			username: NEW_USER.username,
 			password: NEW_USER.password,
 		});
-		const cookies = regRes.headers['set-cookie'][0];
 
 		const res = await request(application.app)
 			.patch(USERS_FULL_PATH.updateUser)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${regRes.body.jwt}`)
 			.send({
 				colors: UPDATED_USER.colors,
 			});
 
 		expect(res.statusCode).toBe(200);
+		expect(res.body.colors).not.toEqual(regRes.body.colors);
 		expect(res.body).toEqual({
 			id: regRes.body.id,
 			passwordUpdatedAt: NEW_USER.passwordUpdatedAt,
@@ -177,11 +175,10 @@ describe('Users', () => {
 			username: NEW_USER.username,
 			password: NEW_USER.password,
 		});
-		const cookies = regRes.headers['set-cookie'][0];
 
 		const res = await request(application.app)
 			.patch(USERS_FULL_PATH.updateUser)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${regRes.body.jwt}`)
 			.send({
 				colors: INVALID_USER.colors,
 			});
@@ -198,11 +195,10 @@ describe('Users', () => {
 			username: NEW_USER.username,
 			password: NEW_USER.password,
 		});
-		const cookies = regRes.headers['set-cookie'][0];
 
 		const res = await request(application.app)
 			.patch(USERS_FULL_PATH.changePassword)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${regRes.body.jwt}`)
 			.send({
 				password: NEW_USER.password,
 				newPassword: UPDATED_USER.password,
@@ -220,21 +216,18 @@ describe('Users', () => {
 			username: NEW_USER.username,
 			password: NEW_USER.password,
 		});
-		const cookies = regRes.headers['set-cookie'][0];
 
 		const res = await request(application.app)
 			.patch(USERS_FULL_PATH.changeEmail)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${regRes.body.jwt}`)
 			.send({
 				newEmail: UPDATED_USER.email,
 			});
-		const newCookies = res.headers['set-cookie'][0];
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body).toEqual({
-			email: UPDATED_USER.email,
-		});
-		expect(newCookies).not.toBe(cookies);
+		expect(res.body.jwt).not.toBe(regRes.body.jwt);
+		expect(res.body.email).not.toBe(regRes.body.email);
+		expect(res.body.email).toBe(UPDATED_USER.email);
 	});
 
 	it('Change username - success', async () => {
@@ -245,21 +238,18 @@ describe('Users', () => {
 			username: NEW_USER.username,
 			password: NEW_USER.password,
 		});
-		const cookies = regRes.headers['set-cookie'][0];
 
 		const res = await request(application.app)
 			.patch(USERS_FULL_PATH.changeUsername)
-			.set('Cookie', cookies)
+			.set('Authorization', `Bearer ${regRes.body.jwt}`)
 			.send({
 				newUsername: UPDATED_USER.username,
 			});
-		const newCookies = res.headers['set-cookie'][0];
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body).toEqual({
-			username: UPDATED_USER.username,
-		});
-		expect(newCookies).not.toBe(cookies);
+		expect(res.body.jwt).not.toBe(regRes.body.jwt);
+		expect(res.body.username).not.toBe(regRes.body.username);
+		expect(res.body.username).toBe(UPDATED_USER.username);
 	});
 
 	it('Get User Info - success', async () => {
@@ -269,11 +259,10 @@ describe('Users', () => {
 			username: NEW_USER.username,
 			password: NEW_USER.password,
 		});
-		const cookies = regRes.headers['set-cookie'][0];
 
 		const res = await request(application.app)
 			.get(USERS_FULL_PATH.getUserInfo)
-			.set('Cookie', cookies);
+			.set('Authorization', `Bearer ${regRes.body.jwt}`);
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual({
