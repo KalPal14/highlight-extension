@@ -85,7 +85,7 @@ export class UsersController extends BaseController implements IUsersController 
 		]);
 	}
 
-	layoutUserInfoRes(user: UserModel): IUserInfo {
+	private layoutUserInfoRes(user: UserModel): IUserInfo {
 		return {
 			id: user.id,
 			email: hideEmail(user.email as TEmail),
@@ -129,7 +129,14 @@ export class UsersController extends BaseController implements IUsersController 
 			return;
 		}
 
-		this.signJwtAndSendUser(res, result, this.ok.bind(this));
+		this.generateJwt(result)
+			.then((jwt) => {
+				this.ok(res, {
+					jwt,
+					...this.layoutUserInfoRes(result),
+				});
+			})
+			.catch((err) => this.send(res, 500, { err }));
 	}
 
 	async register(
@@ -144,7 +151,14 @@ export class UsersController extends BaseController implements IUsersController 
 			return;
 		}
 
-		this.signJwtAndSendUser(res, result, this.created.bind(this));
+		this.generateJwt(result)
+			.then((jwt) => {
+				this.created(res, {
+					jwt,
+					...this.layoutUserInfoRes(result),
+				});
+			})
+			.catch((err) => this.send(res, 500, { err }));
 	}
 
 	async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -190,9 +204,14 @@ export class UsersController extends BaseController implements IUsersController 
 			return next(new HTTPError(422, result.message));
 		}
 
-		this.signJwtAndSendUser(res, result, this.ok.bind(this), {
-			email: result.email,
-		});
+		this.generateJwt(result)
+			.then((jwt) => {
+				this.ok(res, {
+					jwt,
+					email: result.email,
+				});
+			})
+			.catch((err) => this.send(res, 500, { err }));
 	}
 
 	async changeUsername(
@@ -206,25 +225,12 @@ export class UsersController extends BaseController implements IUsersController 
 			return next(new HTTPError(422, result.message));
 		}
 
-		this.signJwtAndSendUser(res, result, this.ok.bind(this), {
-			username: result.username,
-		});
-	}
-
-	private signJwtAndSendUser(
-		res: Response,
-		jwtPayload: IJwtPayload,
-		sendFunc: (res: Response, msg: any) => void,
-		msg?: unknown,
-	): void {
-		this.generateJwt(jwtPayload)
+		this.generateJwt(result)
 			.then((jwt) => {
-				res.cookie('token', jwt, {
-					secure: true,
-					maxAge: this.sessionTime * 1000,
-					sameSite: 'none',
+				this.ok(res, {
+					jwt,
+					username: result.username,
 				});
-				sendFunc(res, msg ? { ...msg } : jwtPayload);
 			})
 			.catch((err) => this.send(res, 500, { err }));
 	}

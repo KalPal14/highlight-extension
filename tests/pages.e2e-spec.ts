@@ -9,7 +9,7 @@ import { PAGES_FULL_PATH } from '@/common/constants/routes/pages';
 import { RIGHT_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
 
 let application: App;
-let cookies: string;
+let jwt: string;
 
 beforeAll(async () => {
 	application = await bootstrap(8053);
@@ -18,7 +18,7 @@ beforeAll(async () => {
 		userIdentifier: RIGHT_USER.username,
 		password: RIGHT_USER.password,
 	});
-	cookies = loginRes.headers['set-cookie'][0];
+	jwt = loginRes.body.jwt;
 });
 
 describe('Pages', () => {
@@ -28,7 +28,7 @@ describe('Pages', () => {
 			.send({
 				url: RIGHT_PAGE.url,
 			})
-			.set('Cookie', cookies);
+			.set('Authorization', `Bearer ${jwt}`);
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body.id).toBe(RIGHT_PAGE.id);
@@ -42,7 +42,7 @@ describe('Pages', () => {
 			.send({
 				url: WRONG_PAGE.url,
 			})
-			.set('Cookie', cookies);
+			.set('Authorization', `Bearer ${jwt}`);
 
 		expect(res.statusCode).toBe(404);
 		expect(res.body.err).toBeDefined();
