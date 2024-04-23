@@ -42,13 +42,13 @@ export default class App {
 	useMiddleware(): void {
 		const jwtSecret = this.configService.get('JWT_KEY');
 		const cookieSecret = this.configService.get('COOCKIE_KEY');
+		const clientUrl = this.configService.get('CLIENT_URL');
 
 		this.app.use(
 			cors({
-				origin: 'http://localhost:3000',
-				credentials: true,
+				origin: clientUrl,
 				methods: ['GET', 'PATCH', 'POST', 'DELETE'],
-				allowedHeaders: ['Content-Type'],
+				allowedHeaders: ['Content-Type', 'Authorization'],
 			}),
 		);
 		this.app.use(bodyParser.json());
@@ -75,8 +75,8 @@ export default class App {
 		await this.prismaService.connect();
 		this.server = createServer(
 			{
-				key: readFileSync('key.pem'),
-				cert: readFileSync('cert.pem'),
+				key: readFileSync('host-key.pem'),
+				cert: readFileSync('host.pem'),
 			},
 			this.app,
 		);
