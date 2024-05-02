@@ -11,10 +11,14 @@ import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
 import { IHighlightsService } from './highlights.service.interface';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
+import { INodesService } from '@/nodes/nodes.service.interface';
 
 @injectable()
 export class HighlightsController extends BaseController implements IHighlightsController {
-	constructor(@inject(TYPES.HighlightsService) private highlightsService: IHighlightsService) {
+	constructor(
+		@inject(TYPES.HighlightsService) private highlightsService: IHighlightsService,
+		@inject(TYPES.NodesService) private nodesService: INodesService,
+	) {
 		super();
 		this.bindRoutes([
 			{
@@ -49,7 +53,13 @@ export class HighlightsController extends BaseController implements IHighlightsC
 			return next(new HTTPError(422, result.message));
 		}
 
-		this.created(res, result);
+		const startContainer = await this.nodesService.getNode(result.startContainerId);
+		const endContainer = await this.nodesService.getNode(result.endContainerId);
+		this.created(res, {
+			...result,
+			startContainer,
+			endContainer,
+		});
 	}
 
 	async updateHighlight(
@@ -67,7 +77,13 @@ export class HighlightsController extends BaseController implements IHighlightsC
 			return next(new HTTPError(422, result.message));
 		}
 
-		this.ok(res, result);
+		const startContainer = await this.nodesService.getNode(result.startContainerId);
+		const endContainer = await this.nodesService.getNode(result.endContainerId);
+		this.ok(res, {
+			...result,
+			startContainer,
+			endContainer,
+		});
 	}
 
 	async deleteHighlight(

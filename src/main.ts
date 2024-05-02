@@ -29,6 +29,10 @@ import { HighlightsService } from '@/highlights/highlights.service';
 import { IHighlightsService } from '@/highlights/highlights.service.interface';
 import { IPagesController } from '@/pages/pagea.controller.interface';
 import { PagesController } from '@/pages/pages.controller';
+import { INodesRepository } from './nodes/nodes.repository.interface';
+import { NodesRepository } from './nodes/nodes.repository';
+import { INodesService } from './nodes/nodes.service.interface';
+import { NodesService } from './nodes/nodes.service';
 
 const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.App).to(App);
@@ -56,12 +60,18 @@ const highlightBindings = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IHighlightsService>(TYPES.HighlightsService).to(HighlightsService);
 });
 
+const nodesBindings = new ContainerModule((bind: interfaces.Bind) => {
+	bind<INodesRepository>(TYPES.NodesRepository).to(NodesRepository);
+	bind<INodesService>(TYPES.NodesService).to(NodesService);
+});
+
 export async function bootstrap(port?: number): Promise<App> {
 	const container = new Container();
 	container.load(appBindings);
 	container.load(userBindings);
 	container.load(pageBindings);
 	container.load(highlightBindings);
+	container.load(nodesBindings);
 
 	const app = container.get<App>(TYPES.App);
 	await app.init(port);

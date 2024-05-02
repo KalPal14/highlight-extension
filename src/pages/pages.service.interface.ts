@@ -9,7 +9,7 @@ export type TPageInfo = PageModel & {
 };
 
 export interface IPagesServise {
-	createPage: (pageData: CreateHighlightDto, userData: IJwtPayload) => Promise<PageModel | Error>;
+	createPage: (pageUrl: string, userData: IJwtPayload) => Promise<PageModel | Error>;
 	getPageInfo: (url: string, userId: number) => Promise<PageModel | null>;
 	getPagesInfo: (userId: number) => Promise<TPageInfo[]>;
 }
