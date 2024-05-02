@@ -1,11 +1,11 @@
 import { UserModel } from '@prisma/client';
-import { User } from './user.entity';
+import { IUser } from './user.entity.interface';
 
 export interface IUsersRepository {
 	findByEmail: (email: string) => Promise<UserModel | null>;
 	findByUsername: (username: string) => Promise<UserModel | null>;
 	findById: (id: number) => Promise<UserModel | null>;
 
-	create: (user: User) => Promise<UserModel>;
-	update: (id: number, payload: Partial<User>) => Promise<UserModel>;
+	create: (user: IUser) => Promise<UserModel>;
+	update: (id: number, payload: Partial<IUser>) => Promise<UserModel>;
 }

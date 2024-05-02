@@ -1,9 +1,9 @@
 import { HighlightModel } from '@prisma/client';
-import { Highlight } from './highlight.entity';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
+import { IHighlight } from './highlight.entity.interface';
 
 export interface IHighlightsRepository {
-	create: (highlight: Highlight) => Promise<HighlightModel>;
+	create: (highlight: IHighlight) => Promise<HighlightModel>;
 	update: (
 		id: number,
 		payload: Omit<UpdateHighlightDto, 'startContainer' | 'endContainer'>,
