@@ -30,10 +30,25 @@ model PageModel {
 }
 
 model HighlightModel {
-  id     Int       @id @default(autoincrement())
-  page   PageModel @relation(fields: [pageId], references: [id])
-  pageId Int
-  text   String
-  color  String
-  note   String?
+  id               Int       @id @default(autoincrement())
+  page             PageModel @relation(fields: [pageId], references: [id])
+  pageId           Int
+  startContainer   NodeModel @relation(fields: [startContainerId], references: [id], name: "startContainer")
+  startContainerId Int       @unique
+  endContainer     NodeModel @relation(fields: [endContainerId], references: [id], name: "endContainer")
+  endContainerId   Int       @unique
+  startOffset      Int
+  endOffset        Int
+  text             String
+  color            String
+  note             String?
+}
+
+model NodeModel {
+  id                      Int             @id @default(autoincrement())
+  startContainerHighlight HighlightModel? @relation("startContainer")
+  endContainerHighlight   HighlightModel? @relation("endContainer")
+  text                    String
+  indexNumber             Int
+  sameElementsAmount      Int
 }

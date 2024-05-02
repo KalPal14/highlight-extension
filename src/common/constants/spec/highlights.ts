@@ -1,10 +1,15 @@
 import { HighlightModel } from '@prisma/client';
 
 import { RIGHT_PAGE, WRONG_PAGE } from './pages';
+import { RIGHT_START_NODE, RIGHT_END_NODE, UPDATED_END_NODE } from './nodes';
 
 export const RIGHT_HIGHLIGHT: HighlightModel = {
 	id: 1,
 	pageId: RIGHT_PAGE.id,
+	startOffset: 66,
+	endOffset: 4,
+	startContainerId: RIGHT_START_NODE.id,
+	endContainerId: RIGHT_END_NODE.id,
 	text: 'one-to-many relation between User and Post',
 	color: '#ff1500',
 	note: 'those modules between which the connection is established in the example',
@@ -13,6 +18,10 @@ export const RIGHT_HIGHLIGHT: HighlightModel = {
 export const UPDATED_HIGHLIGHT: HighlightModel = {
 	id: 1,
 	pageId: RIGHT_HIGHLIGHT.pageId,
+	startOffset: 66,
+	endOffset: 5,
+	startContainerId: RIGHT_START_NODE.id,
+	endContainerId: UPDATED_END_NODE.id,
 	text: 'one-to-many relation between User and Post because one user can have many blog posts.',
 	note: 'new note',
 	color: '#15ff00',

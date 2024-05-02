@@ -1,18 +1,26 @@
 const TYPES = {
 	App: Symbol('App'),
+
 	LoggerService: Symbol('LoggerService'),
-	UsersController: Symbol('UsersController'),
 	ConfigService: Symbol('ConfigService'),
-	ExceptionFilter: Symbol('ExceptionFilter'),
 	PrismaService: Symbol('PrismaService'),
+
+	ExceptionFilter: Symbol('ExceptionFilter'),
+
+	UsersController: Symbol('UsersController'),
 	UsersService: Symbol('UsersService'),
 	UsersRepository: Symbol('UsersRepository'),
-	PagesRepository: Symbol('PagesRepository'),
-	PagesServise: Symbol('PagesServise'),
-	HighlightsController: Symbol('HighlightsController'),
-	HighlightsRepository: Symbol('HighlightsRepository'),
-	HighlightsService: Symbol('HighlightsService'),
+
 	PagesController: Symbol('PagesController'),
+	PagesServise: Symbol('PagesServise'),
+	PagesRepository: Symbol('PagesRepository'),
+
+	HighlightsController: Symbol('HighlightsController'),
+	HighlightsService: Symbol('HighlightsService'),
+	HighlightsRepository: Symbol('HighlightsRepository'),
+
+	NodesService: Symbol('NodesService'),
+	NodesRepository: Symbol('NodesRepository'),
 };
 
 export default TYPES;

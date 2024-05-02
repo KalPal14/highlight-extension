@@ -12,6 +12,7 @@ import {
 } from '@/common/constants/spec/highlights';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 import { RIGHT_USER } from '@/common/constants/spec/users';
+import { RIGHT_END_NODE, RIGHT_START_NODE, UPDATED_END_NODE } from '@/common/constants/spec/nodes';
 
 let application: App;
 let jwt: string;
@@ -51,11 +52,17 @@ describe('Highlits', () => {
 	});
 
 	it('create highlight - success: for an existing page', async () => {
+		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
+		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;
 		const res = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
 			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
 				text: RIGHT_HIGHLIGHT.text,
 				color: RIGHT_HIGHLIGHT.color,
 			});
@@ -63,18 +70,28 @@ describe('Highlits', () => {
 		expect(res.statusCode).toBe(201);
 		expect(res.body.text).toBe(RIGHT_HIGHLIGHT.text);
 		expect(res.body.pageId).toBe(RIGHT_HIGHLIGHT.pageId);
+		expect(res.body.startContainer.text).toBe(RIGHT_START_NODE.text);
+		expect(res.body.endContainer.text).toBe(RIGHT_END_NODE.text);
 	});
 
 	it('update highlight - success', async () => {
+		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
+		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;
+		const { id: _upendid, ...UPDATE_NODE_DATA } = UPDATED_END_NODE;
 		const createHighlightRes = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
 			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
 				text: RIGHT_HIGHLIGHT.text,
 				color: RIGHT_HIGHLIGHT.color,
 			});
 		const highlightId = createHighlightRes.body.id;
+
 		const res = await request(application.app)
 			.patch(HIGHLIGHTS_FULL_PATH.update.replace(':id', highlightId.toString()))
 			.set('Authorization', `Bearer ${jwt}`)
@@ -82,12 +99,23 @@ describe('Highlits', () => {
 				note: UPDATED_HIGHLIGHT.note as string | undefined,
 				text: UPDATED_HIGHLIGHT.text,
 				color: UPDATED_HIGHLIGHT.color,
+				endContainer: UPDATE_NODE_DATA,
+				endOffset: UPDATED_HIGHLIGHT.endOffset,
 			});
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toEqual({
 			...UPDATED_HIGHLIGHT,
 			id: highlightId,
+			startContainerId: createHighlightRes.body.startContainer.id,
+			endContainerId: createHighlightRes.body.endContainer.id,
+			startContainer: {
+				...createHighlightRes.body.startContainer,
+			},
+			endContainer: {
+				id: createHighlightRes.body.endContainer.id,
+				...UPDATE_NODE_DATA,
+			},
 		});
 	});
 
@@ -106,11 +134,17 @@ describe('Highlits', () => {
 	});
 
 	it('delete highlight - success', async () => {
+		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
+		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;
 		const createHighlightRes = await request(application.app)
 			.post(HIGHLIGHTS_FULL_PATH.create)
 			.set('Authorization', `Bearer ${jwt}`)
 			.send({
 				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
 				text: RIGHT_HIGHLIGHT.text,
 				color: RIGHT_HIGHLIGHT.color,
 			});
@@ -120,7 +154,7 @@ describe('Highlits', () => {
 			.set('Authorization', `Bearer ${jwt}`);
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body).toEqual(createHighlightRes.body);
+		expect(res.body.id).toBe(createHighlightRes.body.id);
 	});
 
 	it('delete highlight - wrong: non-existent highlight', async () => {

@@ -12,10 +12,7 @@ import { IPagesRepository } from './pages.repository.interface';
 export class PagesServise implements IPagesServise {
 	constructor(@inject(TYPES.PagesRepository) private pagesRepository: IPagesRepository) {}
 
-	async createPage(
-		{ pageUrl }: CreateHighlightDto,
-		{ id }: IJwtPayload,
-	): Promise<PageModel | Error> {
+	async createPage(pageUrl: string, { id }: IJwtPayload): Promise<PageModel | Error> {
 		const existingPage = await this.pagesRepository.findByUrl(pageUrl, id);
 		if (existingPage) {
 			return Error('This page already exists');
