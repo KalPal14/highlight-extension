@@ -18,7 +18,7 @@ export class PagesServise implements IPagesServise {
 			return Error('This page already exists');
 		}
 
-		const newPage = new Page(id, pageUrl);
+		const newPage = new Page(id, pageUrl).getData();
 		return await this.pagesRepository.create(newPage);
 	}
 

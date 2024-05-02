@@ -3,9 +3,11 @@ import { Container } from 'inversify';
 import bcryptjs from 'bcryptjs';
 
 import { UsersService } from './users.service';
-import TYPES from '@/types.inversify';
 import { IUsersService } from './users.service.interface';
 import { IUsersRepository } from './users.repository.interface';
+import { IUser } from './user.entity.interface';
+
+import TYPES from '@/types.inversify';
 import { IConfigService } from '@/common/services/config.service.interface';
 import {
 	RIGHT_USER,
@@ -13,7 +15,6 @@ import {
 	UPDATED_USER,
 	RIGHT_USER_JWT,
 } from '@/common/constants/spec/users';
-import { User } from './user.entity';
 import { UserModel } from '@prisma/client';
 import { HTTPError } from '@/errors/http-error.class';
 
@@ -49,7 +50,7 @@ describe('Users Service', () => {
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
 		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
 		usersRepositoryMock.create = jest.fn().mockImplementation(
-			(user: User): UserModel => ({
+			(user: IUser): UserModel => ({
 				id: RIGHT_USER.id,
 				email: user.email,
 				username: user.username,
@@ -77,7 +78,7 @@ describe('Users Service', () => {
 		usersRepositoryMock.findByEmail = jest.fn().mockImplementation((user) => user);
 		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
 		usersRepositoryMock.create = jest.fn().mockImplementation(
-			(user: User): UserModel => ({
+			(user: IUser): UserModel => ({
 				id: RIGHT_USER.id,
 				email: user.email,
 				username: user.username,
@@ -100,7 +101,7 @@ describe('Users Service', () => {
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
 		usersRepositoryMock.findByUsername = jest.fn().mockImplementation((user) => user);
 		usersRepositoryMock.create = jest.fn().mockImplementation(
-			(user: User): UserModel => ({
+			(user: IUser): UserModel => ({
 				id: RIGHT_USER.id,
 				email: user.email,
 				username: user.username,
@@ -194,7 +195,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(USER);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -222,7 +223,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(USER);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -243,7 +244,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(USER);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -264,7 +265,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -284,7 +285,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(null);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -304,7 +305,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByEmail = jest.fn().mockReturnValue(UPDATED_USER);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -324,7 +325,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -344,7 +345,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(null);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),
@@ -364,7 +365,7 @@ describe('Users Service', () => {
 		const { passwordHash, ...USER } = { ...RIGHT_USER, password: RIGHT_USER.passwordHash };
 		usersRepositoryMock.findByUsername = jest.fn().mockReturnValue(UPDATED_USER);
 		usersRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: Partial<User>): UserModel => ({
+			(id: number, payload: Partial<IUser>): UserModel => ({
 				...USER,
 				...payload,
 			}),

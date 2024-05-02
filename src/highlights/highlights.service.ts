@@ -47,7 +47,7 @@ export class HighlightsService implements IHighlightsService {
 			text,
 			color,
 			note,
-		);
+		).getData();
 
 		return await this.highlightsRepository.create(newHighlight);
 	}
