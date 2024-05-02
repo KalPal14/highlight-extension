@@ -6,7 +6,7 @@ import TYPES from '@/types.inversify';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
 import { IUsersRepository } from './users.repository.interface';
 import { User } from './user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { IUser } from './user.entity.interface';
 
 @injectable()
 export class UsersRepository implements IUsersRepository {
@@ -36,7 +36,7 @@ export class UsersRepository implements IUsersRepository {
 		});
 	}
 
-	async create({ email, username, password }: User): Promise<UserModel> {
+	async create({ email, username, password }: IUser): Promise<UserModel> {
 		return this.prismaService.client.userModel.create({
 			data: {
 				email,
@@ -49,9 +49,7 @@ export class UsersRepository implements IUsersRepository {
 	async update(id: number, payload: Partial<User>): Promise<UserModel> {
 		return await this.prismaService.client.userModel.update({
 			where: { id },
-			data: {
-				...payload,
-			},
+			data: payload,
 		});
 	}
 }

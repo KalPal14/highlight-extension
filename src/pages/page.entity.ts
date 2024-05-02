@@ -1,4 +1,6 @@
-export class Page {
+import { IPage } from './page.entity.interface';
+
+export class Page implements IPage {
 	constructor(
 		private _userId: number,
 		private _url: string,
@@ -13,5 +15,13 @@ export class Page {
 	}
 	get highlights(): number[] {
 		return this._highlights;
+	}
+
+	getData(): IPage {
+		return {
+			userId: this.userId,
+			url: this.url,
+			highlights: this.highlights,
+		};
 	}
 }

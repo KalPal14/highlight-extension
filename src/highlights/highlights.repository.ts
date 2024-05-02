@@ -2,37 +2,19 @@ import { inject, injectable } from 'inversify';
 
 import { HighlightModel } from '@prisma/client';
 
-import { Highlight } from './highlight.entity';
 import { IHighlightsRepository } from './highlights.repository.interface';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
 import TYPES from '@/types.inversify';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
+import { IHighlight } from './highlight.entity.interface';
 
 @injectable()
 export class HighlightsRepository implements IHighlightsRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: IPrismaService) {}
 
-	async create({
-		pageId,
-		startContainerId,
-		endContainerId,
-		startOffset,
-		endOffset,
-		text,
-		note,
-		color,
-	}: Highlight): Promise<HighlightModel> {
+	async create(highlight: IHighlight): Promise<HighlightModel> {
 		return await this.prismaService.client.highlightModel.create({
-			data: {
-				pageId,
-				startContainerId,
-				endContainerId,
-				startOffset,
-				endOffset,
-				text,
-				note,
-				color,
-			},
+			data: highlight,
 		});
 	}
 
@@ -42,9 +24,7 @@ export class HighlightsRepository implements IHighlightsRepository {
 	): Promise<HighlightModel> {
 		return await this.prismaService.client.highlightModel.update({
 			where: { id },
-			data: {
-				...payload,
-			},
+			data: payload,
 		});
 	}
 

@@ -1,4 +1,6 @@
-export class Highlight {
+import { IHighlight } from './highlight.entity.interface';
+
+export class Highlight implements IHighlight {
 	constructor(
 		private _pageId: number,
 		private _startContainerId: number,
@@ -33,5 +35,18 @@ export class Highlight {
 	}
 	get note(): string | null {
 		return this._note || null;
+	}
+
+	getData(): IHighlight {
+		return {
+			pageId: this.pageId,
+			startContainerId: this.startContainerId,
+			endContainerId: this.endContainerId,
+			startOffset: this.startOffset,
+			endOffset: this.endOffset,
+			text: this.text,
+			color: this.color,
+			note: this.note,
+		};
 	}
 }

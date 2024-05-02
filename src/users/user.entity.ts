@@ -1,6 +1,7 @@
 import { compare, hash } from 'bcryptjs';
+import { IUser } from './user.entity.interface';
 
-export class User {
+export class User implements IUser {
 	private _password: string;
 
 	constructor(
@@ -29,6 +30,16 @@ export class User {
 	}
 	get passwordUpdatedAt(): Date | null {
 		return this._passwordUpdatedAt;
+	}
+
+	getData(): IUser {
+		return {
+			username: this.username,
+			email: this.email,
+			password: this.password,
+			passwordUpdatedAt: this.passwordUpdatedAt,
+			colors: this.colors,
+		};
 	}
 
 	async setPassword(password: string, salt: number): Promise<void> {

@@ -5,16 +5,17 @@ import { UserModel } from '@prisma/client';
 import { UsersRegisterDto } from './dto/users-register.dto';
 import { User } from './user.entity';
 import { IUsersService } from './users.service.interface';
-import TYPES from '@/types.inversify';
 import { IUsersRepository } from './users.repository.interface';
-import { IConfigService } from '@/common/services/config.service.interface';
-import { HTTPError } from '@/errors/http-error.class';
 import { UsersLoginDto } from './dto/users-login.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { ChangeUsernameDto } from './dto/change-username.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+
+import TYPES from '@/types.inversify';
+import { IConfigService } from '@/common/services/config.service.interface';
+import { HTTPError } from '@/errors/http-error.class';
+import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -41,7 +42,7 @@ export class UsersService implements IUsersService {
 			return new HTTPError(422, 'User with this username already exists');
 		}
 
-		return await this.usersRepository.create(newUser);
+		return await this.usersRepository.create(newUser.getData());
 	}
 
 	async validateUser({ userIdentifier, password }: UsersLoginDto): Promise<UserModel | Error> {

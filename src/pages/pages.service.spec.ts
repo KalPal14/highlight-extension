@@ -3,9 +3,10 @@ import { Container } from 'inversify';
 
 import { IPagesRepository } from './pages.repository.interface';
 import { IPagesServise } from './pages.service.interface';
-import TYPES from '@/types.inversify';
 import { PagesServise } from './pages.service';
-import { Page } from './page.entity';
+import { IPage } from './page.entity.interface';
+
+import TYPES from '@/types.inversify';
 import { PageModel } from '@prisma/client';
 import { RIGHT_PAGE } from '@/common/constants/spec/pages';
 import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
@@ -33,7 +34,7 @@ describe('Pages Servise', () => {
 	it('create page - success', async () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
 		pagesRepository.create = jest.fn().mockImplementation(
-			(page: Page): PageModel => ({
+			(page: IPage): PageModel => ({
 				id: RIGHT_PAGE.id,
 				userId: page.userId,
 				url: page.url,
@@ -52,7 +53,7 @@ describe('Pages Servise', () => {
 	it('create page - wrong: this user already has a page with the same url', async () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
 		pagesRepository.create = jest.fn().mockImplementation(
-			(page: Page): PageModel => ({
+			(page: IPage): PageModel => ({
 				id: RIGHT_PAGE.id,
 				userId: page.userId,
 				url: page.url,

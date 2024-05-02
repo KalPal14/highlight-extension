@@ -1,22 +1,23 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
+import { HighlightModel } from '@prisma/client';
+
+import { IHighlight } from './highlight.entity.interface';
+import { HighlightsService } from './highlights.service';
+import { IHighlightsRepository } from './highlights.repository.interface';
+import { IHighlightsService } from './highlights.service.interface';
+import { UpdateHighlightDto } from './dto/update-highlight.dto';
 
 import { IPagesRepository } from '@/pages/pages.repository.interface';
-import { IHighlightsRepository } from './highlights.repository.interface';
 import { IPagesServise } from '@/pages/pages.service.interface';
-import { IHighlightsService } from './highlights.service.interface';
 import TYPES from '@/types.inversify';
-import { HighlightsService } from './highlights.service';
 import { RIGHT_PAGE } from '@/common/constants/spec/pages';
-import type { Highlight } from './highlight.entity';
-import { HighlightModel } from '@prisma/client';
 import {
 	RIGHT_HIGHLIGHT,
 	UPDATED_HIGHLIGHT,
 	WRONG_HIGHLIGHT,
 } from '@/common/constants/spec/highlights';
 import { RIGHT_USER_JWT } from '@/common/constants/spec/users';
-import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { RIGHT_END_NODE, RIGHT_START_NODE, UPDATED_END_NODE } from '@/common/constants/spec/nodes';
 import { INodesService } from '@/nodes/nodes.service.interface';
 
@@ -73,16 +74,9 @@ describe('Highlights Service', () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
 		pagesServise.createPage = jest.fn().mockReturnValue(RIGHT_PAGE);
 		highlightsRepository.create = jest.fn().mockImplementation(
-			(highlight: Highlight): HighlightModel => ({
+			(highlight: IHighlight): HighlightModel => ({
 				id: RIGHT_HIGHLIGHT.id,
-				pageId: highlight.pageId,
-				startContainerId: highlight.startContainerId,
-				endContainerId: highlight.endContainerId,
-				startOffset: highlight.startOffset,
-				endOffset: highlight.endOffset,
-				text: highlight.text,
-				color: highlight.color,
-				note: highlight.note,
+				...highlight,
 			}),
 		);
 		nodesServise.createNode = jest
@@ -116,16 +110,9 @@ describe('Highlights Service', () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
 		pagesServise.createPage = jest.fn().mockReturnValue(Error);
 		highlightsRepository.create = jest.fn().mockImplementation(
-			(highlight: Highlight): HighlightModel => ({
+			(highlight: IHighlight): HighlightModel => ({
 				id: RIGHT_HIGHLIGHT.id,
-				pageId: highlight.pageId,
-				startContainerId: highlight.startContainerId,
-				endContainerId: highlight.endContainerId,
-				startOffset: highlight.startOffset,
-				endOffset: highlight.endOffset,
-				text: highlight.text,
-				color: highlight.color,
-				note: highlight.note,
+				...highlight,
 			}),
 		);
 		nodesServise.createNode = jest
