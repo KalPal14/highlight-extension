@@ -12,10 +12,23 @@ import { UpdateHighlightDto } from './dto/update-highlight.dto';
 export class HighlightsRepository implements IHighlightsRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: IPrismaService) {}
 
-	async create({ pageId, text, note, color }: Highlight): Promise<HighlightModel> {
+	async create({
+		pageId,
+		startContainerId,
+		endContainerId,
+		startOffset,
+		endOffset,
+		text,
+		note,
+		color,
+	}: Highlight): Promise<HighlightModel> {
 		return await this.prismaService.client.highlightModel.create({
 			data: {
 				pageId,
+				startContainerId,
+				endContainerId,
+				startOffset,
+				endOffset,
 				text,
 				note,
 				color,
@@ -23,7 +36,10 @@ export class HighlightsRepository implements IHighlightsRepository {
 		});
 	}
 
-	async update(id: number, payload: UpdateHighlightDto): Promise<HighlightModel> {
+	async update(
+		id: number,
+		payload: Omit<UpdateHighlightDto, 'startContainer' | 'endContainer'>,
+	): Promise<HighlightModel> {
 		return await this.prismaService.client.highlightModel.update({
 			where: { id },
 			data: {

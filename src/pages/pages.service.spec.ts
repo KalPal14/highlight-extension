@@ -40,14 +40,7 @@ describe('Pages Servise', () => {
 			}),
 		);
 
-		const result = await pagesServise.createPage(
-			{
-				pageUrl: RIGHT_PAGE.url,
-				text: RIGHT_HIGHLIGHT.text,
-				color: RIGHT_HIGHLIGHT.color,
-			},
-			RIGHT_USER_JWT,
-		);
+		const result = await pagesServise.createPage(RIGHT_PAGE.url, RIGHT_USER_JWT);
 
 		expect(result).not.toBeInstanceOf(Error);
 		if (result instanceof Error) return;
@@ -66,14 +59,7 @@ describe('Pages Servise', () => {
 			}),
 		);
 
-		const result = await pagesServise.createPage(
-			{
-				pageUrl: RIGHT_PAGE.url,
-				text: RIGHT_HIGHLIGHT.text,
-				color: RIGHT_HIGHLIGHT.color,
-			},
-			RIGHT_USER_JWT,
-		);
+		const result = await pagesServise.createPage(RIGHT_PAGE.url, RIGHT_USER_JWT);
 
 		expect(result).toBeInstanceOf(Error);
 	});

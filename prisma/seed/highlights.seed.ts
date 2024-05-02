@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 import { RIGHT_HIGHLIGHT } from '../../src/common/constants/spec/highlights';
+import { RIGHT_END_NODE, RIGHT_START_NODE } from '../../src/common/constants/spec/nodes';
 
 const salt = Number(process.env.SALT);
 
@@ -10,19 +11,14 @@ export async function highlightsSeed(prisma: PrismaClient): Promise<void> {
 		update: {},
 		create: {
 			pageId: RIGHT_HIGHLIGHT.pageId,
+			startContainerId: RIGHT_START_NODE.id,
+			endContainerId: RIGHT_END_NODE.id,
+			startOffset: RIGHT_HIGHLIGHT.startOffset,
+			endOffset: RIGHT_HIGHLIGHT.endOffset,
 			text: RIGHT_HIGHLIGHT.text,
 			color: RIGHT_HIGHLIGHT.color,
 			note: RIGHT_HIGHLIGHT.note,
 		},
 	});
-	const highlight2 = await prisma.highlightModel.upsert({
-		where: { id: RIGHT_HIGHLIGHT.id + 1 },
-		update: {},
-		create: {
-			pageId: RIGHT_HIGHLIGHT.pageId,
-			text: 'The fields involved in defining the relation are highlighted:',
-			color: '#ff1500',
-		},
-	});
-	console.log({ highlight1, highlight2 });
+	console.log({ highlight1 });
 }
