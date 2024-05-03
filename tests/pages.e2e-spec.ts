@@ -33,7 +33,9 @@ describe('Pages', () => {
 		expect(res.statusCode).toBe(200);
 		expect(res.body.id).toBe(RIGHT_PAGE.id);
 		expect(res.body.userId).toBe(RIGHT_PAGE.userId);
-		expect(res.body.highlights.length).toBeDefined();
+		expect(res.body.highlights.length).not.toBe(0);
+		expect(res.body.highlights[0].startContainer.id).toBeDefined();
+		expect(res.body.highlights[0].endContainer.id).toBeDefined();
 	});
 
 	it('get page info - wrong: trying to get a non-existent page', async () => {

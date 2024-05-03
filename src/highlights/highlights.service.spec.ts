@@ -1,12 +1,10 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { HighlightModel } from '@prisma/client';
 
 import { IHighlight } from './highlight.entity.interface';
 import { HighlightsService } from './highlights.service';
 import { IHighlightsRepository } from './highlights.repository.interface';
 import { IHighlightsService } from './highlights.service.interface';
-import { UpdateHighlightDto } from './dto/update-highlight.dto';
 
 import { IPagesRepository } from '@/pages/pages.repository.interface';
 import { IPagesServise } from '@/pages/pages.service.interface';
@@ -20,11 +18,13 @@ import {
 import { RIGHT_USER_JWT } from '@/common/constants/spec/users';
 import { RIGHT_END_NODE, RIGHT_START_NODE, UPDATED_END_NODE } from '@/common/constants/spec/nodes';
 import { INodesService } from '@/nodes/nodes.service.interface';
+import { THighlightDeepModel } from './highlight-deep-model.type';
 
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
 	findById: jest.fn(),
+	findAllByPageUrl: jest.fn(),
 	delete: jest.fn(),
 };
 const pagesRepositoryMock: IPagesRepository = {
@@ -74,9 +74,11 @@ describe('Highlights Service', () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
 		pagesServise.createPage = jest.fn().mockReturnValue(RIGHT_PAGE);
 		highlightsRepository.create = jest.fn().mockImplementation(
-			(highlight: IHighlight): HighlightModel => ({
+			(highlight: IHighlight): THighlightDeepModel => ({
 				id: RIGHT_HIGHLIGHT.id,
 				...highlight,
+				startContainer: RIGHT_START_NODE,
+				endContainer: RIGHT_END_NODE,
 			}),
 		);
 		nodesServise.createNode = jest
@@ -101,6 +103,8 @@ describe('Highlights Service', () => {
 		expect(createNodeSpy).toHaveBeenCalledTimes(2);
 		expect(result).toEqual({
 			...RIGHT_HIGHLIGHT,
+			startContainer: RIGHT_START_NODE,
+			endContainer: RIGHT_END_NODE,
 			note: null,
 		});
 	});
@@ -110,9 +114,11 @@ describe('Highlights Service', () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
 		pagesServise.createPage = jest.fn().mockReturnValue(Error);
 		highlightsRepository.create = jest.fn().mockImplementation(
-			(highlight: IHighlight): HighlightModel => ({
+			(highlight: IHighlight): THighlightDeepModel => ({
 				id: RIGHT_HIGHLIGHT.id,
 				...highlight,
+				startContainer: RIGHT_START_NODE,
+				endContainer: RIGHT_END_NODE,
 			}),
 		);
 		nodesServise.createNode = jest
@@ -136,20 +142,24 @@ describe('Highlights Service', () => {
 		);
 
 		expect(createNodeSpy).toHaveBeenCalledTimes(2);
-		expect(result).toEqual(RIGHT_HIGHLIGHT);
+		expect(result).toEqual({
+			...RIGHT_HIGHLIGHT,
+			startContainer: RIGHT_START_NODE,
+			endContainer: RIGHT_END_NODE,
+		});
 	});
 
-	it('update highlight - success', async () => {
+	it('update highlight - success: update highlight and one node', async () => {
 		const { id: _endid, ...UPDATED_END_NODE_DATA } = UPDATED_END_NODE;
 		nodesServise.updateNode = jest.fn();
-		highlightsRepository.findById = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
-		highlightsRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: UpdateHighlightDto): HighlightModel => ({
-				...RIGHT_HIGHLIGHT,
-				...payload,
-			}),
-		);
+		highlightsRepository.findById = jest.fn().mockReturnValue({
+			...RIGHT_HIGHLIGHT,
+			startContainer: RIGHT_START_NODE,
+			endContainer: RIGHT_END_NODE,
+		});
+		highlightsRepository.update = jest.fn();
 		const updateNodeSpy = jest.spyOn(nodesServise, 'updateNode');
+		const updateHighlightSpy = jest.spyOn(highlightsRepository, 'update');
 
 		const result = await highlightsService.updateHighlight(RIGHT_HIGHLIGHT.id, {
 			note: UPDATED_HIGHLIGHT.note as string | undefined,
@@ -164,19 +174,67 @@ describe('Highlights Service', () => {
 			RIGHT_HIGHLIGHT.endContainerId,
 			UPDATED_END_NODE_DATA,
 		);
-		if (result instanceof Error) return;
-		expect(result).toEqual(UPDATED_HIGHLIGHT);
+		expect(updateHighlightSpy).toHaveBeenCalledWith(RIGHT_HIGHLIGHT.id, {
+			note: UPDATED_HIGHLIGHT.note as string | undefined,
+			text: UPDATED_HIGHLIGHT.text,
+			color: UPDATED_HIGHLIGHT.color,
+			endOffset: UPDATED_HIGHLIGHT.endOffset,
+		});
+	});
+
+	it('update highlight - success: update highlight only', async () => {
+		const { id: _endid, ...UPDATED_END_NODE_DATA } = UPDATED_END_NODE;
+		nodesServise.updateNode = jest.fn();
+		highlightsRepository.findById = jest.fn().mockReturnValue({
+			...RIGHT_HIGHLIGHT,
+			startContainer: RIGHT_START_NODE,
+			endContainer: RIGHT_END_NODE,
+		});
+		highlightsRepository.update = jest.fn();
+		const updateNodeSpy = jest.spyOn(nodesServise, 'updateNode');
+		const updateHighlightSpy = jest.spyOn(highlightsRepository, 'update');
+
+		const result = await highlightsService.updateHighlight(RIGHT_HIGHLIGHT.id, {
+			note: UPDATED_HIGHLIGHT.note as string | undefined,
+			color: UPDATED_HIGHLIGHT.color,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		expect(updateNodeSpy).toHaveBeenCalledTimes(0);
+		expect(updateHighlightSpy).toHaveBeenCalledWith(RIGHT_HIGHLIGHT.id, {
+			note: UPDATED_HIGHLIGHT.note,
+			color: UPDATED_HIGHLIGHT.color,
+		});
+	});
+
+	it('update highlight - success: update only one node', async () => {
+		const { id: _endid, ...UPDATED_END_NODE_DATA } = UPDATED_END_NODE;
+		nodesServise.updateNode = jest.fn();
+		highlightsRepository.findById = jest.fn().mockReturnValue({
+			...RIGHT_HIGHLIGHT,
+			startContainer: RIGHT_START_NODE,
+			endContainer: RIGHT_END_NODE,
+		});
+		highlightsRepository.update = jest.fn();
+		const updateNodeSpy = jest.spyOn(nodesServise, 'updateNode');
+		const updateHighlightSpy = jest.spyOn(highlightsRepository, 'update');
+
+		const result = await highlightsService.updateHighlight(RIGHT_HIGHLIGHT.id, {
+			endContainer: UPDATED_END_NODE_DATA,
+		});
+
+		expect(result).not.toBeInstanceOf(Error);
+		expect(updateNodeSpy).toHaveBeenCalledWith(
+			RIGHT_HIGHLIGHT.endContainerId,
+			UPDATED_END_NODE_DATA,
+		);
+		expect(updateHighlightSpy).toHaveBeenCalledTimes(0);
 	});
 
 	it('update highlight - wrong: no highlight with this ID', async () => {
 		nodesServise.updateNode = jest.fn();
 		highlightsRepository.findById = jest.fn().mockReturnValue(null);
-		highlightsRepository.update = jest.fn().mockImplementation(
-			(id: number, payload: UpdateHighlightDto): HighlightModel => ({
-				...RIGHT_HIGHLIGHT,
-				...payload,
-			}),
-		);
+		highlightsRepository.update = jest.fn();
 
 		const result = await highlightsService.updateHighlight(WRONG_HIGHLIGHT.id!, {
 			note: UPDATED_HIGHLIGHT.note as string | undefined,
@@ -188,7 +246,11 @@ describe('Highlights Service', () => {
 	});
 	it('delete highlight - success', async () => {
 		nodesServise.deleteNode = jest.fn();
-		highlightsRepository.findById = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
+		highlightsRepository.findById = jest.fn().mockReturnValue({
+			...RIGHT_HIGHLIGHT,
+			startContainer: RIGHT_START_NODE,
+			endContainer: RIGHT_END_NODE,
+		});
 		highlightsRepository.delete = jest.fn().mockReturnValue(RIGHT_HIGHLIGHT);
 		const deleteNodeSpy = jest.spyOn(nodesServise, 'deleteNode');
 
