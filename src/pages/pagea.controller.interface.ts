@@ -6,6 +6,6 @@ import { GetPageDto } from './dto/get-page.dto';
 export interface IPagesController {
 	router: Router;
 
-	getPage: TController<{}, {}, GetPageDto>;
+	getPage: TController<{}, {}, {}, GetPageDto>;
 	getPages: TController;
 }

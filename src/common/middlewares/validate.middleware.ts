@@ -11,10 +11,13 @@ interface IErrMsg {
 }
 
 export class ValidateMiddleware implements IMiddleware {
-	constructor(private classToValidate: ClassConstructor<object>) {}
+	constructor(
+		private classToValidate: ClassConstructor<object>,
+		private validateMode: 'body' | 'query' = 'body',
+	) {}
 
-	execute({ body }: Request, res: Response, next: NextFunction): void {
-		const instance = plainToClass(this.classToValidate, body);
+	execute(req: Request, res: Response, next: NextFunction): void {
+		const instance = plainToClass(this.classToValidate, req[this.validateMode]);
 		validate(instance).then((errors) => {
 			if (errors.length > 0) {
 				const errorsMsg = this.constructErrorsMsg(errors);
