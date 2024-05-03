@@ -1,13 +1,15 @@
 import { HighlightModel } from '@prisma/client';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { IHighlight } from './highlight.entity.interface';
+import { THighlightDeepModel } from './highlight-deep-model.type';
 
 export interface IHighlightsRepository {
-	create: (highlight: IHighlight) => Promise<HighlightModel>;
+	create: (highlight: IHighlight) => Promise<THighlightDeepModel>;
 	update: (
 		id: number,
 		payload: Omit<UpdateHighlightDto, 'startContainer' | 'endContainer'>,
-	) => Promise<HighlightModel>;
-	findById: (id: number) => Promise<HighlightModel | null>;
+	) => Promise<THighlightDeepModel>;
+	findById: (id: number) => Promise<THighlightDeepModel | null>;
+	findAllByPageUrl: (pageId: number) => Promise<THighlightDeepModel[] | null>;
 	delete: (id: number) => Promise<HighlightModel>;
 }
