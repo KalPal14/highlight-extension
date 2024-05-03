@@ -103,7 +103,7 @@ describe('Pages Servise', () => {
 		});
 	});
 
-	it('get page info - wrong: user does not have a page with this URL', async () => {
+	it('get page info - success: user does not have a page with this URL', async () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
 		highlightsRepository.findAllByPageUrl = jest.fn().mockReturnValue(null);
 

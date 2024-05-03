@@ -20,7 +20,7 @@ export class PagesController extends BaseController implements IPagesController 
 				path: PAGES_PATH.getPage,
 				method: 'get',
 				func: this.getPage,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(GetPageDto)],
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(GetPageDto, 'query')],
 			},
 			{
 				path: PAGES_PATH.getPages,
@@ -31,21 +31,18 @@ export class PagesController extends BaseController implements IPagesController 
 		]);
 	}
 
-	async getPage(
-		{ body, user }: Request<{}, {}, GetPageDto>,
-		res: Response,
-		next: NextFunction,
-	): Promise<void> {
-		const result = await this.pagesServise.getPageInfo(body.url, user.id);
+	async getPage({ user, query }: Request<{}, {}, {}, GetPageDto>, res: Response): Promise<void> {
+		const result = await this.pagesServise.getPageInfo(query.url, user.id);
 
 		if (!result) {
-			return next(new HTTPError(404, 'There is no such page'));
+			this.ok(res, { page: null });
+			return;
 		}
 
 		this.ok(res, result);
 	}
 
-	async getPages({ user }: Request, res: Response, next: NextFunction): Promise<void> {
+	async getPages({ user }: Request, res: Response): Promise<void> {
 		const result = await this.pagesServise.getPagesInfo(user.id);
 
 		this.ok(res, result);

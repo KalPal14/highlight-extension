@@ -25,7 +25,7 @@ describe('Pages', () => {
 	it('get page info - success', async () => {
 		const res = await request(application.app)
 			.get(PAGES_FULL_PATH.getPage)
-			.send({
+			.query({
 				url: RIGHT_PAGE.url,
 			})
 			.set('Authorization', `Bearer ${jwt}`);
@@ -41,13 +41,13 @@ describe('Pages', () => {
 	it('get page info - wrong: trying to get a non-existent page', async () => {
 		const res = await request(application.app)
 			.get(PAGES_FULL_PATH.getPage)
-			.send({
+			.query({
 				url: WRONG_PAGE.url,
 			})
 			.set('Authorization', `Bearer ${jwt}`);
 
-		expect(res.statusCode).toBe(404);
-		expect(res.body.err).toBeDefined();
+		expect(res.statusCode).toBe(200);
+		expect(res.body.page).toBeNull();
 	});
 
 	it('get page info - wrong: not authorizede', async () => {
