@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
-
 import { PageModel } from '@prisma/client';
 
 import { IPagesRepository } from './pages.repository.interface';
+import { IPage } from './page.entity.interface';
+import { TPageDeepModel } from './page-deep-model.type';
+
 import TYPES from '@/types.inversify';
 import { IPrismaService } from '@/common/services/prisma.service.interface';
-import { TPageDeepModel } from './page-deep-model.interface';
-import { IPage } from './page.entity.interface';
 
 @injectable()
 export class PagesRepository implements IPagesRepository {

@@ -7,30 +7,53 @@ import { IPrismaService } from '@/common/services/prisma.service.interface';
 import TYPES from '@/types.inversify';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { IHighlight } from './highlight.entity.interface';
+import { THighlightDeepModel } from './highlight-deep-model.type';
 
 @injectable()
 export class HighlightsRepository implements IHighlightsRepository {
 	constructor(@inject(TYPES.PrismaService) private prismaService: IPrismaService) {}
 
-	async create(highlight: IHighlight): Promise<HighlightModel> {
+	async create(highlight: IHighlight): Promise<THighlightDeepModel> {
 		return await this.prismaService.client.highlightModel.create({
 			data: highlight,
+			include: {
+				startContainer: true,
+				endContainer: true,
+			},
 		});
 	}
 
 	async update(
 		id: number,
 		payload: Omit<UpdateHighlightDto, 'startContainer' | 'endContainer'>,
-	): Promise<HighlightModel> {
+	): Promise<THighlightDeepModel> {
 		return await this.prismaService.client.highlightModel.update({
 			where: { id },
 			data: payload,
+			include: {
+				startContainer: true,
+				endContainer: true,
+			},
 		});
 	}
 
-	async findById(id: number): Promise<HighlightModel | null> {
+	async findById(id: number): Promise<THighlightDeepModel | null> {
 		return await this.prismaService.client.highlightModel.findFirst({
 			where: { id },
+			include: {
+				startContainer: true,
+				endContainer: true,
+			},
+		});
+	}
+
+	async findAllByPageUrl(pageId: number): Promise<THighlightDeepModel[] | null> {
+		return await this.prismaService.client.highlightModel.findMany({
+			where: { pageId },
+			include: {
+				startContainer: true,
+				endContainer: true,
+			},
 		});
 	}
 

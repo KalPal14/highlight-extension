@@ -8,25 +8,39 @@ import { IPage } from './page.entity.interface';
 
 import TYPES from '@/types.inversify';
 import { PageModel } from '@prisma/client';
-import { RIGHT_PAGE } from '@/common/constants/spec/pages';
+import { RIGHT_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
 import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
 import { RIGHT_USER, RIGHT_USER_JWT } from '@/common/constants/spec/users';
+import { IHighlightsRepository } from '@/highlights/highlights.repository.interface';
+import { RIGHT_END_NODE, RIGHT_START_NODE } from '@/common/constants/spec/nodes';
 
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
 	findByUrl: jest.fn(),
 	findAll: jest.fn(),
 };
+const highlightsRepositoryMock: IHighlightsRepository = {
+	create: jest.fn(),
+	update: jest.fn(),
+	findById: jest.fn(),
+	findAllByPageUrl: jest.fn(),
+	delete: jest.fn(),
+};
 
 const container = new Container();
 let pagesRepository: IPagesRepository;
+let highlightsRepository: IHighlightsRepository;
 let pagesServise: IPagesServise;
 
 beforeAll(() => {
 	container.bind<IPagesRepository>(TYPES.PagesRepository).toConstantValue(pagesRepositoryMock);
+	container
+		.bind<IHighlightsRepository>(TYPES.HighlightsRepository)
+		.toConstantValue(highlightsRepositoryMock);
 	container.bind<IPagesServise>(TYPES.PagesServise).to(PagesServise);
 
 	pagesRepository = container.get<IPagesRepository>(TYPES.PagesRepository);
+	highlightsRepository = container.get<IHighlightsRepository>(TYPES.HighlightsRepository);
 	pagesServise = container.get<IPagesServise>(TYPES.PagesServise);
 });
 
@@ -63,6 +77,39 @@ describe('Pages Servise', () => {
 		const result = await pagesServise.createPage(RIGHT_PAGE.url, RIGHT_USER_JWT);
 
 		expect(result).toBeInstanceOf(Error);
+	});
+
+	it('get page info - success', async () => {
+		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
+		highlightsRepository.findAllByPageUrl = jest.fn().mockReturnValue([
+			{
+				...RIGHT_HIGHLIGHT,
+				startContainer: RIGHT_START_NODE,
+				endContainer: RIGHT_END_NODE,
+			},
+		]);
+
+		const result = await pagesServise.getPageInfo(RIGHT_PAGE.url, RIGHT_PAGE.userId);
+
+		expect(result).toEqual({
+			...RIGHT_PAGE,
+			highlights: [
+				{
+					...RIGHT_HIGHLIGHT,
+					startContainer: RIGHT_START_NODE,
+					endContainer: RIGHT_END_NODE,
+				},
+			],
+		});
+	});
+
+	it('get page info - wrong: user does not have a page with this URL', async () => {
+		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
+		highlightsRepository.findAllByPageUrl = jest.fn().mockReturnValue(null);
+
+		const result = await pagesServise.getPageInfo(WRONG_PAGE.url!, WRONG_PAGE.userId!);
+
+		expect(result).toBe(null);
 	});
 
 	it('get pages info - success: user without highlights', async () => {

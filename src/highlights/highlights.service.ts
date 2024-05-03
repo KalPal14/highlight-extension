@@ -3,13 +3,15 @@ import { HighlightModel, PageModel } from '@prisma/client';
 
 import { CreateHighlightDto } from './dto/create-highlight.dto';
 import { IHighlightsService } from './highlights.service.interface';
-import TYPES from '@/types.inversify';
 import { IHighlightsRepository } from './highlights.repository.interface';
+import { Highlight } from './highlight.entity';
+import { UpdateHighlightDto } from './dto/update-highlight.dto';
+import { THighlightDeepModel } from './highlight-deep-model.type';
+
+import TYPES from '@/types.inversify';
 import { IPagesRepository } from '@/pages/pages.repository.interface';
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { IPagesServise } from '@/pages/pages.service.interface';
-import { Highlight } from './highlight.entity';
-import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { INodesService } from '@/nodes/nodes.service.interface';
 
 @injectable()
@@ -24,7 +26,7 @@ export class HighlightsService implements IHighlightsService {
 	async createHighlight(
 		createHighlightDto: CreateHighlightDto,
 		user: IJwtPayload,
-	): Promise<HighlightModel> {
+	): Promise<THighlightDeepModel> {
 		const { pageUrl, startContainer, endContainer, startOffset, endOffset, text, note, color } =
 			createHighlightDto;
 
@@ -52,20 +54,24 @@ export class HighlightsService implements IHighlightsService {
 		return await this.highlightsRepository.create(newHighlight);
 	}
 
-	async updateHighlight(id: number, payload: UpdateHighlightDto): Promise<HighlightModel | Error> {
+	async updateHighlight(
+		id: number,
+		payload: UpdateHighlightDto,
+	): Promise<THighlightDeepModel | Error> {
 		const existingHighlight = await this.highlightsRepository.findById(id);
 		if (!existingHighlight) {
 			return Error('There is no highlight with this ID');
 		}
 
 		const { startContainer, endContainer, ...rest } = payload;
+
 		if (startContainer) {
 			await this.nodesService.updateNode(existingHighlight.startContainerId, startContainer);
 		}
 		if (endContainer) {
 			await this.nodesService.updateNode(existingHighlight.endContainerId, endContainer);
 		}
-		if (rest) {
+		if (Object.keys(rest).length) {
 			return await this.highlightsRepository.update(id, rest);
 		}
 		return existingHighlight;

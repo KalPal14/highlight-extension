@@ -1,5 +1,6 @@
 import { PageModel } from '@prisma/client';
-import { TPageDeepModel } from './page-deep-model.interface';
+
+import { TPageDeepModel } from './page-deep-model.type';
 import { IPage } from './page.entity.interface';
 
 export interface IPagesRepository {
