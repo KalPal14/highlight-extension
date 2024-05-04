@@ -47,7 +47,9 @@ describe('Pages', () => {
 			.set('Authorization', `Bearer ${jwt}`);
 
 		expect(res.statusCode).toBe(200);
-		expect(res.body.page).toBeNull();
+		expect(res.body).toEqual({
+			id: null,
+		});
 	});
 
 	it('get page info - wrong: not authorizede', async () => {
