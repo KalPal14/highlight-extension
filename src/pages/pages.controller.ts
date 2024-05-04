@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { BaseController } from '@/common/base.controller';
 import { IPagesController } from './pagea.controller.interface';
@@ -9,7 +9,6 @@ import { PAGES_PATH } from '@/common/constants/routes/pages';
 import { RouteGuard } from '@/common/middlewares/route.guard';
 import { GetPageDto } from './dto/get-page.dto';
 import { ValidateMiddleware } from '@/common/middlewares/validate.middleware';
-import { HTTPError } from '@/errors/http-error.class';
 
 @injectable()
 export class PagesController extends BaseController implements IPagesController {
@@ -35,7 +34,7 @@ export class PagesController extends BaseController implements IPagesController 
 		const result = await this.pagesServise.getPageInfo(query.url, user.id);
 
 		if (!result) {
-			this.ok(res, { page: null });
+			this.ok(res, { id: null });
 			return;
 		}
 
