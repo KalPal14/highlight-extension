@@ -10,6 +10,7 @@ export interface IHighlightsRepository {
 		payload: Omit<UpdateHighlightDto, 'startContainer' | 'endContainer'>,
 	) => Promise<THighlightDeepModel>;
 	findById: (id: number) => Promise<THighlightDeepModel | null>;
+	findAllByIds: (isd: number[]) => Promise<THighlightDeepModel[]>;
 	findAllByPageUrl: (pageId: number) => Promise<THighlightDeepModel[] | null>;
 	delete: (id: number) => Promise<HighlightModel>;
 }

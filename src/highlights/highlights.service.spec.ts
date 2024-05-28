@@ -24,6 +24,7 @@ const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
 	findById: jest.fn(),
+	findAllByIds: jest.fn(),
 	findAllByPageUrl: jest.fn(),
 	delete: jest.fn(),
 };
