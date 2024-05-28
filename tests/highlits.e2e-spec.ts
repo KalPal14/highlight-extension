@@ -74,6 +74,66 @@ describe('Highlits', () => {
 		expect(res.body.endContainer.text).toBe(RIGHT_END_NODE.text);
 	});
 
+	it('get highlights - wrong: ID list not specified', async () => {
+		const res = await request(application.app)
+			.get(HIGHLIGHTS_FULL_PATH.get)
+			.set('Authorization', `Bearer ${jwt}`);
+
+		expect(res.statusCode).toBe(422);
+		expect(res.body.length).toBeDefined();
+	});
+
+	it('get highlights - success: ID of a non-existent highlights was sent', async () => {
+		const res = await request(application.app)
+			.get(HIGHLIGHTS_FULL_PATH.get)
+			.set('Authorization', `Bearer ${jwt}`)
+			.query({
+				ids: JSON.stringify([-1, -2]),
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toHaveLength(0);
+	});
+
+	it('get highlights - success', async () => {
+		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
+		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;
+		const newHighlight1 = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			});
+		const newHighlight2 = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			});
+
+		const res = await request(application.app)
+			.get(HIGHLIGHTS_FULL_PATH.get)
+			.set('Authorization', `Bearer ${jwt}`)
+			.query({
+				ids: JSON.stringify([newHighlight1.body.id, newHighlight2.body.id]),
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual([newHighlight1.body, newHighlight2.body]);
+	});
+
 	it('update highlight - success', async () => {
 		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
 		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;

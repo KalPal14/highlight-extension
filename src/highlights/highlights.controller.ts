@@ -11,12 +11,19 @@ import { RouteGuard } from '@/common/middlewares/route.guard';
 import { HTTPError } from '@/errors/http-error.class';
 import { IHighlightsService } from './highlights.service.interface';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
+import { GetHighlightsDto } from './dto/get-highlights.dto';
 
 @injectable()
 export class HighlightsController extends BaseController implements IHighlightsController {
 	constructor(@inject(TYPES.HighlightsService) private highlightsService: IHighlightsService) {
 		super();
 		this.bindRoutes([
+			{
+				path: HIGHLIGHTS_PATH.get,
+				method: 'get',
+				func: this.getHighlights,
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(GetHighlightsDto, 'query')],
+			},
 			{
 				path: HIGHLIGHTS_PATH.create,
 				method: 'post',
@@ -36,6 +43,15 @@ export class HighlightsController extends BaseController implements IHighlightsC
 				middlewares: [new RouteGuard('user')],
 			},
 		]);
+	}
+
+	async getHighlights(
+		{ query }: Request<{}, {}, {}, GetHighlightsDto>,
+		res: Response,
+	): Promise<void> {
+		const result = await this.highlightsService.getHighlights(JSON.parse(query.ids));
+
+		this.ok(res, result);
 	}
 
 	async createHighlight(

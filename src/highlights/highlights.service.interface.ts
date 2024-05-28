@@ -5,6 +5,7 @@ import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { THighlightDeepModel } from './highlight-deep-model.type';
 
 export interface IHighlightsService {
+	getHighlights: (ids: number[]) => Promise<THighlightDeepModel[]>;
 	createHighlight: (
 		highlightData: CreateHighlightDto,
 		user: IJwtPayload,

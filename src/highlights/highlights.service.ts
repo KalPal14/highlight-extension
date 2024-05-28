@@ -23,6 +23,10 @@ export class HighlightsService implements IHighlightsService {
 		@inject(TYPES.NodesService) private nodesService: INodesService,
 	) {}
 
+	async getHighlights(ids: number[]): Promise<THighlightDeepModel[]> {
+		return await this.highlightsRepository.findAllByIds(ids);
+	}
+
 	async createHighlight(
 		createHighlightDto: CreateHighlightDto,
 		user: IJwtPayload,
