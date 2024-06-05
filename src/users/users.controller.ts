@@ -26,8 +26,6 @@ import IUserInfo from './user-info.interface';
 
 @injectable()
 export class UsersController extends BaseController implements IUsersController {
-	private sessionTime: number = 2 * 60 * 60;
-
 	constructor(
 		@inject(TYPES.UsersService) private usersService: IUsersService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
@@ -244,7 +242,6 @@ export class UsersController extends BaseController implements IUsersController 
 				jwtKey,
 				{
 					algorithm: 'HS256',
-					expiresIn: this.sessionTime,
 				},
 				(err, token) => {
 					if (err) {
