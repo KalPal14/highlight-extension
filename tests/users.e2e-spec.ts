@@ -13,7 +13,7 @@ import {
 	UPDATED_USER,
 } from '@/common/constants/spec/users';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
-import { hideEmail } from '@/common/helpers/hide-email.helper';
+import { hideEmail } from '@/utils/helper-functions/hide-email/hide-email.helper';
 import { TEmail } from '@/common/types/email.type';
 
 let application: App;
