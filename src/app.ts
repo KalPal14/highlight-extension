@@ -1,24 +1,26 @@
 import 'reflect-metadata';
-import cors from 'cors';
-import express, { Express } from 'express';
 import { Server, createServer } from 'https';
 import { readFileSync } from 'fs';
+
+import cors from 'cors';
+import express, { Express } from 'express';
 import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
+import { PAGES_ROUTER_PATH } from './common/constants/routes/pages';
+import { IPagesController } from './controllers/pages-controller/pages.controller.interface';
+
 import { USERS_ROUTER_PATH } from '@/common/constants/routes/users';
 import { HIGHLIGHTS_ROUTER_PATH } from '@/common/constants/routes/highlights';
-import TYPES from '@/types.inversify';
-import { ILogger } from '@/common/services/logger.service.interface';
-import { IUsersController } from '@/users/users.controller.interface';
-import { IExceptionFilter } from '@/errors/exception.filter.interface';
-import { IPrismaService } from '@/common/services/prisma.service.interface';
-import { IConfigService } from '@/common/services/config.service.interface';
-import { JwtAuthMiddleware } from './common/middlewares/jwt-auth.middleware';
-import { IHighlightsController } from '@/highlights/highlights.controller.interface';
-import { PAGES_ROUTER_PATH } from './common/constants/routes/pages';
-import { IPagesController } from './pages/pagea.controller.interface';
+import TYPES from '@/common/constants/types.inversify';
+import { ILogger } from '@/utils/services/logger-service/logger.service.interface';
+import { IUsersController } from '@/controllers/users-controller/users.controller.interface';
+import { IExceptionFilter } from '@/exceptions/exception-filter/exception.filter.interface';
+import { IPrismaService } from '@/utils/services/prisma-service/prisma.service.interface';
+import { IConfigService } from '@/utils/services/config-service/config.service.interface';
+import { JwtAuthMiddleware } from '@/middlewares/jwt-auth.middleware';
+import { IHighlightsController } from '@/controllers/highlights-controller/highlights.controller.interface';
 
 @injectable()
 export default class App {
