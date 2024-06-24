@@ -2,7 +2,7 @@ import { UserModel } from '@prisma/client';
 
 import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 //prism seed does not work if there is import via alias @/
-import { random } from '../../helpers/random.helper';
+import { random } from '../../../utils/helper-functions/random.helper';
 
 type TExtendedUserModel = UserModel & {
 	passwordHash: string;
