@@ -14,6 +14,7 @@ import { HTTPError } from '@/exceptions/http-error.class';
 import { RouteGuard } from '@/middlewares/route-guard/route.guard';
 import { ValidateMiddleware } from '@/middlewares/validate.middleware';
 import { IHighlightsService } from '@/services/highlights-service/highlights.service.interface';
+import { IndividualUpdateHighlightsDto } from '@/dto/highlights/individual-update-highlights.dto';
 
 @injectable()
 export class HighlightsController extends BaseController implements IHighlightsController {
@@ -37,6 +38,15 @@ export class HighlightsController extends BaseController implements IHighlightsC
 				method: 'patch',
 				func: this.updateHighlight,
 				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateHighlightDto)],
+			},
+			{
+				path: HIGHLIGHTS_PATH.individualUpdateMany,
+				method: 'patch',
+				func: this.individualUpdateHighlights,
+				middlewares: [
+					new RouteGuard('user'),
+					new ValidateMiddleware(IndividualUpdateHighlightsDto),
+				],
 			},
 			{
 				path: HIGHLIGHTS_PATH.delete,
@@ -84,6 +94,16 @@ export class HighlightsController extends BaseController implements IHighlightsC
 		if (result instanceof Error) {
 			return next(new HTTPError(422, result.message));
 		}
+
+		this.ok(res, result);
+	}
+
+	async individualUpdateHighlights(
+		{ body }: Request<{}, {}, IndividualUpdateHighlightsDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.highlightsService.individualUpdateHighlights(body);
 
 		this.ok(res, result);
 	}

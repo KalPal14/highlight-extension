@@ -8,6 +8,7 @@ import TYPES from '@/common/constants/types.inversify';
 import { UpdateHighlightDto } from '@/dto/highlights/update-highlight.dto';
 import { IHighlight } from '@/entities/highlight-entity/highlight.entity.interface';
 import { IPrismaService } from '@/utils/services/prisma-service/prisma.service.interface';
+import { IndividualUpdateHighlightsDto } from '@/dto/highlights/individual-update-highlights.dto';
 
 @injectable()
 export class HighlightsRepository implements IHighlightsRepository {
@@ -35,6 +36,16 @@ export class HighlightsRepository implements IHighlightsRepository {
 				endContainer: true,
 			},
 		});
+	}
+
+	async individualUpdateMany({
+		highlights,
+	}: IndividualUpdateHighlightsDto): Promise<THighlightDeepModel[]> {
+		return await Promise.all(
+			highlights.map(async ({ id, payload }) => {
+				return await this.update(id, payload);
+			}),
+		);
 	}
 
 	async findById(id: number): Promise<THighlightDeepModel | null> {
