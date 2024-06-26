@@ -1,3 +1,5 @@
+import { createRoutesFullPath } from '@/utils/helper-functions/create-routes-full-path/create-routes-full-path.helper';
+
 export const USERS_ROUTER_PATH = '/users';
 
 export const USERS_PATH = {
@@ -11,13 +13,4 @@ export const USERS_PATH = {
 	getUserInfo: '/get-info',
 };
 
-export const USERS_FULL_PATH = {
-	login: USERS_ROUTER_PATH + USERS_PATH.login,
-	register: USERS_ROUTER_PATH + USERS_PATH.register,
-	logout: USERS_ROUTER_PATH + USERS_PATH.logout,
-	updateUser: USERS_ROUTER_PATH + USERS_PATH.updateUser,
-	changePassword: USERS_ROUTER_PATH + USERS_PATH.changePassword,
-	changeEmail: USERS_ROUTER_PATH + USERS_PATH.changeEmail,
-	changeUsername: USERS_ROUTER_PATH + USERS_PATH.changeUsername,
-	getUserInfo: USERS_ROUTER_PATH + USERS_PATH.getUserInfo,
-};
+export const USERS_FULL_PATH = createRoutesFullPath(USERS_ROUTER_PATH, USERS_PATH);
