@@ -24,6 +24,7 @@ import { IPagesRepository } from '@/repositories/pages-repository/pages.reposito
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
+	individualUpdateMany: jest.fn(),
 	findById: jest.fn(),
 	findAllByIds: jest.fn(),
 	findAllByPageUrl: jest.fn(),
@@ -246,6 +247,66 @@ describe('Highlights Service', () => {
 
 		expect(result).toBeInstanceOf(Error);
 	});
+
+	it('individual update highlights - success: called with one unexisting highlight', async () => {
+		highlightsRepositoryMock.findAllByIds = jest.fn().mockReturnValue([RIGHT_HIGHLIGHT]);
+		const individualUpdateManySpy = jest.spyOn(highlightsRepositoryMock, 'individualUpdateMany');
+
+		await highlightsService.individualUpdateHighlights({
+			highlights: [
+				{
+					id: WRONG_HIGHLIGHT.id!,
+					payload: {
+						text: UPDATED_HIGHLIGHT.text,
+					},
+				},
+				{
+					id: RIGHT_HIGHLIGHT.id,
+					payload: {
+						text: UPDATED_HIGHLIGHT.text,
+					},
+				},
+			],
+		});
+
+		expect(individualUpdateManySpy).toHaveBeenCalledWith({
+			highlights: [
+				{
+					id: RIGHT_HIGHLIGHT.id,
+					payload: {
+						text: UPDATED_HIGHLIGHT.text,
+					},
+				},
+			],
+		});
+	});
+
+	it('individual update highlights - success: called with all unexisting highlights', async () => {
+		highlightsRepositoryMock.findAllByIds = jest.fn().mockReturnValue([]);
+		const individualUpdateManySpy = jest.spyOn(highlightsRepositoryMock, 'individualUpdateMany');
+
+		await highlightsService.individualUpdateHighlights({
+			highlights: [
+				{
+					id: WRONG_HIGHLIGHT.id!,
+					payload: {
+						text: UPDATED_HIGHLIGHT.text,
+					},
+				},
+				{
+					id: RIGHT_HIGHLIGHT.id,
+					payload: {
+						text: UPDATED_HIGHLIGHT.text,
+					},
+				},
+			],
+		});
+
+		expect(individualUpdateManySpy).toHaveBeenCalledWith({
+			highlights: [],
+		});
+	});
+
 	it('delete highlight - success', async () => {
 		nodesServise.deleteNode = jest.fn();
 		highlightsRepository.findById = jest.fn().mockReturnValue({

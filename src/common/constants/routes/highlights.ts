@@ -6,6 +6,7 @@ export const HIGHLIGHTS_PATH = {
 	get: '',
 	create: '/highlight',
 	update: '/highlight/:id',
+	individualUpdateMany: '/individual-update-many',
 	delete: '/highlight/:id',
 };
 

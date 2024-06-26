@@ -22,6 +22,7 @@ const pagesRepositoryMock: IPagesRepository = {
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
+	individualUpdateMany: jest.fn(),
 	findById: jest.fn(),
 	findAllByIds: jest.fn(),
 	findAllByPageUrl: jest.fn(),
