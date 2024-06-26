@@ -1,3 +1,5 @@
+import { createRoutesFullPath } from '@/utils/helper-functions/create-routes-full-path/create-routes-full-path.helper';
+
 export const PAGES_ROUTER_PATH = '/pages';
 
 export const PAGES_PATH = {
@@ -5,7 +7,4 @@ export const PAGES_PATH = {
 	getPages: '/get-all',
 };
 
-export const PAGES_FULL_PATH = {
-	getPage: PAGES_ROUTER_PATH + PAGES_PATH.getPage,
-	getPages: PAGES_ROUTER_PATH + PAGES_PATH.getPages,
-};
+export const PAGES_FULL_PATH = createRoutesFullPath(PAGES_ROUTER_PATH, PAGES_PATH);
