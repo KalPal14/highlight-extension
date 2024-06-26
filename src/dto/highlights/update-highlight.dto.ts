@@ -6,7 +6,7 @@ import { IsNode } from '@/utils/dto-validation-rules/is-node';
 
 export class UpdateHighlightDto {
 	text?: string;
-	note?: string;
+	note?: string | null;
 
 	@IsOptional()
 	@Validate(IsNode, {
@@ -21,7 +21,11 @@ export class UpdateHighlightDto {
 	})
 	endContainer?: INode;
 
+	@IsOptional()
+	@IsNumber()
 	startOffset?: number;
+	@IsOptional()
+	@IsNumber()
 	endOffset?: number;
 
 	@IsOptional()

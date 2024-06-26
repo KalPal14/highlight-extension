@@ -193,6 +193,115 @@ describe('Highlits', () => {
 		expect(res.body.err).toBe('There is no highlight with this ID');
 	});
 
+	it('individual update highlights - success: try to update two existings and one unexisting', async () => {
+		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
+		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;
+		const { id: _upendid, ...UPDATE_NODE_DATA } = UPDATED_END_NODE;
+		const createHighlightRes1 = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			});
+		const createHighlightRes2 = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				pageUrl: RIGHT_PAGE.url,
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			});
+		const highlightId1 = createHighlightRes1.body.id;
+		const highlightId2 = createHighlightRes2.body.id;
+		const unexistingHighlightId = highlightId1 * highlightId2;
+
+		const res = await request(application.app)
+			.patch(HIGHLIGHTS_FULL_PATH.individualUpdateMany)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				highlights: [
+					{
+						id: highlightId1,
+						payload: {
+							text: `new text for highlight: ${highlightId1}`,
+						},
+					},
+					{
+						id: highlightId2,
+						payload: {
+							text: `new text for highlight: ${highlightId2}`,
+						},
+					},
+					{
+						id: unexistingHighlightId,
+						payload: {
+							text: `new text for highlight: ${unexistingHighlightId}`,
+						},
+					},
+				],
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual([
+			{
+				...createHighlightRes1.body,
+				text: `new text for highlight: ${highlightId1}`,
+			},
+			{
+				...createHighlightRes2.body,
+				text: `new text for highlight: ${highlightId2}`,
+			},
+		]);
+	});
+
+	it('individual update highlights - success: try to update unexisting only', async () => {
+		const res = await request(application.app)
+			.patch(HIGHLIGHTS_FULL_PATH.individualUpdateMany)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				highlights: [
+					{
+						id: WRONG_HIGHLIGHT.id,
+						payload: {
+							text: `new text`,
+						},
+					},
+				],
+			});
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body).toEqual([]);
+	});
+
+	it('individual update highlights - wrong: wrong request body', async () => {
+		const res = await request(application.app)
+			.patch(HIGHLIGHTS_FULL_PATH.individualUpdateMany)
+			.set('Authorization', `Bearer ${jwt}`)
+			.send({
+				highlights: [
+					{
+						id: WRONG_HIGHLIGHT.id,
+						payload: {
+							text: `new text`,
+							unexistingProperty: true,
+						},
+					},
+				],
+			});
+
+		expect(res.statusCode).toBe(422);
+	});
+
 	it('delete highlight - success', async () => {
 		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
 		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;

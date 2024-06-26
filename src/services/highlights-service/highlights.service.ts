@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { HighlightModel, PageModel } from '@prisma/client';
+import { intersectionBy } from 'lodash';
 
 import { INodesService } from '../nodes-service/nodes.service.interface';
 import { IPagesServise } from '../pages-service/pages.service.interface';
@@ -14,6 +15,7 @@ import { UpdateHighlightDto } from '@/dto/highlights/update-highlight.dto';
 import { IHighlightsRepository } from '@/repositories/highlights-repository/highlights.repository.interface';
 import { THighlightDeepModel } from '@/repositories/highlights-repository/types/highlight-deep-model.type';
 import { IPagesRepository } from '@/repositories/pages-repository/pages.repository.interface';
+import { IndividualUpdateHighlightsDto } from '@/dto/highlights/individual-update-highlights.dto';
 
 @injectable()
 export class HighlightsService implements IHighlightsService {
@@ -80,6 +82,17 @@ export class HighlightsService implements IHighlightsService {
 			return await this.highlightsRepository.update(id, rest);
 		}
 		return existingHighlight;
+	}
+
+	async individualUpdateHighlights(
+		data: IndividualUpdateHighlightsDto,
+	): Promise<THighlightDeepModel[]> {
+		const ids = data.highlights.map(({ id }) => id);
+		const existingHighlights = await this.highlightsRepository.findAllByIds(ids);
+		const filteredHighlights = intersectionBy(data.highlights, existingHighlights, 'id');
+		return await this.highlightsRepository.individualUpdateMany({
+			highlights: filteredHighlights,
+		});
 	}
 
 	async deleteHighlight(id: number): Promise<HighlightModel | Error> {
