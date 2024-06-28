@@ -161,6 +161,7 @@ describe('Highlits', () => {
 				color: UPDATED_HIGHLIGHT.color,
 				endContainer: UPDATE_NODE_DATA,
 				endOffset: UPDATED_HIGHLIGHT.endOffset,
+				order: UPDATED_HIGHLIGHT.order,
 			});
 
 		expect(res.statusCode).toBe(200);

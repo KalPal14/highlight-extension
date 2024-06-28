@@ -33,6 +33,7 @@ model HighlightModel {
   id               Int       @id @default(autoincrement())
   page             PageModel @relation(fields: [pageId], references: [id])
   pageId           Int
+  order            Int
   startContainer   NodeModel @relation(fields: [startContainerId], references: [id], name: "startContainer")
   startContainerId Int       @unique
   endContainer     NodeModel @relation(fields: [endContainerId], references: [id], name: "endContainer")

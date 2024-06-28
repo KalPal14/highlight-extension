@@ -15,6 +15,6 @@ export interface IHighlightsRepository {
 	individualUpdateMany: (data: IndividualUpdateHighlightsDto) => Promise<THighlightDeepModel[]>;
 	findById: (id: number) => Promise<THighlightDeepModel | null>;
 	findAllByIds: (isd: number[]) => Promise<THighlightDeepModel[]>;
-	findAllByPageUrl: (pageId: number) => Promise<THighlightDeepModel[] | null>;
+	findAllByPageId: (pageId: number) => Promise<THighlightDeepModel[] | null>;
 	delete: (id: number) => Promise<HighlightModel>;
 }

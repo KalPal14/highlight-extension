@@ -37,7 +37,7 @@ export class PagesServise implements IPagesServise {
 
 		return {
 			...page,
-			highlights: await this.highlightsRepository.findAllByPageUrl(page.id),
+			highlights: await this.highlightsRepository.findAllByPageId(page.id),
 		};
 	}
 

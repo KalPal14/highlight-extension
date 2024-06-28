@@ -1,5 +1,6 @@
 export interface IHighlight {
 	pageId: number;
+	order: number;
 	startContainerId: number;
 	endContainerId: number;
 	startOffset: number;

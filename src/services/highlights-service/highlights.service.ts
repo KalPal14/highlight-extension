@@ -44,6 +44,8 @@ export class HighlightsService implements IHighlightsService {
 				user,
 			)) as PageModel;
 		}
+		const pageHighlights = await this.highlightsRepository.findAllByPageId(existingPage.id);
+
 		const startNode = await this.nodesService.createNode(startContainer);
 		const endNode = await this.nodesService.createNode(endContainer);
 
@@ -55,7 +57,10 @@ export class HighlightsService implements IHighlightsService {
 			endOffset,
 			text,
 			color,
-			note,
+			{
+				note,
+				pageHighlightsCount: pageHighlights?.length,
+			},
 		).getData();
 
 		return await this.highlightsRepository.create(newHighlight);

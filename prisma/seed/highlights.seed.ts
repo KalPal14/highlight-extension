@@ -11,6 +11,7 @@ export async function highlightsSeed(prisma: PrismaClient): Promise<void> {
 		update: {},
 		create: {
 			pageId: RIGHT_HIGHLIGHT.pageId,
+			order: RIGHT_HIGHLIGHT.order,
 			startContainerId: RIGHT_START_NODE.id,
 			endContainerId: RIGHT_END_NODE.id,
 			startOffset: RIGHT_HIGHLIGHT.startOffset,

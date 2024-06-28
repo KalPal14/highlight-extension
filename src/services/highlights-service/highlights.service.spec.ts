@@ -27,7 +27,7 @@ const highlightsRepositoryMock: IHighlightsRepository = {
 	individualUpdateMany: jest.fn(),
 	findById: jest.fn(),
 	findAllByIds: jest.fn(),
-	findAllByPageUrl: jest.fn(),
+	findAllByPageId: jest.fn(),
 	delete: jest.fn(),
 };
 const pagesRepositoryMock: IPagesRepository = {
