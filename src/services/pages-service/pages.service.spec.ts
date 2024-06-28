@@ -25,7 +25,7 @@ const highlightsRepositoryMock: IHighlightsRepository = {
 	individualUpdateMany: jest.fn(),
 	findById: jest.fn(),
 	findAllByIds: jest.fn(),
-	findAllByPageUrl: jest.fn(),
+	findAllByPageId: jest.fn(),
 	delete: jest.fn(),
 };
 
@@ -83,7 +83,7 @@ describe('Pages Servise', () => {
 
 	it('get page info - success', async () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(RIGHT_PAGE);
-		highlightsRepository.findAllByPageUrl = jest.fn().mockReturnValue([
+		highlightsRepository.findAllByPageId = jest.fn().mockReturnValue([
 			{
 				...RIGHT_HIGHLIGHT,
 				startContainer: RIGHT_START_NODE,
@@ -107,7 +107,7 @@ describe('Pages Servise', () => {
 
 	it('get page info - success: user does not have a page with this URL', async () => {
 		pagesRepository.findByUrl = jest.fn().mockReturnValue(null);
-		highlightsRepository.findAllByPageUrl = jest.fn().mockReturnValue(null);
+		highlightsRepository.findAllByPageId = jest.fn().mockReturnValue(null);
 
 		const result = await pagesServise.getPageInfo(WRONG_PAGE.url!, WRONG_PAGE.userId!);
 

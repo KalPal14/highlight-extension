@@ -70,7 +70,7 @@ export class HighlightsRepository implements IHighlightsRepository {
 		});
 	}
 
-	async findAllByPageUrl(pageId: number): Promise<THighlightDeepModel[] | null> {
+	async findAllByPageId(pageId: number): Promise<THighlightDeepModel[] | null> {
 		return await this.prismaService.client.highlightModel.findMany({
 			where: { pageId },
 			include: {

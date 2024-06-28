@@ -6,6 +6,7 @@ import { RIGHT_START_NODE, RIGHT_END_NODE, UPDATED_END_NODE } from './nodes';
 export const RIGHT_HIGHLIGHT: HighlightModel = {
 	id: 1,
 	pageId: RIGHT_PAGE.id,
+	order: 1,
 	startOffset: 66,
 	endOffset: 4,
 	startContainerId: RIGHT_START_NODE.id,
@@ -18,6 +19,7 @@ export const RIGHT_HIGHLIGHT: HighlightModel = {
 export const UPDATED_HIGHLIGHT: HighlightModel = {
 	id: 1,
 	pageId: RIGHT_HIGHLIGHT.pageId,
+	order: 2,
 	startOffset: 66,
 	endOffset: 5,
 	startContainerId: RIGHT_START_NODE.id,

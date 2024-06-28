@@ -23,6 +23,9 @@ export class UpdateHighlightDto {
 
 	@IsOptional()
 	@IsNumber()
+	order?: number;
+	@IsOptional()
+	@IsNumber()
 	startOffset?: number;
 	@IsOptional()
 	@IsNumber()
