@@ -24,6 +24,7 @@ class IsIndividualUpdateHighlightsItem implements ValidatorConstraintInterface {
 
 		const {
 			pageId,
+			order,
 			startContainerId,
 			endContainerId,
 			startOffset,
@@ -35,6 +36,7 @@ class IsIndividualUpdateHighlightsItem implements ValidatorConstraintInterface {
 		} = payload;
 		if (isNotEmptyObject(rest)) return false;
 		if (pageId && !isNumber(pageId)) return false;
+		if (order && !isNumber(order)) return false;
 		if (startContainerId && !isNumber(startContainerId)) return false;
 		if (endContainerId && !isNumber(endContainerId)) return false;
 		if (startOffset && !isNumber(startOffset)) return false;
