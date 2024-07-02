@@ -8,6 +8,12 @@ export const RIGHT_PAGE: PageModel = {
 	url: 'https://www.prisma.io/docs/orm/prisma-schema/data-model/relations',
 };
 
+export const UPDATED_PAGE: PageModel = {
+	id: 1,
+	userId: RIGHT_USER.id,
+	url: 'https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/one-to-one-relations',
+};
+
 export const WRONG_PAGE: Partial<PageModel> = {
 	id: 500,
 	userId: WRONG_USER.id,

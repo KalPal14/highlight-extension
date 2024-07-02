@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { BaseController } from '../base-controller/base.controller';
 
@@ -11,6 +11,8 @@ import { GetPageDto } from '@/dto/pages/get-page.dto';
 import { RouteGuard } from '@/middlewares/route-guard/route.guard';
 import { ValidateMiddleware } from '@/middlewares/validate.middleware';
 import { IPagesServise } from '@/services/pages-service/pages.service.interface';
+import { UpdatePageDto } from '@/dto/pages/update-page.dto';
+import { HTTPError } from '@/exceptions/http-error.class';
 
 @injectable()
 export class PagesController extends BaseController implements IPagesController {
@@ -29,6 +31,12 @@ export class PagesController extends BaseController implements IPagesController 
 				func: this.getPages,
 				middlewares: [new RouteGuard('user')],
 			},
+			{
+				path: PAGES_PATH.updatePage,
+				method: 'patch',
+				func: this.updatePage,
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdatePageDto)],
+			},
 		]);
 	}
 
@@ -45,6 +53,20 @@ export class PagesController extends BaseController implements IPagesController 
 
 	async getPages({ user }: Request, res: Response): Promise<void> {
 		const result = await this.pagesServise.getPagesInfo(user.id);
+
+		this.ok(res, result);
+	}
+
+	async updatePage(
+		{ params, body }: Request<{ id: string }, {}, UpdatePageDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.pagesServise.updatePage(Number(params.id), body);
+
+		if (result instanceof Error) {
+			return next(new HTTPError(422, result.message));
+		}
 
 		this.ok(res, result);
 	}
