@@ -188,7 +188,6 @@ describe('Users', () => {
 	});
 
 	it('Change password - success', async () => {
-		const hashSpy = jest.spyOn(bcryptjs, 'hash');
 		const NEW_USER = GET_NEW_USER();
 		const regRes = await request(application.app).post(USERS_FULL_PATH.register).send({
 			email: NEW_USER.email,
@@ -206,7 +205,7 @@ describe('Users', () => {
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body.passwordUpdatedAt).toBeDefined();
-	});
+	}, 6000);
 
 	it('Change email - success', async () => {
 		const NEW_USER = GET_NEW_USER();

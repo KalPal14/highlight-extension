@@ -6,7 +6,10 @@ import App from '@/app';
 import { USERS_FULL_PATH } from '@/common/constants/routes/users';
 import { RIGHT_USER } from '@/common/constants/spec/users';
 import { PAGES_FULL_PATH } from '@/common/constants/routes/pages';
-import { RIGHT_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
+import { RIGHT_PAGE, UPDATED_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
+import { HIGHLIGHTS_FULL_PATH } from '@/common/constants/routes/highlights';
+import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
+import { RIGHT_START_NODE, RIGHT_END_NODE } from '@/common/constants/spec/nodes';
 
 let application: App;
 let jwt: string;
@@ -22,6 +25,35 @@ beforeAll(async () => {
 });
 
 describe('Pages', () => {
+	it('update page - success', async () => {
+		const { id: _stid, ...START_NODE } = RIGHT_START_NODE;
+		const { id: _endid, ...END_NODE } = RIGHT_END_NODE;
+		const createdHighlightRes = await request(application.app)
+			.post(HIGHLIGHTS_FULL_PATH.create)
+			.send({
+				pageUrl: 'https://example.com/',
+				startContainer: START_NODE,
+				endContainer: END_NODE,
+				startOffset: RIGHT_HIGHLIGHT.startOffset,
+				endOffset: RIGHT_HIGHLIGHT.endOffset,
+				text: RIGHT_HIGHLIGHT.text,
+				color: RIGHT_HIGHLIGHT.color,
+			})
+			.set('Authorization', `Bearer ${jwt}`);
+		const pageId = createdHighlightRes.body.pageId;
+
+		const res = await request(application.app)
+			.patch(PAGES_FULL_PATH.updatePage.replace(':id', pageId))
+			.send({
+				url: UPDATED_PAGE.url,
+			})
+			.set('Authorization', `Bearer ${jwt}`);
+
+		expect(res.statusCode).toBe(200);
+		expect(res.body.id).toBe(pageId);
+		expect(res.body.url).toBe(UPDATED_PAGE.url);
+	});
+
 	it('get page info - success', async () => {
 		const res = await request(application.app)
 			.get(PAGES_FULL_PATH.getPage)

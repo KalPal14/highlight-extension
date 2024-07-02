@@ -32,11 +32,14 @@ const highlightsRepositoryMock: IHighlightsRepository = {
 };
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
+	update: jest.fn(),
 	findByUrl: jest.fn(),
+	findById: jest.fn(),
 	findAll: jest.fn(),
 };
 const pagesServiseMock: IPagesServise = {
 	createPage: jest.fn(),
+	updatePage: jest.fn(),
 	getPageInfo: jest.fn(),
 	getPagesInfo: jest.fn(),
 };
