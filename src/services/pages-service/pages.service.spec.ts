@@ -7,7 +7,7 @@ import { IPagesServise } from './pages.service.interface';
 
 import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
 import { RIGHT_START_NODE, RIGHT_END_NODE } from '@/common/constants/spec/nodes';
-import { RIGHT_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
+import { RIGHT_PAGE, UPDATED_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
 import { RIGHT_USER_JWT, RIGHT_USER } from '@/common/constants/spec/users';
 import TYPES from '@/common/constants/types.inversify';
 import { IPage } from '@/entities/page-entity/page.entity.interface';
@@ -16,7 +16,9 @@ import { IPagesRepository } from '@/repositories/pages-repository/pages.reposito
 
 const pagesRepositoryMock: IPagesRepository = {
 	create: jest.fn(),
+	update: jest.fn(),
 	findByUrl: jest.fn(),
+	findById: jest.fn(),
 	findAll: jest.fn(),
 };
 const highlightsRepositoryMock: IHighlightsRepository = {
@@ -77,6 +79,23 @@ describe('Pages Servise', () => {
 		);
 
 		const result = await pagesServise.createPage(RIGHT_PAGE.url, RIGHT_USER_JWT);
+
+		expect(result).toBeInstanceOf(Error);
+	});
+
+	it('update page - success', async () => {
+		pagesRepositoryMock.findById = jest.fn().mockReturnValue(RIGHT_PAGE);
+		const updateSpy = jest.spyOn(pagesRepositoryMock, 'update');
+
+		await pagesServise.updatePage(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
+
+		expect(updateSpy).toHaveBeenCalledWith(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
+	});
+
+	it('update page - wrong: no page with this ID', async () => {
+		pagesRepositoryMock.findById = jest.fn().mockReturnValue(null);
+
+		const result = await pagesServise.updatePage(WRONG_PAGE.id!, { url: UPDATED_PAGE.url });
 
 		expect(result).toBeInstanceOf(Error);
 	});

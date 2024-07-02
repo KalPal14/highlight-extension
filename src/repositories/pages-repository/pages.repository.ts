@@ -21,6 +21,15 @@ export class PagesRepository implements IPagesRepository {
 		});
 	}
 
+	async update(id: number, { url }: Pick<IPage, 'url'>): Promise<PageModel> {
+		return await this.prismaService.client.pageModel.update({
+			where: { id },
+			data: {
+				url,
+			},
+		});
+	}
+
 	async findByUrl(
 		url: string,
 		userId: number,
@@ -33,6 +42,14 @@ export class PagesRepository implements IPagesRepository {
 			},
 			include: {
 				highlights: includeHighlights,
+			},
+		});
+	}
+
+	async findById(id: number): Promise<PageModel | null> {
+		return await this.prismaService.client.pageModel.findFirst({
+			where: {
+				id,
 			},
 		});
 	}

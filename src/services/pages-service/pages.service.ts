@@ -10,6 +10,7 @@ import { IJwtPayload } from '@/common/types/jwt-payload.interface';
 import { Page } from '@/entities/page-entity/page.entity';
 import { IHighlightsRepository } from '@/repositories/highlights-repository/highlights.repository.interface';
 import { IPagesRepository } from '@/repositories/pages-repository/pages.repository.interface';
+import { UpdatePageDto } from '@/dto/pages/update-page.dto';
 
 @injectable()
 export class PagesServise implements IPagesServise {
@@ -26,6 +27,15 @@ export class PagesServise implements IPagesServise {
 
 		const newPage = new Page(id, pageUrl).getData();
 		return await this.pagesRepository.create(newPage);
+	}
+
+	async updatePage(id: number, { url }: UpdatePageDto): Promise<PageModel | Error> {
+		const existingPage = await this.pagesRepository.findById(id);
+		if (!existingPage) {
+			return Error('This page does not exist');
+		}
+
+		return await this.pagesRepository.update(id, { url });
 	}
 
 	async getPageInfo(url: string, userId: number): Promise<TPageAllInfo | null> {
