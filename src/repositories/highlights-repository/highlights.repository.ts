@@ -73,6 +73,7 @@ export class HighlightsRepository implements IHighlightsRepository {
 	async findAllByPageId(pageId: number): Promise<THighlightDeepModel[] | null> {
 		return await this.prismaService.client.highlightModel.findMany({
 			where: { pageId },
+			orderBy: { order: 'asc' },
 			include: {
 				startContainer: true,
 				endContainer: true,
