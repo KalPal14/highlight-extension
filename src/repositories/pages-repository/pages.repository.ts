@@ -59,6 +59,7 @@ export class PagesRepository implements IPagesRepository {
 			where: {
 				userId,
 			},
+			orderBy: { id: 'asc' },
 			include: {
 				highlights: includeHighlights,
 			},
