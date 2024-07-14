@@ -65,4 +65,10 @@ export class PagesRepository implements IPagesRepository {
 			},
 		});
 	}
+
+	async delete(id: number): Promise<PageModel> {
+		return await this.prismaService.client.pageModel.delete({
+			where: { id },
+		});
+	}
 }

@@ -29,13 +29,24 @@ export class PagesServise implements IPagesServise {
 		return await this.pagesRepository.create(newPage);
 	}
 
-	async updatePage(id: number, { url }: UpdatePageDto): Promise<PageModel | Error> {
-		const existingPage = await this.pagesRepository.findById(id);
+	async updatePage(
+		userId: number,
+		pageId: number,
+		{ url }: UpdatePageDto,
+	): Promise<PageModel | Error> {
+		const existingPage = await this.pagesRepository.findById(pageId);
 		if (!existingPage) {
 			return Error('This page does not exist');
 		}
 
-		return await this.pagesRepository.update(id, { url });
+		const pageWithSameUrl = await this.pagesRepository.findByUrl(url, userId, true);
+		if (pageWithSameUrl) {
+			const ids = pageWithSameUrl.highlights?.map(({ id }) => id) ?? [];
+			await this.highlightsRepository.updateMany(ids, { pageId });
+			await this.pagesRepository.delete(pageWithSameUrl.id);
+		}
+
+		return await this.pagesRepository.update(pageId, { url });
 	}
 
 	async getPageInfo(url: string, userId: number): Promise<TPageAllInfo | null> {

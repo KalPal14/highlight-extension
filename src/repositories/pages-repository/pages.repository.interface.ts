@@ -14,4 +14,5 @@ export interface IPagesRepository {
 	) => Promise<TPageDeepModel | null>;
 	findById: (id: number) => Promise<PageModel | null>;
 	findAll: (userId: number, includeHighlights?: boolean) => Promise<TPageDeepModel[]>;
+	delete: (id: number) => Promise<PageModel>;
 }

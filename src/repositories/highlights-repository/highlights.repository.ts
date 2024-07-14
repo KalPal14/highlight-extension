@@ -9,6 +9,7 @@ import { UpdateHighlightDto } from '@/dto/highlights/update-highlight.dto';
 import { IHighlight } from '@/entities/highlight-entity/highlight.entity.interface';
 import { IPrismaService } from '@/utils/services/prisma-service/prisma.service.interface';
 import { IndividualUpdateHighlightsDto } from '@/dto/highlights/individual-update-highlights.dto';
+import { IBatchPayload } from '@/common/types/batch-payload.interface';
 
 @injectable()
 export class HighlightsRepository implements IHighlightsRepository {
@@ -35,6 +36,13 @@ export class HighlightsRepository implements IHighlightsRepository {
 				startContainer: true,
 				endContainer: true,
 			},
+		});
+	}
+
+	async updateMany(ids: number[], payload: Partial<HighlightModel>): Promise<IBatchPayload> {
+		return await this.prismaService.client.highlightModel.updateMany({
+			where: { id: { in: ids } },
+			data: payload,
 		});
 	}
 
