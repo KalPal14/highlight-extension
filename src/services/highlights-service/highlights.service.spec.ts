@@ -24,6 +24,7 @@ import { IPagesRepository } from '@/repositories/pages-repository/pages.reposito
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
+	updateMany: jest.fn(),
 	individualUpdateMany: jest.fn(),
 	findById: jest.fn(),
 	findAllByIds: jest.fn(),
@@ -36,6 +37,7 @@ const pagesRepositoryMock: IPagesRepository = {
 	findByUrl: jest.fn(),
 	findById: jest.fn(),
 	findAll: jest.fn(),
+	delete: jest.fn(),
 };
 const pagesServiseMock: IPagesServise = {
 	createPage: jest.fn(),
