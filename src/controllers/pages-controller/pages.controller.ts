@@ -58,11 +58,11 @@ export class PagesController extends BaseController implements IPagesController 
 	}
 
 	async updatePage(
-		{ params, body }: Request<{ id: string }, {}, UpdatePageDto>,
+		{ user, params, body }: Request<{ id: string }, {}, UpdatePageDto>,
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		const result = await this.pagesServise.updatePage(Number(params.id), body);
+		const result = await this.pagesServise.updatePage(user.id, Number(params.id), body);
 
 		if (result instanceof Error) {
 			return next(new HTTPError(422, result.message));

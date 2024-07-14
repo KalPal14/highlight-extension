@@ -5,7 +5,7 @@ import { PageModel } from '@prisma/client';
 import { PagesServise } from './pages.service';
 import { IPagesServise } from './pages.service.interface';
 
-import { RIGHT_HIGHLIGHT } from '@/common/constants/spec/highlights';
+import { RIGHT_HIGHLIGHT, UPDATED_HIGHLIGHT } from '@/common/constants/spec/highlights';
 import { RIGHT_START_NODE, RIGHT_END_NODE } from '@/common/constants/spec/nodes';
 import { RIGHT_PAGE, UPDATED_PAGE, WRONG_PAGE } from '@/common/constants/spec/pages';
 import { RIGHT_USER_JWT, RIGHT_USER } from '@/common/constants/spec/users';
@@ -20,10 +20,12 @@ const pagesRepositoryMock: IPagesRepository = {
 	findByUrl: jest.fn(),
 	findById: jest.fn(),
 	findAll: jest.fn(),
+	delete: jest.fn(),
 };
 const highlightsRepositoryMock: IHighlightsRepository = {
 	create: jest.fn(),
 	update: jest.fn(),
+	updateMany: jest.fn(),
 	individualUpdateMany: jest.fn(),
 	findById: jest.fn(),
 	findAllByIds: jest.fn(),
@@ -85,17 +87,41 @@ describe('Pages Servise', () => {
 
 	it('update page - success', async () => {
 		pagesRepositoryMock.findById = jest.fn().mockReturnValue(RIGHT_PAGE);
+		pagesRepositoryMock.findByUrl = jest.fn().mockReturnValue(null);
 		const updateSpy = jest.spyOn(pagesRepositoryMock, 'update');
 
-		await pagesServise.updatePage(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
+		await pagesServise.updatePage(RIGHT_USER.id, RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
 
+		expect(updateSpy).toHaveBeenCalledWith(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
+	});
+
+	it('update page - success: merging pages', async () => {
+		pagesRepositoryMock.findById = jest.fn().mockReturnValue(RIGHT_PAGE);
+		pagesRepositoryMock.findByUrl = jest.fn().mockReturnValue({
+			...UPDATED_PAGE,
+			id: UPDATED_PAGE.id + 1,
+			highlights: [RIGHT_HIGHLIGHT, { ...RIGHT_HIGHLIGHT, id: RIGHT_HIGHLIGHT.id + 1 }],
+		});
+		const updateManyHighlightsSpy = jest.spyOn(highlightsRepositoryMock, 'updateMany');
+		const deleteSpy = jest.spyOn(pagesRepositoryMock, 'delete');
+		const updateSpy = jest.spyOn(pagesRepositoryMock, 'update');
+
+		await pagesServise.updatePage(RIGHT_USER.id, RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
+
+		expect(updateManyHighlightsSpy).toHaveBeenCalledWith(
+			[RIGHT_HIGHLIGHT.id, RIGHT_HIGHLIGHT.id + 1],
+			{ pageId: RIGHT_PAGE.id },
+		);
 		expect(updateSpy).toHaveBeenCalledWith(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
 	});
 
 	it('update page - wrong: no page with this ID', async () => {
 		pagesRepositoryMock.findById = jest.fn().mockReturnValue(null);
+		pagesRepositoryMock.findByUrl = jest.fn().mockReturnValue(null);
 
-		const result = await pagesServise.updatePage(WRONG_PAGE.id!, { url: UPDATED_PAGE.url });
+		const result = await pagesServise.updatePage(RIGHT_PAGE.id, WRONG_PAGE.id!, {
+			url: UPDATED_PAGE.url,
+		});
 
 		expect(result).toBeInstanceOf(Error);
 	});
