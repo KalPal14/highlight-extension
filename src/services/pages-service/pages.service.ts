@@ -38,6 +38,9 @@ export class PagesServise implements IPagesServise {
 		if (!existingPage) {
 			return Error('This page does not exist');
 		}
+		if (existingPage.url === url) {
+			return Error('The new URL cannot be the same as the current one');
+		}
 
 		const pageWithSameUrl = await this.pagesRepository.findByUrl(url, userId, true);
 		if (pageWithSameUrl) {
