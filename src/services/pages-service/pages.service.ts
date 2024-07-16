@@ -34,19 +34,32 @@ export class PagesServise implements IPagesServise {
 		pageId: number,
 		{ url }: UpdatePageDto,
 	): Promise<PageModel | Error> {
-		const existingPage = await this.pagesRepository.findById(pageId);
-		if (!existingPage) {
+		const currentPage = await this.pagesRepository.findById(pageId);
+		if (!currentPage) {
 			return Error('This page does not exist');
 		}
-		if (existingPage.url === url) {
+		if (currentPage.url === url) {
 			return Error('The new URL cannot be the same as the current one');
 		}
 
-		const pageWithSameUrl = await this.pagesRepository.findByUrl(url, userId, true);
-		if (pageWithSameUrl) {
-			const ids = pageWithSameUrl.highlights?.map(({ id }) => id) ?? [];
-			await this.highlightsRepository.updateMany(ids, { pageId });
-			await this.pagesRepository.delete(pageWithSameUrl.id);
+		const pageToMerge = await this.pagesRepository.findByUrl(url, userId, true);
+		if (pageToMerge) {
+			const pageToMergeHighlightsMaxOrder = pageToMerge.highlights
+				? pageToMerge.highlights[pageToMerge.highlights.length - 1].order
+				: 0;
+			const currentPageHighlights = (await this.highlightsRepository.findAllByPageId(pageId)) ?? [];
+			const individualUpdateCurrentHighligtsData =
+				currentPageHighlights.map(({ id, order }) => ({
+					id,
+					payload: { order: order + pageToMergeHighlightsMaxOrder },
+				})) ?? [];
+			await this.highlightsRepository.individualUpdateMany({
+				highlights: individualUpdateCurrentHighligtsData,
+			});
+
+			const mergeHighlightsIds = pageToMerge.highlights?.map(({ id }) => id) ?? [];
+			await this.highlightsRepository.updateMany(mergeHighlightsIds, { pageId });
+			await this.pagesRepository.delete(pageToMerge.id);
 		}
 
 		return await this.pagesRepository.update(pageId, { url });

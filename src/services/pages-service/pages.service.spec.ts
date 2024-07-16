@@ -96,23 +96,35 @@ describe('Pages Servise', () => {
 	});
 
 	it('update page - success: merging pages', async () => {
+		const pageToMergeId = UPDATED_PAGE.id + 1;
 		pagesRepositoryMock.findById = jest.fn().mockReturnValue(RIGHT_PAGE);
 		pagesRepositoryMock.findByUrl = jest.fn().mockReturnValue({
 			...UPDATED_PAGE,
-			id: UPDATED_PAGE.id + 1,
-			highlights: [RIGHT_HIGHLIGHT, { ...RIGHT_HIGHLIGHT, id: RIGHT_HIGHLIGHT.id + 1 }],
+			id: pageToMergeId,
+			highlights: [RIGHT_HIGHLIGHT, { ...RIGHT_HIGHLIGHT, id: RIGHT_HIGHLIGHT.id + 1, order: 2 }],
 		});
+		highlightsRepositoryMock.findAllByPageId = jest
+			.fn()
+			.mockReturnValue([{ ...RIGHT_HIGHLIGHT, id: RIGHT_HIGHLIGHT.id + 2 }]);
+		const individualUpdateManyHighlightsSpy = jest.spyOn(
+			highlightsRepositoryMock,
+			'individualUpdateMany',
+		);
 		const updateManyHighlightsSpy = jest.spyOn(highlightsRepositoryMock, 'updateMany');
-		const deleteSpy = jest.spyOn(pagesRepositoryMock, 'delete');
-		const updateSpy = jest.spyOn(pagesRepositoryMock, 'update');
+		const deletePageSpy = jest.spyOn(pagesRepositoryMock, 'delete');
+		const updatePageSpy = jest.spyOn(pagesRepositoryMock, 'update');
 
 		await pagesServise.updatePage(RIGHT_USER.id, RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
 
+		expect(individualUpdateManyHighlightsSpy).toHaveBeenCalledWith({
+			highlights: [{ id: RIGHT_HIGHLIGHT.id + 2, payload: { order: 3 } }],
+		});
 		expect(updateManyHighlightsSpy).toHaveBeenCalledWith(
 			[RIGHT_HIGHLIGHT.id, RIGHT_HIGHLIGHT.id + 1],
 			{ pageId: RIGHT_PAGE.id },
 		);
-		expect(updateSpy).toHaveBeenCalledWith(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
+		expect(deletePageSpy).toHaveBeenCalledWith(pageToMergeId);
+		expect(updatePageSpy).toHaveBeenCalledWith(RIGHT_PAGE.id, { url: UPDATED_PAGE.url });
 	});
 
 	it('update page - wrong: no page with this ID', async () => {
