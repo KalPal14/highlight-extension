@@ -14,10 +14,44 @@
 		"plugin:import/warnings"
 	],
 	"rules": {
-		"@typescript-eslint/ban-types": "off",
-		"@typescript-eslint/no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"error",
+			{
+				"args": "none",
+				"varsIgnorePattern": "^_"
+			}
+		],
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/explicit-function-return-type": "warn",
+		"prefer-const": "error",
+		"no-console": "warn",
+		"comma-dangle": [
+			"error",
+			"always-multiline"
+		],
+		"@typescript-eslint/naming-convention": [
+			"warn",
+			{
+				"selector": "interface",
+				"format": [
+					"PascalCase"
+				],
+				"custom": {
+					"regex": "^I[A-Z]",
+					"match": true
+				}
+			},
+			{
+				"selector": "typeAlias",
+				"format": [
+					"PascalCase"
+				],
+				"custom": {
+					"regex": "^T[A-Z]",
+					"match": true
+				}
+			}
+		],
 		"import/order": [
 			"error",
 			{
@@ -31,7 +65,18 @@
 					"object",
 					"type"
 				],
-				"newlines-between": "always"
+				"newlines-between": "always",
+				"pathGroups": [
+					{
+						"pattern": "~/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "~libs/**",
+						"group": "internal",
+						"position": "before"
+					}
+				]
 			}
 		],
 		"import/no-unresolved": "off",
@@ -41,10 +86,12 @@
 				"singleQuote": true,
 				"useTabs": true,
 				"semi": true,
-				"trailingComma": "all",
+				"trailingComma": "es5",
 				"bracketSpacing": true,
 				"printWidth": 100,
-				"endOfLine": "auto"
+				"endOfLine": "auto",
+				"arrowParens": "always",
+				"singleAttributePerLine": true
 			}
 		]
 	}
