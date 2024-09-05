@@ -1,0 +1,38 @@
+{
+	"manifest_version": 3,
+	"name": "Note-taker",
+	"description": "Extension for convenient note-taking of web pages",
+	"version": "1.0.0",
+	"action": {
+		"default_popup": "popup.html",
+		"default_title": "Note-taker"
+	},
+	"sidebar_action": {
+		"default_title": "Note-taker sidebar",
+		"default_panel": "sidepanel.html"
+	},
+	"side_panel": {
+		"default_title": "Note-taker sidebar",
+		"default_path": "sidepanel.html"
+	},
+	"permissions": ["tabs", "activeTab", "storage", "sidePanel"],
+	"icons": {
+		"16": "./icons/note.png",
+		"48": "./icons/note.png",
+		"128": "./icons/note.png"
+	},
+	"options_page": "options.html",
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["highlights.js"]
+		}
+	],
+	"host_permissions": ["<all_urls>"],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "note-taker@example.com",
+			"strict_min_version": "109.0"
+		}
+	}
+}
