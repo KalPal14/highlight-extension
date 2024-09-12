@@ -8,6 +8,7 @@ const config: Config.InitialOptions = {
 	moduleNameMapper: {
 		'^~/iam/prisma/(.*)$': '<rootDir>/prisma/$1',
 		'^~/iam/(.*)$': '<rootDir>/src/$1',
+		'^~libs/express-core/config$': '<rootDir>/../../libs/express-core/src/config',
 		'^~libs/express-core': '<rootDir>/../../libs/express-core/src',
 		'^~libs/common': '<rootDir>/../../libs/common/src',
 		'^~libs/dto/(.*)$': '<rootDir>/../../libs/dto/src/$1',

@@ -1,12 +1,10 @@
 import 'reflect-metadata';
-import { Server, createServer } from 'https';
-import { readFileSync } from 'fs';
+import { Server, createServer } from 'http';
 
 import cors from 'cors';
 import express, { Express } from 'express';
 import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 
 import { ILogger, IConfigService, IExceptionFilter, JwtAuthMiddleware } from '~libs/express-core';
 
@@ -39,18 +37,16 @@ export default class App {
 
 	useMiddleware(): void {
 		const jwtSecret = this.configService.get('JWT_KEY');
-		const cookieSecret = this.configService.get('COOCKIE_KEY');
-		const clientUrl = this.configService.get('CLIENT_URL');
+		const clientUrls = this.configService.get('H_EXT_FE_URLS').split(', ');
 
 		this.app.use(
 			cors({
-				origin: clientUrl,
+				origin: clientUrls,
 				methods: ['GET', 'PATCH', 'POST', 'DELETE'],
 				allowedHeaders: ['Content-Type', 'Authorization'],
 			})
 		);
 		this.app.use(bodyParser.json());
-		this.app.use(cookieParser(cookieSecret));
 
 		const jwtAuthMiddleware = new JwtAuthMiddleware(jwtSecret);
 		this.app.use(jwtAuthMiddleware.execute.bind(jwtAuthMiddleware));
@@ -66,21 +62,16 @@ export default class App {
 		this.app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
 	}
 
-	async init(mode: 'test' | 'dev' | 'prod', port?: number): Promise<void> {
+	async init(): Promise<void> {
 		this.useMiddleware();
 		this.useRoutes();
 		this.useExceptions();
 		await this.prismaService.connect();
 
-		if (mode == 'test') return;
+		if (process.env.NODE_ENV === 'test') return;
 
-		this.server = createServer(
-			{
-				key: readFileSync('host-key.pem'),
-				cert: readFileSync('host.pem'),
-			},
-			this.app
-		);
+		const port = this.configService.get('H_EXT_PORT');
+		this.server = createServer(this.app);
 		this.server.listen(port, () => {
 			this.logger.log(`The server is running on port ${port}`);
 		});
