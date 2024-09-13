@@ -5,7 +5,9 @@ export * from './highlights/individual-update-highlights.dto';
 export * from './highlights/update-highlight.dto';
 
 // pages
+export * from './pages/create-page.dto';
 export * from './pages/get-page.dto';
+export * from './pages/get-pages.dto';
 export * from './pages/update-page.dto';
 
 // workspace
