@@ -11,13 +11,7 @@ import {
 	BaseController,
 } from '~libs/express-core';
 import { hideEmail, IJwtPayload, TEmail } from '~libs/common';
-import {
-	ChangeEmailDto,
-	ChangePasswordDto,
-	ChangeUsernameDto,
-	UsersLoginDto,
-	UsersRegisterDto,
-} from '~libs/dto/iam';
+import { UpdateUserDto, UsersLoginDto, UsersRegisterDto } from '~libs/dto/iam';
 
 import { UserModel } from '~/iam/prisma/client';
 import { USERS_ENDPOINTS } from '~/iam/common/constants/routes/users';
@@ -60,22 +54,10 @@ export class UsersController extends BaseController implements IUsersController 
 				middlewares: [new RouteGuard('user')],
 			},
 			{
-				path: USERS_ENDPOINTS.changePassword,
+				path: USERS_ENDPOINTS.update,
 				method: 'patch',
-				func: this.changePassword,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangePasswordDto)],
-			},
-			{
-				path: USERS_ENDPOINTS.changeEmail,
-				method: 'patch',
-				func: this.changeEmail,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangeEmailDto)],
-			},
-			{
-				path: USERS_ENDPOINTS.changeUsername,
-				method: 'patch',
-				func: this.changeUsername,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(ChangeUsernameDto)],
+				func: this.update,
+				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateUserDto)],
 			},
 		]);
 	}
@@ -120,35 +102,21 @@ export class UsersController extends BaseController implements IUsersController 
 		}
 	};
 
-	changePassword: TController<null, ChangePasswordDto> = async ({ user, body }, res) => {
-		const result = await this.usersService.changePassword(user, body);
-		this.ok(res, {
-			passwordUpdatedAt: result.passwordUpdatedAt,
-		});
-	};
+	update: TController<null, UpdateUserDto> = async ({ user, body }, res) => {
+		const result = await this.usersService.update(user, body);
 
-	changeEmail: TController<null, ChangeEmailDto> = async ({ user, body }, res) => {
-		const result = await this.usersService.changeEmail(user, body);
-		this.generateJwt(result)
-			.then((jwt) => {
-				this.ok(res, {
-					jwt,
-					email: result.email,
-				});
-			})
-			.catch((err) => this.send(res, 500, { err }));
-	};
-
-	changeUsername: TController<null, ChangeUsernameDto> = async ({ user, body }, res) => {
-		const result = await this.usersService.changeUsername(user, body);
-		this.generateJwt(result)
-			.then((jwt) => {
-				this.ok(res, {
-					jwt,
-					username: result.username,
-				});
-			})
-			.catch((err) => this.send(res, 500, { err }));
+		if (body.username || body.email) {
+			this.generateJwt(result)
+				.then((jwt) => {
+					this.ok(res, {
+						jwt,
+						email: result.email,
+					});
+				})
+				.catch((err) => this.send(res, 500, { err }));
+		} else {
+			this.ok(res, this.layoutUserInfoRes(result));
+		}
 	};
 
 	private layoutUserInfoRes(user: UserModel): IUserInfo {
