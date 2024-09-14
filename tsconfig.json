@@ -58,7 +58,10 @@
          ],
          "~libs/react-core/*": [
             "libs/react-core/src/*"
-         ]
+         ],
+         "~libs/ro/*": [
+            "libs/ro/src/*"
+         ],
       }
    },
    "exclude": [
