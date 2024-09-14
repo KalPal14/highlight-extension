@@ -6,8 +6,8 @@ import {
 	ChangeEmailDto,
 	ChangePasswordDto,
 	ChangeUsernameDto,
-	UsersLoginDto,
-	UsersRegisterDto,
+	LoginDto,
+	RegistrationDto,
 } from '~libs/dto/iam';
 import { hideEmail, TEmail } from '~libs/common/index';
 
@@ -33,7 +33,7 @@ describe('Users', () => {
 	describe('registration', () => {
 		describe('pass email address of existing user', () => {
 			it('return error message', async () => {
-				const DTO: UsersRegisterDto = {
+				const DTO: RegistrationDto = {
 					email: USER.email,
 					username: USER.username,
 					password: USER.password,
@@ -48,7 +48,7 @@ describe('Users', () => {
 
 		describe('pass invalid username format', () => {
 			it('return dto validation error message', async () => {
-				const DTO: UsersRegisterDto = {
+				const DTO: RegistrationDto = {
 					email: USER.email,
 					username: 'username+',
 					password: USER.password,
@@ -73,7 +73,7 @@ describe('Users', () => {
 	describe('login', () => {
 		describe('pass correct email and password', () => {
 			it('return jwt token and user info', async () => {
-				const LOGIN_DTO: UsersLoginDto = {
+				const LOGIN_DTO: LoginDto = {
 					userIdentifier: USER.email,
 					password: USER.password,
 				};
@@ -111,7 +111,7 @@ describe('Users', () => {
 		describe('pass email of unexisting user', () => {
 			it('return error message', async () => {
 				const NEW_USER = CREATE_USER_DTO();
-				const LOGGIN_DTO: UsersLoginDto = {
+				const LOGGIN_DTO: LoginDto = {
 					userIdentifier: NEW_USER.email,
 					password: NEW_USER.password,
 				};
@@ -126,7 +126,7 @@ describe('Users', () => {
 		describe('pass username of unexisting user', () => {
 			it('return error message', async () => {
 				const NEW_USER = CREATE_USER_DTO();
-				const LOGIN_DTO: UsersLoginDto = {
+				const LOGIN_DTO: LoginDto = {
 					userIdentifier: NEW_USER.username,
 					password: NEW_USER.password,
 				};
@@ -140,7 +140,7 @@ describe('Users', () => {
 
 		describe('pass wrong password', () => {
 			it('return error message', async () => {
-				const LOGIN_DTO: UsersLoginDto = {
+				const LOGIN_DTO: LoginDto = {
 					userIdentifier: USER.email,
 					password: USER.password + '123',
 				};

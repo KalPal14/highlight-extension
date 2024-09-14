@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import { IJwtPayload } from '~libs/common';
 import { HTTPError } from '~libs/express-core';
-import { UpdateUserDto, UsersLoginDto, UsersRegisterDto } from '~libs/dto/iam';
+import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
 
 import { UserModel } from '~/iam/prisma/client';
 import { TYPES } from '~/iam/common/constants/types';
@@ -28,7 +28,7 @@ export class UsersService implements IUsersService {
 		return user;
 	}
 
-	async create(registerDto: UsersRegisterDto): Promise<UserModel> {
+	async create(registerDto: RegistrationDto): Promise<UserModel> {
 		let existingUser = await this.usersRepository.findBy({ email: registerDto.email });
 		if (existingUser) {
 			throw new HTTPError(422, 'user with this email already exists');
@@ -42,7 +42,7 @@ export class UsersService implements IUsersService {
 		return this.usersRepository.create(newUser);
 	}
 
-	async validate({ userIdentifier, password }: UsersLoginDto): Promise<UserModel> {
+	async validate({ userIdentifier, password }: LoginDto): Promise<UserModel> {
 		let existingUser = null;
 		if (userIdentifier.includes('@')) {
 			existingUser = await this.usersRepository.findBy({ email: userIdentifier });
