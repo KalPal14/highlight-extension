@@ -4,11 +4,10 @@ import request from 'supertest';
 import { configEnv } from '~libs/express-core/config';
 import { GetPageDto, UpdatePageDto } from '~libs/dto/highlight-extension';
 import { random } from '~libs/common/index';
+import { HIGHLIGHTS_URLS, PAGES_URLS } from '~libs/routes/highlight-extension';
+import { USERS_URLS } from '~libs/routes/iam';
 
 import { bootstrap } from '~/highlight-extension/main';
-import { USERS_URLS } from '~/iam/common/constants/routes/users';
-import { PAGES_URLS } from '~/highlight-extension/common/constants/routes/pages';
-import { HIGHLIGHTS_URLS } from '~/highlight-extension/common/constants/routes/highlights';
 import { bootstrap as iamBootstrap } from '~/iam/main';
 import { LOGIN_USER_DTO } from '~/iam/common/constants/spec/users';
 import {

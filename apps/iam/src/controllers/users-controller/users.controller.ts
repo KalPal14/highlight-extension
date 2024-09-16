@@ -12,9 +12,9 @@ import {
 } from '~libs/express-core';
 import { hideEmail, IJwtPayload, TEmail } from '~libs/common';
 import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
+import { USERS_ENDPOINTS } from '~libs/routes/iam';
 
 import { UserModel } from '~/iam/prisma/client';
-import { USERS_ENDPOINTS } from '~/iam/common/constants/routes/users';
 import { TYPES } from '~/iam/common/constants/types';
 import { IUsersService } from '~/iam/services/users-service/users.service.interface';
 

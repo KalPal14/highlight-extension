@@ -3,15 +3,14 @@ import request from 'supertest';
 
 import { configEnv } from '~libs/express-core/config';
 import { UpdateWorkspaceDto } from '~libs/dto/highlight-extension';
+import { WORKSPACES_URLS } from '~libs/routes/highlight-extension';
+import { USERS_URLS } from '~libs/routes/iam';
 
-import { bootstrap } from '~/highlight-extension/main';
-import { WORKSPACES_URLS } from '~/highlight-extension/common/constants/routes/workspaces';
 import {
 	CREATE_WORKSPACE_DTO,
 	WORKSPACE_MODEL,
 } from '~/highlight-extension/common/constants/spec/workspaces';
-import { USERS_URLS } from '~/iam/common/constants/routes/users';
-import { bootstrap as iamBootstrap } from '~/iam/main';
+import { bootstrap, bootstrap as iamBootstrap } from '~/iam/main';
 import { LOGIN_USER_DTO } from '~/iam/common/constants/spec/users';
 
 import type { Express } from 'express';
