@@ -10,7 +10,7 @@ import {
 	TController,
 	BaseController,
 } from '~libs/express-core';
-import { hideEmail, IJwtPayload, TEmail } from '~libs/common';
+import { hideEmailUsername, IJwtPayload } from '~libs/common';
 import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
 import { USERS_ENDPOINTS } from '~libs/routes/iam';
 
@@ -122,7 +122,7 @@ export class UsersController extends BaseController implements IUsersController 
 	private layoutUserInfoRes(user: UserModel): IUserInfo {
 		return {
 			id: user.id,
-			email: hideEmail(user.email as TEmail),
+			email: hideEmailUsername(user.email),
 			username: user.username,
 			passwordUpdatedAt: user.passwordUpdatedAt,
 		};

@@ -3,7 +3,7 @@ import request from 'supertest';
 
 import { configEnv } from '~libs/express-core/config';
 import { LoginDto, RegistrationDto, UpdateUserDto } from '~libs/dto/iam';
-import { hideEmail, TEmail } from '~libs/common';
+import { hideEmailUsername } from '~libs/common';
 import { USERS_URLS } from '~libs/routes/iam';
 
 import { bootstrap } from '~/iam/main';
@@ -33,7 +33,7 @@ describe('Users', () => {
 				expect(res.body).toEqual(
 					expect.objectContaining({
 						username: DTO.username,
-						email: hideEmail(DTO.email as TEmail),
+						email: hideEmailUsername(DTO.email),
 					})
 				);
 			});
@@ -92,7 +92,7 @@ describe('Users', () => {
 				expect(jwt).toBeDefined();
 				expect(userInfo).toEqual({
 					id: USER_MODEL.id,
-					email: hideEmail(USER_MODEL.email as TEmail),
+					email: hideEmailUsername(USER_MODEL.email),
 					username: USER_MODEL.username,
 					passwordUpdatedAt: USER_MODEL.passwordUpdatedAt,
 				});
@@ -108,7 +108,7 @@ describe('Users', () => {
 				expect(jwt).toBeDefined();
 				expect(userInfo).toEqual({
 					id: USER_MODEL.id,
-					email: hideEmail(USER_MODEL.email as TEmail),
+					email: hideEmailUsername(USER_MODEL.email),
 					username: USER_MODEL.username,
 					passwordUpdatedAt: USER_MODEL.passwordUpdatedAt,
 				});
