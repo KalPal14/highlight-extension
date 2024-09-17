@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { HTTPError } from '../http-error.class';
+import { HttpException, HttpValidationException } from '~libs/common';
 
 export interface IExceptionFilter {
-	catch: (err: Error | HTTPError, req: Request, res: Response, next: NextFunction) => void;
+	catch: (
+		err: Error | HttpException | HttpValidationException,
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) => void;
 }

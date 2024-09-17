@@ -2,9 +2,8 @@ import 'reflect-metadata';
 import { Container } from 'inversify';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-import { JWT_PAYLOAD } from '~libs/common';
+import { JWT_PAYLOAD, HttpException } from '~libs/common';
 import { LoginDto, UpdateUserDto } from '~libs/dto/iam';
-import { HTTPError } from '~libs/express-core';
 
 import { TYPES } from '~/iam/common/constants/types';
 import { IUsersRepository } from '~/iam/repositories/users-repository/users.repository.interface';
@@ -77,8 +76,8 @@ describe('UsersService', () => {
 				try {
 					await usersService.create(CREATE_DTO);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('user with this email already exists');
+					expect(err).toBeInstanceOf(HttpException);
+					expect(err.message).toBe('User with this username already exists');
 				}
 			});
 		});
@@ -114,7 +113,7 @@ describe('UsersService', () => {
 					try {
 						await usersService.validate(LOGIN_DTO);
 					} catch (err: any) {
-						expect(err).toBeInstanceOf(HTTPError);
+						expect(err).toBeInstanceOf(HttpException);
 						expect(err.message).toBe('There is no user with this email');
 					}
 				});
@@ -147,7 +146,7 @@ describe('UsersService', () => {
 					try {
 						await usersService.validate(LOGIN_USER_DTO);
 					} catch (err: any) {
-						expect(err).toBeInstanceOf(HTTPError);
+						expect(err).toBeInstanceOf(HttpException);
 						expect(err.message).toBe('There is no user with this username');
 					}
 				});
@@ -166,7 +165,7 @@ describe('UsersService', () => {
 				try {
 					await usersService.validate(LOGIN_USER_DTO);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe('Incorrect password');
 				}
 			});
@@ -228,7 +227,7 @@ describe('UsersService', () => {
 					try {
 						await usersService.update(JWT_PAYLOAD, dto);
 					} catch (err: any) {
-						expect(err).toBeInstanceOf(HTTPError);
+						expect(err).toBeInstanceOf(HttpException);
 						expect(err.message).toBe('Incorrect password');
 					}
 				});
@@ -261,7 +260,7 @@ describe('UsersService', () => {
 					try {
 						await usersService.update(JWT_PAYLOAD, dto);
 					} catch (err: any) {
-						expect(err).toBeInstanceOf(HTTPError);
+						expect(err).toBeInstanceOf(HttpException);
 						expect(err.message).toBe('User with this email already exists');
 					}
 				});
@@ -294,7 +293,7 @@ describe('UsersService', () => {
 					try {
 						await usersService.update(JWT_PAYLOAD, CHANGE_USERNAME_DTO);
 					} catch (err: any) {
-						expect(err).toBeInstanceOf(HTTPError);
+						expect(err).toBeInstanceOf(HttpException);
 						expect(err.message).toBe('User with this username already exists');
 					}
 				});

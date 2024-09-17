@@ -1,8 +1,7 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 
-import { IJwtPayload } from '~libs/common';
-import { HTTPError } from '~libs/express-core';
+import { IJwtPayload, HttpException } from '~libs/common';
 import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
 
 import { UserModel } from '~/iam/prisma/client';
@@ -22,7 +21,7 @@ export class UsersService implements IUsersService {
 	async get(id: number): Promise<UserModel> {
 		const user = await this.usersRepository.findBy({ id });
 		if (!user) {
-			throw new HTTPError(422, `user #${id} not found`);
+			throw new HttpException(400, `user #${id} not found`);
 		}
 
 		return user;
@@ -31,11 +30,11 @@ export class UsersService implements IUsersService {
 	async create(registerDto: RegistrationDto): Promise<UserModel> {
 		let existingUser = await this.usersRepository.findBy({ email: registerDto.email });
 		if (existingUser) {
-			throw new HTTPError(422, 'user with this email already exists');
+			throw new HttpException(400, 'User with this username already exists');
 		}
 		existingUser = await this.usersRepository.findBy({ username: registerDto.username });
 		if (existingUser) {
-			throw new HTTPError(422, 'user with this username already exists');
+			throw new HttpException(400, 'user with this username already exists');
 		}
 
 		const newUser = await this.userFactory.create(registerDto);
@@ -47,19 +46,19 @@ export class UsersService implements IUsersService {
 		if (userIdentifier.includes('@')) {
 			existingUser = await this.usersRepository.findBy({ email: userIdentifier });
 			if (!existingUser) {
-				throw new HTTPError(422, 'There is no user with this email');
+				throw new HttpException(400, 'There is no user with this email');
 			}
 		} else {
 			existingUser = await this.usersRepository.findBy({ username: userIdentifier });
 			if (!existingUser) {
-				throw new HTTPError(422, 'There is no user with this username');
+				throw new HttpException(400, 'There is no user with this username');
 			}
 		}
 
 		const user = this.userFactory.createWithHashPassword(existingUser);
 		const isPasswordTrue = await user.comperePassword(password);
 		if (!isPasswordTrue) {
-			throw new HTTPError(422, 'Incorrect password');
+			throw new HttpException(400, 'Incorrect password');
 		}
 		return existingUser;
 	}
@@ -84,7 +83,7 @@ export class UsersService implements IUsersService {
 			});
 		} catch (err: any) {
 			if (err.code === 'P2002') {
-				throw new HTTPError(400, `User with this ${err.meta.target} already exists`);
+				throw new HttpException(400, `User with this ${err.meta.target} already exists`);
 			}
 			throw new Error();
 		}

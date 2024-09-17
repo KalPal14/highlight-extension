@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 
 import { NodeModel } from '~/highlight-extension/prisma/client';
 import { TYPES } from '~/highlight-extension/common/constants/types';
@@ -16,7 +16,7 @@ export class NodesService implements INodesService {
 	async get(id: number): Promise<NodeModel> {
 		const page = await this.nodesRepository.findBy({ id });
 		if (!page) {
-			throw new HTTPError(402, `node #${id} not found`);
+			throw new HttpException(402, `node #${id} not found`);
 		}
 
 		return page;

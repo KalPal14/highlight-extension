@@ -1,15 +1,14 @@
 // constants
 export * from './constants/types';
 
-// exeptions
-export * from './exceptions/http-error.class';
+// exceptions
 export * from './exceptions/exception-filter/exception.filter.interface';
 export * from './exceptions/exception-filter/exception.filter';
 
 // middlewares
 export * from './middlewares/common/types/middleware.interface';
 export * from './middlewares/jwt-auth.middleware';
-export * from './middlewares/validate.middleware';
+export * from './middlewares/validate/validate.middleware';
 export * from './middlewares/route-guard/route.guard';
 export * from './middlewares/route-guard/types/user.role.type';
 

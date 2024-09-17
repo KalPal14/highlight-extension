@@ -51,7 +51,7 @@ export default class App {
 		this.app.use(bodyParser.json());
 
 		const jwtAuthMiddleware = new JwtAuthMiddleware(jwtSecret);
-		this.app.use(jwtAuthMiddleware.execute.bind(jwtAuthMiddleware));
+		this.app.use(jwtAuthMiddleware.use.bind(jwtAuthMiddleware));
 	}
 
 	useRoutes(): void {

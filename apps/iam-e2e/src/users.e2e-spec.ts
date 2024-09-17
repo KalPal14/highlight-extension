@@ -49,7 +49,8 @@ describe('Users', () => {
 
 				const res = await request(app).post(USERS_URLS.register).send(DTO);
 
-				expect(res.statusCode).toBe(422);
+				expect(res.statusCode).toBe(400);
+				expect(res.body).toEqual({ err: 'User with this username already exists' });
 			});
 		});
 
@@ -63,16 +64,17 @@ describe('Users', () => {
 
 				const res = await request(app).post(USERS_URLS.register).send(DTO);
 
-				expect(res.statusCode).toBe(422);
-				expect(res.body).toEqual([
-					{
-						property: 'username',
-						value: DTO.username,
-						errors: [
-							'The username field must contain only uppercase and lowercase letters, as well as the symbols - and _.',
-						],
-					},
-				]);
+				expect(res.statusCode).toBe(400);
+				expect(res.body).toEqual({
+					err: [
+						{
+							property: 'username',
+							errors: [
+								'The username field must contain only uppercase and lowercase letters, as well as the symbols - and _.',
+							],
+						},
+					],
+				});
 			});
 		});
 	});
@@ -125,7 +127,7 @@ describe('Users', () => {
 
 				const res = await request(app).post(USERS_URLS.login).send(LOGGIN_DTO);
 
-				expect(res.statusCode).toBe(422);
+				expect(res.statusCode).toBe(400);
 				expect(res.body).toEqual({ err: 'There is no user with this email' });
 			});
 		});
@@ -140,7 +142,7 @@ describe('Users', () => {
 
 				const res = await request(app).post(USERS_URLS.login).send(LOGIN_DTO);
 
-				expect(res.statusCode).toBe(422);
+				expect(res.statusCode).toBe(400);
 				expect(res.body).toEqual({ err: 'There is no user with this username' });
 			});
 		});
@@ -154,7 +156,7 @@ describe('Users', () => {
 
 				const res = await request(app).post(USERS_URLS.login).send(LOGIN_DTO);
 
-				expect(res.statusCode).toBe(422);
+				expect(res.statusCode).toBe(400);
 				expect(res.body).toEqual({ err: 'Incorrect password' });
 			});
 		});
@@ -168,7 +170,7 @@ describe('Users', () => {
 					.set('Authorization', `Bearer ${prevLoginRes.body.jwt}`)
 					.send(LOGIN_USER_DTO);
 
-				expect(res.statusCode).toBe(401);
+				expect(res.statusCode).toBe(403);
 			});
 		});
 	});
@@ -191,7 +193,7 @@ describe('Users', () => {
 			it('return unauthorised error', async () => {
 				const res = await request(app).post(USERS_URLS.logout);
 
-				expect(res.statusCode).toBe(401);
+				expect(res.statusCode).toBe(403);
 			});
 		});
 	});
@@ -249,7 +251,7 @@ describe('Users', () => {
 						.set('Authorization', `Bearer ${newUserRes.body.jwt}`)
 						.send(dto);
 
-					expect(res.statusCode).toBe(422);
+					expect(res.statusCode).toBe(400);
 					expect(res.body).toEqual({ err: 'Incorrect password' });
 				});
 			});

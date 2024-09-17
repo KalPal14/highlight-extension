@@ -40,7 +40,7 @@ describe('Highlits', () => {
 			it('return unauthorized error', async () => {
 				const res = await request(app).post(HIGHLIGHTS_URLS.create).send(CREATE_HIGHLIGHT_DTO);
 
-				expect(res.statusCode).toBe(401);
+				expect(res.statusCode).toBe(403);
 			});
 		});
 
@@ -51,14 +51,15 @@ describe('Highlits', () => {
 					.set('Authorization', `Bearer ${jwt}`)
 					.send({ ...CREATE_HIGHLIGHT_DTO, color: 'color' });
 
-				expect(res.statusCode).toBe(422);
-				expect(res.body).toEqual([
-					{
-						property: 'color',
-						value: 'color',
-						errors: ['The color field must contain a valid RGB or HEX color'],
-					},
-				]);
+				expect(res.statusCode).toBe(400);
+				expect(res.body).toEqual({
+					err: [
+						{
+							property: 'color',
+							errors: ['The color field must contain a valid RGB or HEX color'],
+						},
+					],
+				});
 			});
 		});
 
@@ -104,7 +105,8 @@ describe('Highlits', () => {
 					.get(HIGHLIGHTS_URLS.getMany)
 					.set('Authorization', `Bearer ${jwt}`);
 
-				expect(res.statusCode).toBe(422);
+				expect(res.statusCode).toBe(400);
+				expect(res.body.err.length).toBeDefined();
 			});
 		});
 
@@ -289,7 +291,7 @@ describe('Highlits', () => {
 						],
 					});
 
-				expect(res.statusCode).toBe(422);
+				expect(res.statusCode).toBe(400);
 			});
 		});
 	});

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 
 import { NodeModel } from '~/highlight-extension/prisma/client';
 import { TYPES } from '~/highlight-extension/common/constants/types';
@@ -65,7 +65,7 @@ describe('NodesService', () => {
 				try {
 					await nodesService.update(END_NODE_MODEL.id, UPDATE_PAYLOAD);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`node #${END_NODE_MODEL.id} not found`);
 				}
 			});
@@ -91,7 +91,7 @@ describe('NodesService', () => {
 				try {
 					await nodesService.delete(END_NODE_MODEL.id);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`node #${END_NODE_MODEL.id} not found`);
 				}
 			});

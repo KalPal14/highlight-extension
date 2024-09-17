@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 import { UpdateWorkspaceDto } from '~libs/dto/highlight-extension';
 
 import { TYPES } from '~/highlight-extension/common/constants/types';
@@ -65,7 +65,7 @@ describe('UsersService', () => {
 				try {
 					await workspacesService.get(WORKSPACE_MODEL.id);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`workspace #${WORKSPACE_MODEL.id} not found`);
 				}
 			});
@@ -128,7 +128,7 @@ describe('UsersService', () => {
 				try {
 					await workspacesService.update(WORKSPACE_MODEL.id, DTO);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`workspace #${WORKSPACE_MODEL.id} not found`);
 					expect(updateSpy).not.toHaveBeenCalled();
 				}
@@ -156,7 +156,7 @@ describe('UsersService', () => {
 				try {
 					await workspacesService.delete(WORKSPACE_MODEL.id);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`workspace #${WORKSPACE_MODEL.id} not found`);
 					expect(deleteSpy).not.toHaveBeenCalled();
 				}

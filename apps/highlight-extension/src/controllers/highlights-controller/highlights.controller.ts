@@ -1,12 +1,7 @@
 import { inject, injectable } from 'inversify';
 
-import {
-	HTTPError,
-	RouteGuard,
-	ValidateMiddleware,
-	TController,
-	BaseController,
-} from '~libs/express-core';
+import { HttpException } from '~libs/common';
+import { RouteGuard, ValidateMiddleware, TController, BaseController } from '~libs/express-core';
 import {
 	GetHighlightsDto,
 	CreateHighlightDto,
@@ -73,7 +68,7 @@ export class HighlightsController extends BaseController implements IHighlightsC
 
 	update: TController<{ id: string }, UpdateHighlightDto> = async ({ params, body }, res, next) => {
 		if (!Object.keys(body).length) {
-			return next(new HTTPError(422, 'Highlight change data is empty'));
+			return next(new HttpException(400, 'Highlight change data is empty'));
 		}
 
 		const result = await this.highlightsService.update(+params.id, body);
