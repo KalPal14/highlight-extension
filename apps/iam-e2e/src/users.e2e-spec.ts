@@ -274,7 +274,7 @@ describe('Users', () => {
 
 					expect(res.statusCode).toBe(200);
 					expect(res.body.jwt).not.toBe(newUser.jwt);
-					expect(res.body.email).toBe(dto.email);
+					expect(res.body.email).toBe(hideEmailUsername(dto.email ?? ''));
 				});
 			});
 		});

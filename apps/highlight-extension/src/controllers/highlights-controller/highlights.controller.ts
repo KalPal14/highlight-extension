@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 
 import { HttpException } from '~libs/common';
-import { RouteGuard, ValidateMiddleware, TController, BaseController } from '~libs/express-core';
+import { ValidateMiddleware, TController, BaseController } from '~libs/express-core';
 import {
 	GetHighlightsDto,
 	CreateHighlightDto,
@@ -24,34 +24,30 @@ export class HighlightsController extends BaseController implements IHighlightsC
 				path: HIGHLIGHTS_ENDPOINTS.getMany,
 				method: 'get',
 				func: this.getMany,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(GetHighlightsDto, 'query')],
+				middlewares: [new ValidateMiddleware(GetHighlightsDto, 'query')],
 			},
 			{
 				path: HIGHLIGHTS_ENDPOINTS.create,
 				method: 'post',
 				func: this.create,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(CreateHighlightDto)],
+				middlewares: [new ValidateMiddleware(CreateHighlightDto)],
 			},
 			{
 				path: HIGHLIGHTS_ENDPOINTS.update,
 				method: 'patch',
 				func: this.update,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateHighlightDto)],
+				middlewares: [new ValidateMiddleware(UpdateHighlightDto)],
 			},
 			{
 				path: HIGHLIGHTS_ENDPOINTS.individualUpdateMany,
 				method: 'patch',
 				func: this.individualUpdateMany,
-				middlewares: [
-					new RouteGuard('user'),
-					new ValidateMiddleware(IndividualUpdateHighlightsDto),
-				],
+				middlewares: [new ValidateMiddleware(IndividualUpdateHighlightsDto)],
 			},
 			{
 				path: HIGHLIGHTS_ENDPOINTS.delete,
 				method: 'delete',
 				func: this.delete,
-				middlewares: [new RouteGuard('user')],
 			},
 		]);
 	}
