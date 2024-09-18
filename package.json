@@ -29,6 +29,7 @@
 		"libs/*"
 	],
 	"dependencies": {
-		"dotenv-cli": "^7.4.4"
+		"dotenv-cli": "^7.4.4",
+		"uuid": "^11.1.0"
 	}
 }

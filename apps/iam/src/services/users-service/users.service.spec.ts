@@ -1,23 +1,16 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import bcryptjs from 'bcryptjs';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-import { HTTPError, IConfigService } from '~libs/express-core';
-import { ChangeEmailDto, ChangePasswordDto, ChangeUsernameDto, LoginDto } from '~libs/dto/iam';
-import { JWT_PAYLOAD } from '~libs/common/index';
+import { JWT_PAYLOAD } from '~libs/common';
+import { LoginDto, UpdateUserDto } from '~libs/dto/iam';
+import { HTTPError } from '~libs/express-core';
 
-import { UserModel } from '~/iam/prisma/client';
 import { TYPES } from '~/iam/common/constants/types';
 import { IUsersRepository } from '~/iam/repositories/users-repository/users.repository.interface';
 import { User } from '~/iam/domain/user/user';
 import { IUserFactory } from '~/iam/domain/user/factory/user-factory.interface';
-import { UserFactory } from '~/iam/domain/user/factory/user.factory';
-import {
-	CREATE_USER_DTO,
-	LOGIN_USER_DTO,
-	USER,
-	USER_MODEL,
-} from '~/iam/common/constants/spec/users';
+import { CREATE_USER_DTO, LOGIN_USER_DTO, USER, USER_MODEL } from '~/iam/common/stubs/users';
 
 import { IUsersService } from './users.service.interface';
 import { UsersService } from './users.service';
@@ -28,21 +21,30 @@ const usersRepositoryMock: IUsersRepository = {
 	update: jest.fn(),
 };
 
-const configServiceMock: IConfigService = {
-	get: jest.fn(),
+const userFactoryMock: IUserFactory = {
+	create: jest.fn(),
+	createWithHashPassword: jest.fn(),
 };
+
+jest.mock('~libs/common', () => ({
+	...jest.requireActual('~libs/common'),
+	api: {
+		post: jest.fn(),
+	},
+}));
 
 const container = new Container();
 let usersService: IUsersService;
+let userFactory: IUserFactory;
 let usersRepository: IUsersRepository;
 
 beforeAll(() => {
 	container.bind<IUsersService>(TYPES.UsersService).to(UsersService);
-	container.bind<IUserFactory>(TYPES.UserFactory).to(UserFactory);
+	container.bind<IUserFactory>(TYPES.UserFactory).toConstantValue(userFactoryMock);
 	container.bind<IUsersRepository>(TYPES.UsersRepository).toConstantValue(usersRepositoryMock);
-	container.bind<IConfigService>(TYPES.ConfigService).toConstantValue(configServiceMock);
 
 	usersService = container.get<IUsersService>(TYPES.UsersService);
+	userFactory = container.get<IUserFactory>(TYPES.UserFactory);
 	usersRepository = container.get<IUsersRepository>(TYPES.UsersRepository);
 });
 
@@ -54,30 +56,21 @@ describe('UsersService', () => {
 	describe('registartion', () => {
 		const CREATE_DTO = CREATE_USER_DTO();
 
-		describe('return created user', () => {
-			it('registration - success', async () => {
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(null);
-				usersRepositoryMock.create = jest.fn().mockImplementation(
-					(user: User): UserModel => ({
-						id: USER_MODEL.id,
-						...user,
-					})
-				);
-				const hashSpy = jest.spyOn(bcryptjs, 'hash');
+		describe('pass new email and username', () => {
+			it('return created user', async () => {
+				userFactory.create = jest.fn().mockReturnValue({ ...USER, password: USER_MODEL.password });
+				usersRepository.create = jest.fn().mockImplementation((data) => ({
+					...data,
+					id: USER_MODEL.id,
+				}));
 
 				const result = await usersService.create(CREATE_DTO);
 
-				const hashSpyResult = await hashSpy.mock.results[0].value;
-				expect(result).toEqual({
-					...USER_MODEL,
-					password: hashSpyResult,
-					email: CREATE_DTO.email,
-					username: CREATE_DTO.username,
-				});
+				expect(result).toEqual(USER_MODEL);
 			});
 		});
 
-		describe('pass existing email', () => {
+		describe('pass existing email or username', () => {
 			it('throw error', async () => {
 				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
 
@@ -86,22 +79,6 @@ describe('UsersService', () => {
 				} catch (err: any) {
 					expect(err).toBeInstanceOf(HTTPError);
 					expect(err.message).toBe('user with this email already exists');
-				}
-			});
-		});
-
-		describe('pass existing username', () => {
-			it('throw error', async () => {
-				usersRepositoryMock.findBy = jest
-					.fn()
-					.mockReturnValueOnce(null)
-					.mockReturnValueOnce(USER_MODEL);
-
-				try {
-					await usersService.create(CREATE_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('user with this username already exists');
 				}
 			});
 		});
@@ -117,11 +94,15 @@ describe('UsersService', () => {
 			describe('pass correct email and password', () => {
 				it('return user', async () => {
 					usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
-					const findBySpy = jest.spyOn(usersRepository, 'findBy');
+					userFactory.createWithHashPassword = jest.fn().mockReturnValue({
+						...USER,
+						password: USER_MODEL.password,
+						comperePassword: jest.fn().mockReturnValue(true),
+					});
 
 					const result = await usersService.validate(LOGIN_DTO);
 
-					expect(findBySpy).toHaveBeenCalledWith({ email: LOGIN_DTO.userIdentifier });
+					expect(usersRepository.findBy).toHaveBeenCalledWith({ email: LOGIN_DTO.userIdentifier });
 					expect(result).toBe(USER_MODEL);
 				});
 			});
@@ -144,11 +125,17 @@ describe('UsersService', () => {
 			describe('pass correct username and password', () => {
 				it('validate user - success: by username', async () => {
 					usersRepository.findBy = jest.fn().mockReturnValue(USER_MODEL);
-					const findBySpy = jest.spyOn(usersRepository, 'findBy');
+					userFactory.createWithHashPassword = jest.fn().mockReturnValue({
+						...USER,
+						password: USER_MODEL.password,
+						comperePassword: jest.fn().mockReturnValue(true),
+					});
 
 					const result = await usersService.validate(LOGIN_USER_DTO);
 
-					expect(findBySpy).toHaveBeenCalledWith({ username: LOGIN_USER_DTO.userIdentifier });
+					expect(usersRepository.findBy).toHaveBeenCalledWith({
+						username: LOGIN_USER_DTO.userIdentifier,
+					});
 					expect(result).toBe(USER_MODEL);
 				});
 			});
@@ -170,6 +157,11 @@ describe('UsersService', () => {
 		describe('pass incorect password', () => {
 			it('throw error', async () => {
 				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
+				userFactory.createWithHashPassword = jest.fn().mockReturnValue({
+					...USER,
+					password: USER_MODEL.password,
+					comperePassword: jest.fn().mockReturnValue(false),
+				});
 
 				try {
 					await usersService.validate(LOGIN_USER_DTO);
@@ -181,176 +173,131 @@ describe('UsersService', () => {
 		});
 	});
 
-	describe('change password', () => {
-		describe('pass correct current and new passwords', () => {
-			it('return updated user', async () => {
-				const CHANGE_PASSWORD_DTO: ChangePasswordDto = {
-					newPassword: '123123123',
-					password: USER.password,
-				};
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
-				usersRepository.update = jest.fn().mockImplementation(
-					(id: number, payload: Partial<User>): UserModel => ({
+	describe('update', () => {
+		beforeEach(() => {
+			usersRepository.update = jest
+				.fn()
+				.mockImplementation((id: number, payload: Partial<User>) => {
+					const fileredPayload = Object.fromEntries(
+						Object.entries(payload).filter((entry) => entry[1])
+					);
+					return {
 						...USER_MODEL,
-						id,
-						...payload,
-					})
-				);
-				const hashSpy = jest.spyOn(bcryptjs, 'hash');
-				const userRepoUpdateSpy = jest.spyOn(usersRepository, 'update');
+						...fileredPayload,
+					};
+				});
+		});
 
-				const result = await usersService.changePassword(JWT_PAYLOAD, CHANGE_PASSWORD_DTO);
+		describe('change password', () => {
+			const dto: UpdateUserDto = {
+				password: {
+					newPassword: '123123123',
+					currentPassword: USER.password,
+				},
+			};
 
-				const hashSpyResult = await hashSpy.mock.results[1].value;
-				const { passwordUpdatedAt } = userRepoUpdateSpy.mock.calls[0][1];
-				expect(result).toEqual({
-					...USER_MODEL,
-					password: hashSpyResult,
-					passwordUpdatedAt: passwordUpdatedAt,
+			describe('pass correct current and new passwords', () => {
+				it('return updated user', async () => {
+					usersRepository.findBy = jest.fn().mockReturnValue(USER_MODEL);
+					userFactory.createWithHashPassword = jest.fn().mockReturnValue({
+						...USER,
+						password: USER_MODEL.password,
+						comperePassword: jest.fn().mockReturnValue(true),
+					});
+
+					userFactory.create = jest
+						.fn()
+						.mockResolvedValue({ ...USER_MODEL, password: dto.password?.newPassword });
+
+					const result = await usersService.update(JWT_PAYLOAD, dto);
+
+					expect(result.password).toBe(dto.password?.newPassword);
+					expect(result.passwordUpdatedAt).not.toBe(null);
+				});
+			});
+
+			describe('pass incorrect current password', () => {
+				it('throw error', async () => {
+					usersRepository.findBy = jest.fn().mockReturnValue(USER_MODEL);
+					userFactory.createWithHashPassword = jest.fn().mockReturnValue({
+						...USER,
+						password: USER_MODEL.password,
+						comperePassword: jest.fn().mockReturnValue(false),
+					});
+
+					try {
+						await usersService.update(JWT_PAYLOAD, dto);
+					} catch (err: any) {
+						expect(err).toBeInstanceOf(HTTPError);
+						expect(err.message).toBe('Incorrect password');
+					}
 				});
 			});
 		});
 
-		describe('pass new password the same as current', () => {
-			it('throw error', async () => {
-				const CHANGE_PASSWORD_DTO: ChangePasswordDto = {
-					password: USER.password,
-					newPassword: USER.password,
-				};
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
+		describe('change email', () => {
+			const dto: UpdateUserDto = {
+				email: 'updated@test.com',
+			};
 
-				try {
-					await usersService.changePassword(JWT_PAYLOAD, CHANGE_PASSWORD_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('new password cannot be the same as the old one');
-				}
+			describe('pass correct email', () => {
+				it('return updated user', async () => {
+					const result = await usersService.update(JWT_PAYLOAD, dto);
+
+					expect(result).toEqual({ ...USER_MODEL, email: dto.email });
+				});
+			});
+
+			describe('pass an existing email', () => {
+				it('throw error', async () => {
+					usersRepository.update = jest.fn().mockImplementation(() => {
+						throw new PrismaClientKnownRequestError('', {
+							clientVersion: '0',
+							code: 'P2002',
+							meta: { target: ['email'] },
+						});
+					});
+
+					try {
+						await usersService.update(JWT_PAYLOAD, dto);
+					} catch (err: any) {
+						expect(err).toBeInstanceOf(HTTPError);
+						expect(err.message).toBe('User with this email already exists');
+					}
+				});
 			});
 		});
 
-		describe('pass incorrect current password', () => {
-			it('throw error', async () => {
-				const CHANGE_PASSWORD_DTO: ChangePasswordDto = {
-					password: 'wrong password',
-					newPassword: '123123123',
-				};
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
-				usersRepository.update = jest.fn().mockImplementation(
-					(id: number, payload: Partial<User>): UserModel => ({
-						...USER_MODEL,
-						id,
-						...payload,
-					})
-				);
+		describe('change username', () => {
+			const CHANGE_USERNAME_DTO: UpdateUserDto = {
+				username: 'new_name-new_life',
+			};
 
-				try {
-					await usersService.changePassword(JWT_PAYLOAD, CHANGE_PASSWORD_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('Incorrect password');
-				}
+			describe('pass correct current and new usernames', () => {
+				it('return updated user', async () => {
+					const result = await usersService.update(JWT_PAYLOAD, CHANGE_USERNAME_DTO);
+
+					expect(result).toEqual({ ...USER_MODEL, username: CHANGE_USERNAME_DTO.username });
+				});
 			});
-		});
-	});
 
-	describe('change email', () => {
-		const CHANGE_EMAIL_DTO: ChangeEmailDto = {
-			newEmail: 'new@gmail.com',
-		};
+			describe('pass an existing new username', () => {
+				it('throw error', async () => {
+					usersRepository.update = jest.fn().mockImplementation(() => {
+						throw new PrismaClientKnownRequestError('', {
+							clientVersion: '0',
+							code: 'P2002',
+							meta: { target: ['username'] },
+						});
+					});
 
-		describe('pass correct current and new emails', () => {
-			it('return updated user', async () => {
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(null);
-				usersRepository.update = jest.fn().mockImplementation(
-					(id: number, payload: Partial<User>): UserModel => ({
-						...USER_MODEL,
-						id,
-						...payload,
-					})
-				);
-
-				const result = await usersService.changeEmail(JWT_PAYLOAD, CHANGE_EMAIL_DTO);
-
-				expect(result).toEqual({ ...USER_MODEL, email: CHANGE_EMAIL_DTO.newEmail });
-			});
-		});
-
-		describe('pass new email the same as current', () => {
-			it('throw error', async () => {
-				const CHANGE_EMAIL_DTO: ChangeEmailDto = {
-					newEmail: JWT_PAYLOAD.email,
-				};
-
-				try {
-					await usersService.changeEmail(JWT_PAYLOAD, CHANGE_EMAIL_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('new email cannot be the same as the old one');
-				}
-			});
-		});
-
-		describe('pass an existing new email', () => {
-			it('throw error', async () => {
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
-
-				try {
-					await usersService.changeEmail(JWT_PAYLOAD, CHANGE_EMAIL_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('account with this email already exists');
-				}
-			});
-		});
-	});
-
-	describe('change username', () => {
-		const CHANGE_USERNAME_DTO: ChangeUsernameDto = {
-			newUsername: 'new_name-new_life',
-		};
-
-		describe('pass correct current and new usernames', () => {
-			it('return updated user', async () => {
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(null);
-				usersRepository.update = jest.fn().mockImplementation(
-					(id: number, payload: Partial<User>): UserModel => ({
-						...USER_MODEL,
-						id,
-						...payload,
-					})
-				);
-
-				const result = await usersService.changeUsername(JWT_PAYLOAD, CHANGE_USERNAME_DTO);
-
-				expect(result).toEqual({ ...USER_MODEL, username: CHANGE_USERNAME_DTO.newUsername });
-			});
-		});
-
-		describe('pass new username the same as current', () => {
-			it('throw error', async () => {
-				const CHANGE_USERNAME_DTO: ChangeUsernameDto = {
-					newUsername: JWT_PAYLOAD.username,
-				};
-
-				try {
-					await usersService.changeUsername(JWT_PAYLOAD, CHANGE_USERNAME_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('new username cannot be the same as the old one');
-				}
-			});
-		});
-
-		describe('pass an existing new username', () => {
-			it('throw error', async () => {
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
-
-				try {
-					await usersService.changeUsername(JWT_PAYLOAD, CHANGE_USERNAME_DTO);
-				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
-					expect(err.message).toBe('account with this username already exists');
-				}
+					try {
+						await usersService.update(JWT_PAYLOAD, CHANGE_USERNAME_DTO);
+					} catch (err: any) {
+						expect(err).toBeInstanceOf(HTTPError);
+						expect(err.message).toBe('User with this username already exists');
+					}
+				});
 			});
 		});
 	});
