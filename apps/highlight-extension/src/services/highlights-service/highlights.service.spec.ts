@@ -11,19 +11,19 @@ import { IPagesRepository } from '~/highlight-extension/repositories/pages-repos
 import { Highlight } from '~/highlight-extension/domain/highlight/highlight';
 import { IHighlightFactory } from '~/highlight-extension/domain/highlight/factory/highlight-factory.interface';
 import { HighlightFactory } from '~/highlight-extension/domain/highlight/factory/highlight.factory';
+import { IHighlightDeepModel } from '~/highlight-extension/repositories/highlights-repository/types/highlight-deep-model.interface';
 import {
 	HIGHLIGHT_MODEL,
 	CREATE_HIGHLIGHT_DTO,
 	HIGHLIGHT_DEEP_MODEL,
-} from '~/highlight-extension/common/constants/spec/highlights';
+} from '~/highlight-extension/common/stubs/highlights';
 import {
 	START_NODE_MODEL,
 	END_NODE_MODEL,
 	START_NODE,
 	END_NODE,
-} from '~/highlight-extension/common/constants/spec/nodes';
-import { CREATE_PAGE_DTO, PAGE_MODEL } from '~/highlight-extension/common/constants/spec/pages';
-import { IHighlightDeepModel } from '~/highlight-extension/repositories/highlights-repository/types/highlight-deep-model.interface';
+} from '~/highlight-extension/common/stubs/nodes';
+import { PAGE_MODEL, CREATE_PAGE_DTO } from '~/highlight-extension/common/stubs/pages';
 
 import { IPagesServise } from '../pages-service/pages.service.interface';
 import { INodesService } from '../nodes-service/nodes.service.interface';

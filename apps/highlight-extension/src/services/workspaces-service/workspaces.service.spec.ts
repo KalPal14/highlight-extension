@@ -10,10 +10,10 @@ import { IWorkspaceFactory } from '~/highlight-extension/domain/workspace/factor
 import { WorkspaceFactory } from '~/highlight-extension/domain/workspace/factory/workspace.factory';
 import { WorkspaceModel } from '~/highlight-extension/prisma/client';
 import {
-	CREATE_WORKSPACE_DTO,
-	WORKSPACE,
 	WORKSPACE_MODEL,
-} from '~/highlight-extension/common/constants/spec/workspaces';
+	WORKSPACE,
+	CREATE_WORKSPACE_DTO,
+} from '~/highlight-extension/common/stubs/workspaces';
 
 import { IWorkspacesService } from './workspaces.service.interface';
 import { WorkspacesService } from './workspaces.service';

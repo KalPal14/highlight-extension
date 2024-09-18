@@ -11,19 +11,15 @@ import { IPagesRepository } from '~/highlight-extension/repositories/pages-repos
 import { Page } from '~/highlight-extension/domain/page/page';
 import { IPageFactory } from '~/highlight-extension/domain/page/factory/page-factory.interface';
 import { PageFactory } from '~/highlight-extension/domain/page/factory/page.factory';
-import { WORKSPACE_MODEL } from '~/highlight-extension/common/constants/spec/workspaces';
 import {
-	CREATE_PAGE_DTO,
-	PAGE,
-	PAGE_MODEL,
-} from '~/highlight-extension/common/constants/spec/pages';
-import {
-	HIGHLIGHT_DEEP_MODEL,
 	HIGHLIGHT_MODEL,
-} from '~/highlight-extension/common/constants/spec/highlights';
+	HIGHLIGHT_DEEP_MODEL,
+} from '~/highlight-extension/common/stubs/highlights';
+import { PAGE_MODEL, CREATE_PAGE_DTO, PAGE } from '~/highlight-extension/common/stubs/pages';
+import { WORKSPACE_MODEL } from '~/highlight-extension/common/stubs/workspaces';
 
-import { IPagesServise } from './pages.service.interface';
 import { PagesServise } from './pages.service';
+import { IPagesServise } from './pages.service.interface';
 
 const highlightsRepositoryMock: IHighlightsRepository = {
 	findBy: jest.fn(),
