@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { JwtPayload, VerifyErrors, verify } from 'jsonwebtoken';
 
 import { IJwtPayload } from '~libs/common';
-
-import { IMiddleware } from './common/types/middleware.interface';
+import { IMiddleware } from '~libs/express-core';
 
 export class JwtAuthMiddleware implements IMiddleware {
 	constructor(private secret: string) {}
