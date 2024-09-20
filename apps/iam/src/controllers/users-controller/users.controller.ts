@@ -1,15 +1,14 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { sign } from 'jsonwebtoken';
 
 import {
 	RoleGuard,
 	ValidateMiddleware,
-	IConfigService,
+	IJwtService,
 	TController,
 	BaseController,
 } from '~libs/express-core';
-import { hideEmailUsername, HttpException, IJwtPayload } from '~libs/common';
+import { hideEmailUsername, HttpException } from '~libs/common';
 import { LoginDto, RegistrationDto, UpdateUserDto } from '~libs/dto/iam';
 import { USERS_ENDPOINTS } from '~libs/routes/iam';
 
@@ -23,7 +22,7 @@ import { IUsersController } from './users.controller.interface';
 export class UsersController extends BaseController implements IUsersController {
 	constructor(
 		@inject(TYPES.UsersService) private usersService: IUsersService,
-		@inject(TYPES.ConfigService) private configService: IConfigService
+		@inject(TYPES.JwtService) private jwtService: IJwtService
 	) {
 		super();
 		this.bindRoutes([
@@ -65,7 +64,8 @@ export class UsersController extends BaseController implements IUsersController 
 
 	login: TController<null, LoginDto> = async ({ body }, res) => {
 		const result = await this.usersService.validate(body);
-		this.generateJwt(result)
+		this.jwtService
+			.generate(result)
 			.then((jwt) => {
 				this.ok(res, {
 					jwt,
@@ -77,11 +77,13 @@ export class UsersController extends BaseController implements IUsersController 
 
 	register: TController<null, RegistrationDto> = async ({ body }, res) => {
 		const result = await this.usersService.create(body);
-		this.generateJwt(result)
+		this.jwtService
+			.generate(result)
 			.then((jwt) => {
 				this.created(res, {
+					...result,
 					jwt,
-					...this.layoutUserInfoRes(result),
+					user: this.layoutUserInfoRes(result),
 				});
 			})
 			.catch((err) => this.send(res, 500, { err }));
@@ -102,7 +104,8 @@ export class UsersController extends BaseController implements IUsersController 
 		const result = await this.usersService.update(user, body);
 
 		if (body.username || body.email) {
-			this.generateJwt(result)
+			this.jwtService
+				.generate(result)
 				.then((jwt) => {
 					this.ok(res, {
 						jwt,
@@ -121,26 +124,5 @@ export class UsersController extends BaseController implements IUsersController 
 			...userInfo,
 			email: hideEmailUsername(user.email),
 		};
-	}
-
-	private async generateJwt({ id, email, username }: IJwtPayload): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const jwtKey = this.configService.get('JWT_KEY');
-
-			sign(
-				{ id, email, username },
-				jwtKey,
-				{
-					algorithm: 'HS256',
-				},
-				(err, token) => {
-					if (err) {
-						reject(err.message);
-					} else {
-						resolve(token as string);
-					}
-				}
-			);
-		});
 	}
 }

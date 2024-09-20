@@ -1,26 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import { JwtPayload, VerifyErrors, verify } from 'jsonwebtoken';
+import { inject, injectable } from 'inversify';
 
-import { IJwtPayload } from '~libs/common';
-import { IMiddleware } from '~libs/express-core';
+import { EXPRESS_CORE_TYPES } from '~libs/express-core/common/constants/types';
+import { IJwtService } from '~libs/express-core/services/jwt-service/jwt.service.interface';
 
-export class JwtAuthMiddleware implements IMiddleware {
-	constructor(private secret: string) {}
+import { BaseJwtAuthMiddleware } from './base-jwt-auth.middleware';
 
-	use(req: Request, res: Response, next: NextFunction): void {
-		if (!req.headers.authorization) return next();
-		const jwt = req.headers.authorization.split(' ')[1];
-		if (!jwt) return next();
-		verify(
-			jwt,
-			this.secret,
-			(err: VerifyErrors | null, payload: string | JwtPayload | undefined) => {
-				if (err || !payload || typeof payload === 'string') {
-					return next();
-				}
-				req.user = payload as IJwtPayload;
-				next();
-			}
-		);
+@injectable()
+export class JwtAuthMiddleware extends BaseJwtAuthMiddleware {
+	constructor(@inject(EXPRESS_CORE_TYPES.JwtService) protected jwtService: IJwtService) {
+		super();
 	}
 }

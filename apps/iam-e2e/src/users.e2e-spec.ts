@@ -30,7 +30,7 @@ describe('Users', () => {
 
 				expect(res.statusCode).toBe(201);
 				expect(res.body.jwt).toBeDefined();
-				expect(res.body).toEqual(
+				expect(res.body.user).toEqual(
 					expect.objectContaining({
 						username: DTO.username,
 						email: hideEmailUsername(DTO.email),
@@ -296,6 +296,7 @@ describe('Users', () => {
 
 					expect(res.statusCode).toBe(200);
 					expect(res.body.jwt).not.toBe(newUser.jwt);
+					expect(res.body.username).toBe(dto.username);
 				});
 			});
 		});
