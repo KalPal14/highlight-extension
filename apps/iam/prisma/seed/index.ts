@@ -1,13 +1,13 @@
-import '~libs/express-core/config';
-
 import { PrismaClient } from '../client';
 
-import { usersSeed } from './users.seed';
+import { usersSeeder } from './users.seeder';
 
 const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
-	await usersSeed(prisma);
+	await prisma.userModel.deleteMany();
+
+	await usersSeeder(prisma);
 }
 
 main()
