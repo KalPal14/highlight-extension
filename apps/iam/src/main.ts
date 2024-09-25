@@ -5,11 +5,10 @@ import { Container } from 'inversify';
 
 import { expressCoreBindings } from '~libs/express-core';
 
-import { TYPES } from '~/iam/common/constants/types';
-import App from '~/iam/app';
-
-import { appBindings } from './utils/bindings/app.bindings';
-import { userBindings } from './utils/bindings/user.bindings';
+import { appBindings } from './common/bindings/app.bindings';
+import { userBindings } from './common/bindings/user.bindings';
+import { TYPES } from './common/constants/types';
+import App from './app';
 
 export async function bootstrap(): Promise<App> {
 	const container = new Container();
