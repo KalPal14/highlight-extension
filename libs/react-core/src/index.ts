@@ -14,3 +14,5 @@ export * from './hooks/exception-handler/exception-handler-hook';
 
 // ui
 export * from './ui/toasts/toasts-options';
+export * from './ui/alerts/high-alert';
+export * from './ui/alerts/outside-click-alert';
