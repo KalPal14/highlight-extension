@@ -17,7 +17,7 @@ let app: Express;
 
 beforeAll(async () => {
 	const inst = await bootstrap();
-	app = inst.app;
+	app = inst.app.app;
 });
 
 describe('Users', () => {

@@ -1,3 +1,7 @@
+// otp
+export * from './otp/upsert-otp.ro';
+export * from './otp/validate-otp.ro';
+
 // users
 export * from './users/common/base-user.ro';
 export * from './users/get-user-info.ro';
