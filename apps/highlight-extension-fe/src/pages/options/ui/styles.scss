@@ -1,0 +1,34 @@
+.options {
+	padding: 0.5rem;
+
+	&_userInfoTab,
+	&_colorsTab,
+	&_pagesTab {
+		max-width: 48rem;
+	}
+
+	&_colors {
+		display: flex;
+	}
+
+	&_colorsItem {
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 50%;
+		margin-right: 0.25rem;
+	}
+
+	&_colorFormControl {
+		display: flex;
+		padding: 0 0.25rem;
+	}
+
+	&_colorInput {
+		height: 2rem !important;
+	}
+
+	&_text-highlighted {
+		font-weight: 700;
+		color: #319795;
+	}
+}

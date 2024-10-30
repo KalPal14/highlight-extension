@@ -10,6 +10,7 @@ import { LinkToLogin } from '~/highlight-extension-fe/widgets/link-to-login';
 import { useUsers } from '~/highlight-extension-fe/entities/user';
 import { useSidePanel } from '~/highlight-extension-fe/entities/browser';
 import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
+import { FULL_OPTIONS_ROUTES } from '~/highlight-extension-fe/shared/ui/routes/options';
 
 export function ExtensionControlPage(): JSX.Element {
 	const [jwt] = useCrossBrowserState('jwt');
@@ -27,7 +28,7 @@ export function ExtensionControlPage(): JSX.Element {
 				>
 					<div>
 						<CogSVG
-							onClick={() => openTab('options.html')}
+							onClick={() => openTab(FULL_OPTIONS_ROUTES.userInfo)}
 							height={28}
 							width={28}
 							cursor="pointer"
