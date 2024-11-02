@@ -1,5 +1,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import ReactShadowRoot from 'react-shadow-root';
+
+import { HighlighterPage } from '~/highlight-extension-fe/pages/highlighter';
 
 init();
 
@@ -13,5 +16,9 @@ function init(): void {
 	highlightsMarker.id = 'highlights-ext-container';
 	document.body.append(highlightsMarker);
 
-	createRoot(highlightsMarker).render(<h1>Highlights</h1>);
+	createRoot(highlightsMarker).render(
+		<ReactShadowRoot>
+			<HighlighterPage />
+		</ReactShadowRoot>
+	);
 }

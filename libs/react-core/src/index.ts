@@ -1,4 +1,5 @@
 // /assets/imgs/svg
+export * from './assets/imgs/svg/align-text-justify';
 export * from './assets/imgs/svg/angle-down';
 export * from './assets/imgs/svg/angle-up';
 export * from './assets/imgs/svg/cog';
