@@ -2,6 +2,10 @@
 export * from './adapters/browser/browser.type';
 export * from './adapters/browser/browser.adapter';
 
+// service-worker
+export * from './service-worker/handlers/open-tab/open-tab.dispatcher';
+export * from './service-worker/handlers/api-request/api-request.dispatcher';
+
 // services
 export * from './services/api-service/infrastracture/browser-storage-base-api.service';
 
