@@ -4,8 +4,9 @@ import ReactTextareaAutosize from 'react-textarea-autosize';
 import { useElementSize } from '@custom-react-hooks/use-element-size';
 
 import { TrashSVG, AlignTextJustifySVG, CogSVG } from '~libs/react-core';
-import { calcPopupPosition, IDocumentPoint } from '~libs/client-core';
+import { calcPopupPosition, dispatchOpenTab, IDocumentPoint } from '~libs/client-core';
 
+import { FULL_OPTIONS_ROUTES } from '~/highlight-extension-fe/shared/ui';
 import { DEF_COLORS } from '~/highlight-extension-fe/shared/model';
 import { useWorkspaces } from '~/highlight-extension-fe/entities/workspace';
 
@@ -104,7 +105,7 @@ export function Highlighter({
 						<CogSVG
 							width={24}
 							height={24}
-							onClick={() => console.log('open colors settings')}
+							onClick={() => dispatchOpenTab({ url: FULL_OPTIONS_ROUTES.colors })}
 						/>
 					</div>
 				</div>
