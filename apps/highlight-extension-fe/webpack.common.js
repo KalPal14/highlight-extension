@@ -14,6 +14,7 @@ module.exports = {
 		sidepanel: path.resolve('src/app/ui/entries/sidepanel/index.tsx'),
 		highlights: path.resolve('src/app/ui/entries/content-scripts/highlights/index.tsx'),
 		tabs: path.resolve('src/app/ui/entries/tabs/index.tsx'),
+		service_worker: path.resolve('src/app/ui/entries/service-worker/index.ts'),
 	},
 	module: {
 		rules: [
