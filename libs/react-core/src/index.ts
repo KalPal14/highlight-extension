@@ -23,3 +23,6 @@ export * from './ui/fields/text-field';
 export * from './ui/forms/accordion-form';
 export * from './ui/toasts/toasts-options';
 export * from './ui/wrappers/viewport-centered/viewport-centered';
+
+// content-scripts-ui
+export * from './content-scripts-ui/toasts/toast';
