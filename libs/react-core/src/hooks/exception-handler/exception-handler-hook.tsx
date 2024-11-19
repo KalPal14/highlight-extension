@@ -1,9 +1,12 @@
+import React from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { uniq } from 'lodash';
 import { useToast } from '@chakra-ui/react';
+import hotToast from 'react-hot-toast';
 
 import { Exception, HttpException, HttpValidationException } from '~libs/common';
 
+import { Toast } from '../../content-scripts-ui/toasts/toast';
 import { toastDefOptions } from '../../ui/toasts/toasts-options';
 
 interface IExceptionMsg {
@@ -22,6 +25,7 @@ interface IExceptionHandlerOptions {
 
 interface IUseExceptionHandlerReturn {
 	toastException: (err: any, options?: IExceptionHandlerOptions) => void;
+	toastContentScriptsException: (err: any, options?: IExceptionHandlerOptions) => void;
 }
 
 export function useExceptionHandler(): IUseExceptionHandlerReturn {
@@ -29,6 +33,20 @@ export function useExceptionHandler(): IUseExceptionHandlerReturn {
 
 	function toastException(err: any, options: IExceptionHandlerOptions = {}): void {
 		handleException(err, toast, options);
+	}
+
+	function toastContentScriptsException(err: any, options: IExceptionHandlerOptions = {}): void {
+		handleException(
+			err,
+			({ title, description }) =>
+				hotToast(
+					<Toast
+						title={title}
+						description={description}
+					/>
+				),
+			options
+		);
 	}
 
 	function handleException(
@@ -65,5 +83,5 @@ export function useExceptionHandler(): IUseExceptionHandlerReturn {
 		});
 	}
 
-	return { toastException };
+	return { toastException, toastContentScriptsException };
 }
