@@ -10,6 +10,7 @@ export interface ICrossBrowserStateDescriptor {
 	jwt: string | null;
 	currentUser: IBaseUserRo | null;
 	currentWorkspace: IBaseWorkspaceRo | null;
+	isExtActive: boolean;
 	createdHighlight: { highlight: ICreateHighlightRo; pageUrl: string } | null;
 	deletedHighlight: { highlight: IDeleteHighlightRo; pageUrl: string } | null;
 	updatedHighlight: { highlight: IUpdateHighlightRo; pageUrl: string } | null;

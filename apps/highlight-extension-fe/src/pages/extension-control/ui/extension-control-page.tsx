@@ -6,17 +6,21 @@ import './styles.scss';
 import { CogSVG } from '~libs/react-core';
 import { openTab } from '~libs/client-core';
 
+import { FULL_OPTIONS_ROUTES } from '~/highlight-extension-fe/shared/ui';
 import { LinkToLogin } from '~/highlight-extension-fe/widgets/link-to-login';
 import { useUsers } from '~/highlight-extension-fe/entities/user';
-import { useSidePanel } from '~/highlight-extension-fe/entities/browser';
+import { useExtension, useSidePanel } from '~/highlight-extension-fe/entities/browser';
 import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
-import { FULL_OPTIONS_ROUTES } from '~/highlight-extension-fe/shared/ui/routes/options';
 
 export function ExtensionControlPage(): JSX.Element {
 	const [jwt] = useCrossBrowserState('jwt');
 
 	const { openSidePanel } = useSidePanel().actions;
 	const { logout } = useUsers().actions;
+	const {
+		data: { isExtActive },
+		actions: { toggleExtension },
+	} = useExtension();
 
 	return (
 		<div className="extensionControlPage">
@@ -42,6 +46,12 @@ export function ExtensionControlPage(): JSX.Element {
 					colorScheme="red"
 				>
 					Open sidebar
+				</Button>
+				<Button
+					onClick={toggleExtension}
+					colorScheme="teal"
+				>
+					{isExtActive ? 'Disable' : 'Enable'} extension
 				</Button>
 				{!jwt && <LinkToLogin />}
 				{jwt && (
