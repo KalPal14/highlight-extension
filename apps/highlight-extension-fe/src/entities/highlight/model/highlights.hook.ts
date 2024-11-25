@@ -1,4 +1,5 @@
 import {
+	IBaseHighlightRo,
 	ICreateHighlightRo,
 	IDeleteHighlightRo,
 	IUpdateHighlightRo,
@@ -12,6 +13,8 @@ import {
 	useCrossBrowserState,
 } from '~/highlight-extension-fe/shared/model';
 
+import { usePages } from '../../page';
+
 interface IHighligtsHookReturn {
 	data: {
 		createdHighlight: ICrossBrowserStateDescriptor['createdHighlight'];
@@ -19,6 +22,7 @@ interface IHighligtsHookReturn {
 		updatedHighlight: ICrossBrowserStateDescriptor['updatedHighlight'];
 	};
 	actions: {
+		getPageHighlights(url: string | null): Promise<IBaseHighlightRo[]>;
 		createHighlight(dto: CreateHighlightDto): Promise<ICreateHighlightRo>;
 		deleteHighlight: (id: number, pageUrl: string) => Promise<IDeleteHighlightRo>;
 		updateHighlight(
@@ -33,6 +37,17 @@ export function useHighlights(): IHighligtsHookReturn {
 	const [createdHighlight, setCreatedHighlight] = useCrossBrowserState('createdHighlight');
 	const [deletedHighlight, setDeletedHighlight] = useCrossBrowserState('deletedHighlight');
 	const [updatedHighlight, setUpdatedHighlight] = useCrossBrowserState('updatedHighlight');
+
+	const { getPage } = usePages().actions;
+
+	async function getPageHighlights(url: string | null): Promise<IBaseHighlightRo[]> {
+		if (!url) return [];
+
+		const resp = await getPage(url);
+		if (resp.id === null) return [];
+
+		return resp.highlights;
+	}
 
 	async function createHighlight(dto: CreateHighlightDto): Promise<ICreateHighlightRo> {
 		const highlight = await dispatchApiRequest.post<CreateHighlightDto, ICreateHighlightRo>(
@@ -72,6 +87,7 @@ export function useHighlights(): IHighligtsHookReturn {
 		},
 
 		actions: {
+			getPageHighlights,
 			createHighlight,
 			deleteHighlight,
 			updateHighlight,
