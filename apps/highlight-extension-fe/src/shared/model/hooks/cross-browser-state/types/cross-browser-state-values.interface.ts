@@ -15,4 +15,5 @@ export interface ICrossBrowserStateDescriptor {
 	deletedHighlight: { highlight: IDeleteHighlightRo; pageUrl: string } | null;
 	updatedHighlight: { highlight: IUpdateHighlightRo; pageUrl: string } | null;
 	unfoundHighlightsIds: Record<string, number[] | undefined>;
+	updatedPages: { urls: string[]; updateTrigger?: boolean };
 }
