@@ -23,6 +23,7 @@ export * from './ui/fields/color-field';
 export * from './ui/fields/draggable-fields/draggable-fields';
 export * from './ui/fields/text-field';
 export * from './ui/forms/accordion-form';
+export * from './ui/modals/confirmation-modal';
 export * from './ui/toasts/toasts-options';
 export * from './ui/wrappers/viewport-centered/viewport-centered';
 
