@@ -44,18 +44,30 @@ interface IHighlighterHookReturn {
 
 export function useHighlighter(): IHighlighterHookReturn {
 	const [, setUnfoundHighlightsIds] = useCrossBrowserState('unfoundHighlightsIds');
+	const [updatedPages] = useCrossBrowserState('updatedPages');
 
 	const { currentWorkspace } = useWorkspaces().data;
 	const { createHighlight, updateHighlight, getPageHighlights } = useHighlights().actions;
 
 	const highlightElementRef = useRef<IHighlightElementData | null>(null);
 	const highlightElementToSetRef = useRef<IHighlightElementData | null>(null);
+	const updatedPagesUrlsRerendersCount = useRef(0);
 	const prevHighlights = useRef<IBaseHighlightRo[] | null>(null);
 
 	const [selectedRanges, setSelectedRanges] = useState<Range[]>([]);
 	const [mouseCoordinates, setMouseCoordinates] = useState<IDocumentPoint>({ top: 0, left: 0 });
 	const [currentHighlight, setCurrentHighlight] = useState<IHighlightElementData | null>(null);
 	const [highlightSetDispatcher, setHighlightSetDispatcher] = useState(false);
+
+	useEffect(() => {
+		if (updatedPagesUrlsRerendersCount.current <= 1) {
+			updatedPagesUrlsRerendersCount.current++;
+			return;
+		}
+		if (updatedPages.urls.includes(getPageUrl())) {
+			window.location.reload();
+		}
+	}, [updatedPages]);
 
 	useEffect(() => {
 		setCurrentHighlight(highlightElementToSetRef.current);
