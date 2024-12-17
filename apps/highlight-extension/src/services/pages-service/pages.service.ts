@@ -82,16 +82,16 @@ export class PagesServise implements IPagesServise {
 		pageToMerge: IPageDeepModel
 	): Promise<void> {
 		const highlightsToMerge = pageToMerge.highlights;
-		const highlightToMergeMaxOrder = highlightsToMerge
+		const highlightToMergeMaxOrder = highlightsToMerge.length
 			? highlightsToMerge[highlightsToMerge.length - 1].order
 			: 0;
-		const individualUpdateCurrentHighligtsData =
-			currentPage.highlights.map(({ id, order }) => ({
-				id,
-				payload: { order: order + highlightToMergeMaxOrder },
-			})) ?? [];
+
 		await this.highlightsRepository.individualUpdateMany({
-			highlights: individualUpdateCurrentHighligtsData,
+			highlights:
+				currentPage.highlights.map(({ id, order }) => ({
+					id,
+					payload: { order: order + highlightToMergeMaxOrder },
+				})) ?? [],
 		});
 
 		const mergeHighlightsIds = pageToMerge.highlights?.map(({ id }) => id) ?? [];
