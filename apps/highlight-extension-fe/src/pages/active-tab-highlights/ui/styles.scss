@@ -1,0 +1,11 @@
+.activeTabHighlightsPage {
+	padding: 1rem 0.5rem;
+
+	&_header {
+		display: flex;
+		justify-content: flex-end;
+		border-bottom: 0.125rem solid #dde2e7;
+		padding-bottom: 0.75rem;
+		margin-bottom: 0.75rem;
+	}
+}
