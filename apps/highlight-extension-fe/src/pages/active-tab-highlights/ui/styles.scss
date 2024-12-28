@@ -9,3 +9,54 @@
 		margin-bottom: 0.75rem;
 	}
 }
+
+.highlightsList {
+	p {
+		line-height: 1.2rem;
+	}
+
+	&_tabsListContainer {
+		display: flex;
+		justify-content: center;
+	}
+
+	&_itemContent {
+		.highlightsList_itemContentDivider {
+			margin-top: 0.25rem;
+			border-bottom-width: 0.125rem;
+		}
+	}
+
+	&_itemContentText {
+		&.chrome {
+			padding: 0.125rem;
+		}
+
+		&.firefox {
+			padding: 0.25rem 0.125rem 0 0.125rem;
+		}
+
+		&.found {
+			cursor: pointer;
+			display: flex;
+			border-radius: 0.125rem;
+
+			&:hover {
+				background-color: #f0f0f0;
+			}
+		}
+	}
+
+	&_exclamationSvgContainer {
+		display: inline-block;
+		margin-left: -0.125rem;
+
+		.svg {
+			cursor: default;
+
+			&:hover {
+				background-color: #fff;
+			}
+		}
+	}
+}
