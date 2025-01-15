@@ -1,0 +1,16 @@
+{
+	"name": "nest-core",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc && tsc-alias"
+	},
+	"dependencies": {
+		"@nestjs/common": "^10.0.0",
+		"@nestjs/config": "^3.3.0",
+		"@nestjs/core": "^10.0.0"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": ""
+}
