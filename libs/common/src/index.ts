@@ -8,6 +8,8 @@ export * from './exceptions/http-exception';
 export * from './exceptions/http-validation-exception';
 
 // services
+export * from './services/ai-service/infrastracture/groq/groq.service';
+export * from './services/ai-service/port/ai.service';
 export * from './services/api-service/port/api.service';
 
 // stabs

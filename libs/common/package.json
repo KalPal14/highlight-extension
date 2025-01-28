@@ -8,6 +8,7 @@
 	},
 	"dependencies": {
 		"class-validator": "^0.14.1",
+		"groq-sdk": "^0.16.0",
 		"inversify": "^6.2.1"
 	},
 	"devDependencies": {
