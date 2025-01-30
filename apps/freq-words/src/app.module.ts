@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestCoreModule } from '~libs/nest-core';
 
+import { TranslationModule } from './resources/translator/translator.module';
 import { LanguagesModule } from './resources/languages/languages.module';
 
 @Module({
@@ -29,6 +30,7 @@ import { LanguagesModule } from './resources/languages/languages.module';
 		}),
 		NestCoreModule,
 		LanguagesModule,
+		TranslationModule,
 	],
 })
 export class AppModule {}

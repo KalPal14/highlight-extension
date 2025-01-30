@@ -29,7 +29,9 @@
 		"libs/*"
 	],
 	"dependencies": {
+		"dedent-js": "^1.0.1",
 		"dotenv-cli": "^7.4.4",
+		"lodash": "^4.17.21",
 		"react-hot-toast": "^2.5.2",
 		"uuid": "^11.1.0"
 	}
