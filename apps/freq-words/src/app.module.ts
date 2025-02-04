@@ -8,6 +8,7 @@ import { NestCoreModule } from '~libs/nest-core';
 
 import { TranslationModule } from './resources/translator/translator.module';
 import { LanguagesModule } from './resources/languages/languages.module';
+import { WorkspacesModule } from './resources/workspaces/workspaces.module';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { LanguagesModule } from './resources/languages/languages.module';
 		NestCoreModule,
 		LanguagesModule,
 		TranslationModule,
+		WorkspacesModule,
 	],
 })
 export class AppModule {}
