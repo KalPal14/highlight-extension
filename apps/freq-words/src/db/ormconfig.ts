@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 import { SeederOptions } from 'typeorm-extension';
 
 import LanguageSeeder from './seeds/languages/language.seeder';
+import WorkspaceSeeder from './seeds/workspaces/workspace.seeder';
 
 config({
 	path: join(__dirname, `../../../../../.env.${process.env.NODE_ENV || 'dev'}`),
@@ -20,7 +21,7 @@ const options: DataSourceOptions & SeederOptions = {
 	synchronize: process.env.NODE_ENV !== 'prod',
 	entities: [join(__dirname, '..', 'resources', '**', 'entities', '*.entity.js')],
 	migrations: [join(__dirname, 'migrations', '*.js')],
-	seeds: [LanguageSeeder],
+	seeds: [LanguageSeeder, WorkspaceSeeder],
 };
 
 export const dataSource = new DataSource(options);
