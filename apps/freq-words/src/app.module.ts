@@ -8,7 +8,10 @@ import { NestCoreModule } from '~libs/nest-core';
 
 import { TranslationModule } from './resources/translator/translator.module';
 import { LanguagesModule } from './resources/languages/languages.module';
+import { WordMarksModule } from './resources/word-marks/word-marks.module';
 import { WorkspacesModule } from './resources/workspaces/workspaces.module';
+import { SourcesModule } from './resources/sources/sources.module';
+import { WordFormsModule } from './resources/word-forms/word-forms.module';
 
 @Module({
 	imports: [
@@ -31,7 +34,10 @@ import { WorkspacesModule } from './resources/workspaces/workspaces.module';
 		}),
 		NestCoreModule,
 		LanguagesModule,
+		SourcesModule,
 		TranslationModule,
+		WordFormsModule,
+		WordMarksModule,
 		WorkspacesModule,
 	],
 })

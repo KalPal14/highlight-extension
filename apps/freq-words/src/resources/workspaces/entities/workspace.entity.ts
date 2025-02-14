@@ -1,6 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Language } from '~/freq-words/resources/languages/entities/language.entity';
+import { WordMark } from '~/freq-words/resources/word-marks/entities/word-mark.entity';
+
+import { Source } from '../../sources/entities/source.entity';
 
 @Entity()
 export class Workspace {
@@ -18,4 +21,10 @@ export class Workspace {
 
 	@ManyToOne(() => Language, (language) => language.targetLanguageWorkspaces, { eager: true })
 	targetLanguage: Language;
+
+	@OneToMany(() => WordMark, (wordMark) => wordMark.workspace)
+	wordsMarks: WordMark[];
+
+	@OneToMany(() => Source, (source) => source.workspace)
+	sources: Source[];
 }
