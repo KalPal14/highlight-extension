@@ -13,6 +13,11 @@ export * from './sources/update-source.ro';
 // translator
 export * from './translator/translate.ro';
 
+// words
+export * from './word-marks/get-word-mark.ro';
+export * from './word-marks/get-word-marks.ro';
+export * from './word-marks/upsert-word-mark.ro';
+
 // workspaces
 export * from './workspaces/create-workspace.ro';
 export * from './workspaces/delete-workspace.ro';
