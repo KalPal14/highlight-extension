@@ -1,1 +1,1 @@
-# highlight-extension
+# highlight-extension-fe

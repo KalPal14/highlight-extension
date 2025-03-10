@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/freq-words",
+    "baseUrl": "./",
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    "../../global-types/*"
+  ],
+}
