@@ -1,0 +1,41 @@
+{
+	"name": "highlight-extension-fe",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "webpack --progress --config webpack.prod.js",
+		"start": "webpack --progress --config webpack.dev.js",
+		"start:dev": "webpack --watch --progress --config webpack.dev.js",
+		"postinstall": "husky"
+	},
+	"devDependencies": {
+		"@svgr/webpack": "^8.1.0",
+		"@types/react": "^18.0.9",
+		"@types/react-dom": "^18.0.4",
+		"clean-webpack-plugin": "^4.0.0",
+		"copy-webpack-plugin": "^11.0.0",
+		"css-loader": "^6.7.1",
+		"dotenv-webpack": "^8.1.0",
+		"html-webpack-plugin": "^5.5.0",
+		"husky": "^9.0.11",
+		"react": "^18.1.0",
+		"react-dom": "^18.1.0",
+		"sass": "^1.71.1",
+		"sass-loader": "^16.0.2",
+		"style-loader": "^3.3.1",
+		"ts-loader": "^9.5.1",
+		"webpack": "^5.72.1",
+		"webpack-cli": "^4.9.2",
+		"webpack-merge": "^5.8.0"
+	},
+	"dependencies": {
+		"@chakra-ui/react": "^2.8.2",
+		"@emotion/react": "^11.11.4",
+		"@emotion/styled": "^11.11.0",
+		"bootstrap": "^5.3.3",
+		"classnames": "^2.5.1",
+		"react-hook-form": "^7.51.0",
+		"react-router-dom": "6.2"
+	}
+}

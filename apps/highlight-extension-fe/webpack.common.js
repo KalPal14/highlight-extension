@@ -1,0 +1,94 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-require-imports */
+const path = require('path');
+
+const CopyPlugin = require('copy-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+module.exports = {
+	entry: {
+		popup: path.resolve('src/app/ui/entries/popup/index.tsx'),
+		options: path.resolve('src/app/ui/entries/options/index.tsx'),
+		sidepanel: path.resolve('src/app/ui/entries/sidepanel/index.tsx'),
+		highlights: path.resolve('src/app/ui/entries/content-scripts/highlights/index.tsx'),
+		tabs: path.resolve('src/app/ui/entries/tabs/index.tsx'),
+	},
+	module: {
+		rules: [
+			{
+				use: 'ts-loader',
+				test: /\.(tsx|ts)$/,
+				exclude: /node_modules/,
+			},
+			{
+				test: /\.s[ac]ss$/i,
+				use: ['style-loader', 'css-loader', 'sass-loader'],
+				exclude: [/\.shadow-dom.scss$/, /node_modules/],
+			},
+			{
+				type: 'assets/imgs',
+				test: /\.(png|jpg|jpeg|gif|woff|woff2|tff|eot)$/,
+			},
+			{
+				type: 'assets/imgs',
+				test: /\.svg$/,
+				use: ['@svgr/webpack'],
+			},
+			{
+				test: /\.css$/i,
+				use: [
+					'style-loader',
+					{
+						loader: 'css-loader',
+						options: {
+							importLoaders: 1,
+						},
+					},
+				],
+			},
+		],
+	},
+	plugins: [
+		new CleanWebpackPlugin({
+			cleanStaleWebpackAssets: false,
+		}),
+		new CopyPlugin({
+			patterns: [
+				{
+					from: path.resolve('src/app/config/manifest'),
+					to: path.resolve('../../dist/apps/highlight-extension-fe'),
+				},
+			],
+		}),
+		...getHtmlPlugins(['popup', 'options', 'tabs', 'sidepanel']),
+	],
+	output: {
+		filename: '[name].js',
+		path: path.join(__dirname, '../../dist/apps/highlight-extension-fe'),
+	},
+	optimization: {
+		splitChunks: {
+			chunks(chunk) {
+				switch (chunk.name) {
+					case 'highlights':
+						return false;
+					default:
+						return true;
+				}
+			},
+		},
+	},
+};
+
+function getHtmlPlugins(chunks) {
+	return chunks.map(
+		(chunk) =>
+			new HtmlPlugin({
+				title: 'React Extension',
+				filename: `${chunk}.html`,
+				chunks: [chunk],
+			})
+	);
+}
