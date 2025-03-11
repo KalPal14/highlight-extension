@@ -1,7 +1,6 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
-		"jsx": "react",
 		"outDir": "../../dist/apps/highlight-extension-fe",
 		"esModuleInterop": true,
 	},

@@ -64,6 +64,18 @@ module.exports = {
 		}),
 		...getHtmlPlugins(['popup', 'options', 'tabs', 'sidepanel']),
 	],
+	resolve: {
+		alias: {
+			// Apps
+			'~/highlight-extension-fe': path.resolve(__dirname, '../../apps/highlight-extension-fe/src'),
+			// Libs
+			'~libs/client-core': path.resolve(__dirname, '../../libs/client-core/src'),
+			'~libs/common': path.resolve(__dirname, '../../libs/common/src'),
+			'~libs/dto': path.resolve(__dirname, '../../libs/dto/src'),
+			'~libs/react-core': path.resolve(__dirname, '../../libs/react-core/src'),
+		},
+		extensions: ['.js', '.ts', '.tsx'],
+	},
 	output: {
 		filename: '[name].js',
 		path: path.join(__dirname, '../../dist/apps/highlight-extension-fe'),
