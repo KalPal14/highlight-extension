@@ -17,6 +17,12 @@
       "baseUrl": "./",
       "paths": {
          // apps
+         "~/freq-words/*": [
+            "apps/freq-words/src/*",
+         ],
+         "~/freq-words-e2e/*": [
+            "apps/freq-words-e2e/src/*",
+         ],
          "~/highlight-extension/*": [
             "apps/highlight-extension/src/*",
             "apps/highlight-extension/*"
@@ -50,6 +56,12 @@
          "~libs/express-core/*": [
             "libs/express-core/src/*"
          ],
+         "~libs/nest-core": [
+            "libs/nest-core/src/index"
+         ],
+         "~libs/nest-core/*": [
+            "libs/nest-core/src/*"
+         ],
          "~libs/react-core": [
             "libs/react-core/src/index"
          ],
@@ -58,6 +70,9 @@
          ],
          "~libs/ro/*": [
             "libs/ro/src/*"
+         ],
+         "~libs/routes/*": [
+            "libs/routes/src/*"
          ],
       }
    },
