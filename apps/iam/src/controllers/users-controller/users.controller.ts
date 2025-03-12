@@ -2,22 +2,21 @@ import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
 
-import { HttpException, hideEmailUsername, IJwtPayload } from '~libs/common';
 import {
-	RouteGuard,
+	RoleGuard,
 	ValidateMiddleware,
 	IConfigService,
 	TController,
 	BaseController,
 } from '~libs/express-core';
-import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
+import { hideEmailUsername, HttpException, IJwtPayload } from '~libs/common';
+import { LoginDto, RegistrationDto, UpdateUserDto } from '~libs/dto/iam';
 import { USERS_ENDPOINTS } from '~libs/routes/iam';
 
 import { UserModel } from '~/iam/prisma/client';
 import { TYPES } from '~/iam/common/constants/types';
 import { IUsersService } from '~/iam/services/users-service/users.service.interface';
 
-import IUserInfo from './types/user-info.interface';
 import { IUsersController } from './users.controller.interface';
 
 @injectable()
@@ -32,31 +31,29 @@ export class UsersController extends BaseController implements IUsersController 
 				path: USERS_ENDPOINTS.getUserInfo,
 				method: 'get',
 				func: this.getUserInfo,
-				middlewares: [new RouteGuard('user')],
 			},
 			{
 				path: USERS_ENDPOINTS.login,
 				method: 'post',
 				func: this.login,
-				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(LoginDto)],
+				middlewares: [new RoleGuard('guest'), new ValidateMiddleware(LoginDto)],
 			},
 			{
 				path: USERS_ENDPOINTS.register,
 				method: 'post',
 				func: this.register,
-				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(RegistrationDto)],
+				middlewares: [new RoleGuard('guest'), new ValidateMiddleware(RegistrationDto)],
 			},
 			{
 				path: USERS_ENDPOINTS.logout,
 				method: 'post',
 				func: this.logout,
-				middlewares: [new RouteGuard('user')],
 			},
 			{
 				path: USERS_ENDPOINTS.update,
 				method: 'patch',
 				func: this.update,
-				middlewares: [new RouteGuard('user'), new ValidateMiddleware(UpdateUserDto)],
+				middlewares: [new ValidateMiddleware(UpdateUserDto)],
 			},
 		]);
 	}
@@ -109,7 +106,7 @@ export class UsersController extends BaseController implements IUsersController 
 				.then((jwt) => {
 					this.ok(res, {
 						jwt,
-						email: result.email,
+						...this.layoutUserInfoRes(result),
 					});
 				})
 				.catch((err) => this.send(res, 500, { err }));
@@ -118,12 +115,11 @@ export class UsersController extends BaseController implements IUsersController 
 		}
 	};
 
-	private layoutUserInfoRes(user: UserModel): IUserInfo {
+	private layoutUserInfoRes(user: UserModel): Omit<UserModel, 'password'> {
+		const { password: _, ...userInfo } = user;
 		return {
-			id: user.id,
+			...userInfo,
 			email: hideEmailUsername(user.email),
-			username: user.username,
-			passwordUpdatedAt: user.passwordUpdatedAt,
 		};
 	}
 

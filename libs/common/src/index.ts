@@ -1,5 +1,9 @@
 // constants
 export * from './constants/regexp';
+export * from './constants/role-guard-msgs';
+
+// stabs
+export * from './stabs/jwt-payload';
 export * from './stabs/jwt-payload';
 
 // exceptions
@@ -10,6 +14,7 @@ export * from './exceptions/http-validation-exception';
 // types
 export * from './types/batch-payload.interface';
 export * from './types/jwt-payload.interface';
+export * from './types/role.type';
 
 // utils/dto-validation-rules
 export * from './utils/dto-validation-rules/is-color';
