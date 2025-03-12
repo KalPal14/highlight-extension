@@ -11,7 +11,7 @@ import {
 	BaseController,
 } from '~libs/express-core';
 import { hideEmail, IJwtPayload, TEmail } from '~libs/common';
-import { UpdateUserDto, UsersLoginDto, UsersRegisterDto } from '~libs/dto/iam';
+import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
 
 import { UserModel } from '~/iam/prisma/client';
 import { USERS_ENDPOINTS } from '~/iam/common/constants/routes/users';
@@ -39,13 +39,13 @@ export class UsersController extends BaseController implements IUsersController 
 				path: USERS_ENDPOINTS.login,
 				method: 'post',
 				func: this.login,
-				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(UsersLoginDto)],
+				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(LoginDto)],
 			},
 			{
 				path: USERS_ENDPOINTS.register,
 				method: 'post',
 				func: this.register,
-				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(UsersRegisterDto)],
+				middlewares: [new RouteGuard('guest'), new ValidateMiddleware(RegistrationDto)],
 			},
 			{
 				path: USERS_ENDPOINTS.logout,
@@ -67,7 +67,7 @@ export class UsersController extends BaseController implements IUsersController 
 		this.ok(res, this.layoutUserInfoRes(result));
 	};
 
-	login: TController<null, UsersLoginDto> = async ({ body }, res) => {
+	login: TController<null, LoginDto> = async ({ body }, res) => {
 		const result = await this.usersService.validate(body);
 		this.generateJwt(result)
 			.then((jwt) => {
@@ -79,7 +79,7 @@ export class UsersController extends BaseController implements IUsersController 
 			.catch((err) => this.send(res, 500, { err }));
 	};
 
-	register: TController<null, UsersRegisterDto> = async ({ body }, res) => {
+	register: TController<null, RegistrationDto> = async ({ body }, res) => {
 		const result = await this.usersService.create(body);
 		this.generateJwt(result)
 			.then((jwt) => {
