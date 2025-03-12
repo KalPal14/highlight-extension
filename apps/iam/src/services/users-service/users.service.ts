@@ -3,13 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import { IJwtPayload } from '~libs/common';
 import { HTTPError } from '~libs/express-core';
-import {
-	ChangeEmailDto,
-	ChangePasswordDto,
-	ChangeUsernameDto,
-	UsersLoginDto,
-	UsersRegisterDto,
-} from '~libs/dto/iam';
+import { UpdateUserDto, UsersLoginDto, UsersRegisterDto } from '~libs/dto/iam';
 
 import { UserModel } from '~/iam/prisma/client';
 import { TYPES } from '~/iam/common/constants/types';
@@ -70,53 +64,29 @@ export class UsersService implements IUsersService {
 		return existingUser;
 	}
 
-	async changePassword(
-		{ id, email, username }: IJwtPayload,
-		{ password, newPassword }: ChangePasswordDto
-	): Promise<UserModel> {
-		const validatedUser = await this.validate({ userIdentifier: email || username, password });
-
-		if (password === newPassword) {
-			throw new HTTPError(422, 'new password cannot be the same as the old one');
+	async update(user: IJwtPayload, dto: UpdateUserDto): Promise<UserModel> {
+		let updatedPassword: string | undefined;
+		let passwordUpdatedAt: Date | undefined;
+		if (dto.password) {
+			await this.validate({ userIdentifier: user.email, password: dto.password.currentPassword });
+			updatedPassword = await this.userFactory
+				.create({ ...user, password: dto.password.newPassword })
+				.then(({ password }) => password);
+			passwordUpdatedAt = new Date();
 		}
 
-		const user = await this.userFactory.create({ ...validatedUser, password: newPassword });
-		return this.usersRepository.update(id, {
-			password: user.password,
-			passwordUpdatedAt: new Date(),
-		});
-	}
-
-	async changeEmail({ id, email }: IJwtPayload, { newEmail }: ChangeEmailDto): Promise<UserModel> {
-		if (newEmail === email) {
-			throw new HTTPError(422, 'new email cannot be the same as the old one');
+		try {
+			return await this.usersRepository.update(user.id, {
+				username: dto.username,
+				email: dto.email,
+				password: updatedPassword,
+				passwordUpdatedAt,
+			});
+		} catch (err: any) {
+			if (err.code === 'P2002') {
+				throw new HTTPError(400, `User with this ${err.meta.target} already exists`);
+			}
+			throw new Error();
 		}
-
-		const userWithSameEmail = await this.usersRepository.findBy({ email: newEmail });
-		if (userWithSameEmail) {
-			throw new HTTPError(422, `account with this email already exists`);
-		}
-
-		return this.usersRepository.update(id, {
-			email: newEmail,
-		});
-	}
-
-	async changeUsername(
-		{ id, username }: IJwtPayload,
-		{ newUsername }: ChangeUsernameDto
-	): Promise<UserModel> {
-		if (newUsername === username) {
-			throw new HTTPError(422, 'new username cannot be the same as the old one');
-		}
-
-		const userWithSameUsername = await this.usersRepository.findBy({ username: newUsername });
-		if (userWithSameUsername) {
-			throw new HTTPError(422, `account with this username already exists`);
-		}
-
-		return this.usersRepository.update(id, {
-			username: newUsername,
-		});
 	}
 }
