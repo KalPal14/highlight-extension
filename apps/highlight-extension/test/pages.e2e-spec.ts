@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import request from 'supertest';
 
+import { configEnv } from '~libs/express-core/config';
 import { GetPageDto, UpdatePageDto } from '~libs/dto/highlight-extension';
 import { random } from '~libs/common/index';
 
@@ -18,14 +19,16 @@ import { PAGE, PAGE_MODEL } from '~/highlight-extension/common/constants/spec/pa
 
 import type { Express } from 'express';
 
+configEnv();
+
 let app: Express;
 let jwt: string;
 
 beforeAll(async () => {
-	const application = await bootstrap('test');
+	const application = await bootstrap();
 	app = application.app;
 
-	const { app: iamApp } = await iamBootstrap('test');
+	const { app: iamApp } = await iamBootstrap();
 
 	const loginRes = await request(iamApp).post(USERS_URLS.login).send(LOGIN_USER_DTO);
 	jwt = loginRes.body.jwt;

@@ -1,3 +1,5 @@
+import '~libs/express-core/config';
+
 import 'reflect-metadata';
 import { Container } from 'inversify';
 
@@ -12,9 +14,7 @@ import { nodesBindings } from './utils/bindings/nodes.bindings';
 import { pageBindings } from './utils/bindings/page.bindings';
 import { workspaceBindings } from './utils/bindings/workspace.bindings';
 
-export async function bootstrap(mode: 'test'): Promise<App>;
-export async function bootstrap(mode: 'dev' | 'prod', port: number): Promise<App>;
-export async function bootstrap(mode: 'test' | 'dev' | 'prod', port?: number): Promise<App> {
+export async function bootstrap(): Promise<App> {
 	const container = new Container();
 	container.load(appBindings);
 	container.load(expressCoreBindings);
@@ -24,11 +24,9 @@ export async function bootstrap(mode: 'test' | 'dev' | 'prod', port?: number): P
 	container.load(nodesBindings);
 
 	const app = container.get<App>(TYPES.App);
-	await app.init(mode, port);
+	await app.init();
 
 	return app;
 }
 
-if (!process.env.IS_RUN_E2E) {
-	bootstrap('dev', 8001);
-}
+bootstrap();

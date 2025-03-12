@@ -1,3 +1,5 @@
+import '~libs/express-core/config';
+
 import { PrismaClient } from '../client';
 
 import { usersSeed } from './users.seed';

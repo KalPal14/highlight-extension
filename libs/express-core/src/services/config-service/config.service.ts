@@ -1,6 +1,9 @@
+import path from 'path';
+import { readFileSync } from 'fs';
+
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import { config, DotenvConfigOutput, DotenvParseOutput } from 'dotenv';
+import { parse, DotenvParseOutput } from 'dotenv';
 
 import { EXPRESS_CORE_TYPES } from '~libs/express-core';
 
@@ -10,31 +13,32 @@ import { IConfigService } from './config.service.interface';
 
 @injectable()
 export class ConfigService implements IConfigService {
-	protected envFile: string;
+	private envName: string;
 	env: DotenvParseOutput;
 
 	constructor(@inject(EXPRESS_CORE_TYPES.LoggerService) private loggerService: ILogger) {
-		this.envFile = process.env.NODE_ENV || '.env.dev';
+		const envName = process.env.NODE_ENV || 'dev';
+		const envFilePath = path.resolve(__dirname, `../../../../../.env.${envName}`);
 
-		const result: DotenvConfigOutput = config({ path: this.envFile });
-
-		if (result.error || !result.parsed) {
+		const env: DotenvParseOutput = parse(readFileSync(envFilePath));
+		if (!Object.keys(env).length) {
 			this.loggerService.err(
-				`[ConfigService] Failed to parse ${this.envFile} file. It may be missing.`
+				`[ConfigService] Failed to parse .env.${envName} file. It may be missing or empty.`
 			);
-		} else {
-			this.loggerService.log(`[ConfigService] ${this.envFile} file parsed successfully`);
-			this.env = result.parsed;
+			return;
 		}
+
+		this.loggerService.log(`[ConfigService] .env.${envName} file parsed successfully`);
+		this.envName = envName;
+		this.env = env;
 	}
 
 	get(key: string): string {
 		if (this.env[key]) {
 			return this.env[key];
 		}
-		this.loggerService.err(
-			`[ConfigService] There is no variable with the key ${key} in ${this.envFile}`
-		);
-		throw new Error(`${this.envFile} does not have the value you are trying to get`);
+		const errMsg = `[ConfigService] There is no variable with the key ${key} in .env.${this.envName}`;
+		this.loggerService.err(errMsg);
+		throw new Error(errMsg);
 	}
 }
