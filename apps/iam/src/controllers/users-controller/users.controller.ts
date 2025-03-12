@@ -2,15 +2,14 @@ import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
 
+import { HttpException, hideEmailUsername, IJwtPayload } from '~libs/common';
 import {
-	HTTPError,
 	RouteGuard,
 	ValidateMiddleware,
 	IConfigService,
 	TController,
 	BaseController,
 } from '~libs/express-core';
-import { hideEmailUsername, IJwtPayload } from '~libs/common';
 import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
 import { USERS_ENDPOINTS } from '~libs/routes/iam';
 
@@ -98,7 +97,7 @@ export class UsersController extends BaseController implements IUsersController 
 				msg: 'You have successfully logged out',
 			});
 		} catch {
-			next(new HTTPError(500, 'Failed to log out'));
+			next(new HttpException(500, 'Failed to log out'));
 		}
 	};
 

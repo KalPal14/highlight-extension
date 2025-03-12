@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 import { UpdatePageDto } from '~libs/dto/highlight-extension';
 import { CreatePageDto } from '~libs/dto/highlight-extension/pages/create-page.dto';
 
@@ -53,7 +53,7 @@ export class PagesServise implements IPagesServise {
 	async create({ url, workspaceId }: CreatePageDto): Promise<PageModel> {
 		const existingPage = await this.pagesRepository.findBy({ url, workspaceId });
 		if (existingPage) {
-			throw new HTTPError(422, 'This page already exists');
+			throw new HttpException(400, 'This page already exists');
 		}
 
 		const newPage = this.pageFactory.create({ workspaceId, url });
@@ -63,10 +63,10 @@ export class PagesServise implements IPagesServise {
 	async update(pageId: number, { url, workspaceId }: UpdatePageDto): Promise<PageModel> {
 		const currentPage = await this.pagesRepository.deepFindBy({ id: pageId });
 		if (!currentPage) {
-			throw new HTTPError(404, `page #${pageId} not found`);
+			throw new HttpException(404, `page #${pageId} not found`);
 		}
 		if (currentPage.url === url) {
-			throw new HTTPError(422, 'The new URL cannot be the same as the current one');
+			throw new HttpException(400, 'The new URL cannot be the same as the current one');
 		}
 
 		const pageToMerge = await this.pagesRepository.deepFindBy({ url, workspaceId });

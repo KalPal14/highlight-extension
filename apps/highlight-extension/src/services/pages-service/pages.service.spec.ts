@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Container } from 'inversify';
 import { PageModel } from 'apps/highlight-extension/prisma/client';
 
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 import { UpdatePageDto } from '~libs/dto/highlight-extension';
 
 import { TYPES } from '~/highlight-extension/common/constants/types';
@@ -92,7 +92,7 @@ describe('PagesServise', () => {
 				try {
 					await pagesServise.create(CREATE_PAGE_DTO);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe('This page already exists');
 				}
 			});
@@ -161,7 +161,7 @@ describe('PagesServise', () => {
 				try {
 					await pagesServise.update(PAGE_MODEL.id, UPDATE_DTO);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`page #${PAGE_MODEL.id} not found`);
 				}
 			});
@@ -176,7 +176,7 @@ describe('PagesServise', () => {
 				try {
 					await pagesServise.update(PAGE_MODEL.id, UPDATE_DTO);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`The new URL cannot be the same as the current one`);
 				}
 			});

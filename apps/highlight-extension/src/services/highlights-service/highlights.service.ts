@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
 import { intersectionBy } from 'lodash';
 
+import { HttpException } from '~libs/common';
 import {
 	CreateHighlightDto,
 	UpdateHighlightDto,
 	IndividualUpdateHighlightsDto,
 } from '~libs/dto/highlight-extension';
-import { HTTPError } from '~libs/express-core';
 
 import { TYPES } from '~/highlight-extension/common/constants/types';
 import { IHighlightsRepository } from '~/highlight-extension/repositories/highlights-repository/highlights.repository.interface';
@@ -32,7 +32,7 @@ export class HighlightsService implements IHighlightsService {
 	async get(id: number): Promise<IHighlightDeepModel> {
 		const highlight = await this.highlightsRepository.deepFindBy({ id });
 		if (!highlight) {
-			throw new HTTPError(404, `highlight #${id} not found`);
+			throw new HttpException(404, `highlight #${id} not found`);
 		}
 
 		return highlight;

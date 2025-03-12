@@ -2,15 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { plainToClass } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
 
-import { IMiddleware } from './common/types/middleware.interface';
+import { HttpValidationException, THttpValidationExceptionPayload } from '~libs/common';
+
+import { IMiddleware } from '../common/types/middleware.interface';
 
 import type { ClassConstructor } from 'class-transformer';
-
-interface IErrMsg {
-	property: string;
-	value: string | 'undefined';
-	errors: string[];
-}
 
 export class ValidateMiddleware implements IMiddleware {
 	constructor(
@@ -18,7 +14,7 @@ export class ValidateMiddleware implements IMiddleware {
 		private validateMode: 'body' | 'query' = 'body'
 	) {}
 
-	execute(req: Request, res: Response, next: NextFunction): void {
+	use(req: Request, res: Response, next: NextFunction): void {
 		const instance = plainToClass(this.classToValidate, req[this.validateMode]);
 		validate(instance, {
 			skipMissingProperties: false,
@@ -27,8 +23,7 @@ export class ValidateMiddleware implements IMiddleware {
 		}).then((errors) => {
 			if (errors.length > 0) {
 				const errorsMsg = this.constructErrorsMsg(errors);
-				res.status(422).send(errorsMsg);
-				return;
+				return next(new HttpValidationException(errorsMsg));
 			}
 			next();
 		});
@@ -37,7 +32,7 @@ export class ValidateMiddleware implements IMiddleware {
 	private constructErrorsMsg(
 		errors: ValidationError[],
 		parentProperties: string[] = []
-	): IErrMsg[] {
+	): THttpValidationExceptionPayload {
 		return errors
 			.map((err) => {
 				if (err.children?.length) {
@@ -47,7 +42,6 @@ export class ValidateMiddleware implements IMiddleware {
 					property: parentProperties.length
 						? `${parentProperties.join('.')}.${err.property}`
 						: err.property,
-					value: err.value || 'undefined',
 					errors: Object.values(err.constraints || {}),
 				};
 			})

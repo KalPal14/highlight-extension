@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Container } from 'inversify';
 
 import { IndividualUpdateHighlightsDto, UpdateHighlightDto } from '~libs/dto/highlight-extension';
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 import { ContainerDto } from '~libs/dto/highlight-extension/highlights/common/container.dto';
 
 import { TYPES } from '~/highlight-extension/common/constants/types';
@@ -284,7 +284,7 @@ describe('HighlightsService', () => {
 				try {
 					await highlightsService.update(HIGHLIGHT_MODEL.id, {});
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`highlight #${HIGHLIGHT_MODEL.id} not found`);
 				}
 			});
@@ -351,7 +351,7 @@ describe('HighlightsService', () => {
 				try {
 					await highlightsService.delete(HIGHLIGHT_MODEL.id);
 				} catch (err: any) {
-					expect(err).toBeInstanceOf(HTTPError);
+					expect(err).toBeInstanceOf(HttpException);
 					expect(err.message).toBe(`highlight #${HIGHLIGHT_MODEL.id} not found`);
 				}
 			});

@@ -2,6 +2,11 @@
 export * from './constants/regexp';
 export * from './stabs/jwt-payload';
 
+// exceptions
+export * from './exceptions/exception';
+export * from './exceptions/http-exception';
+export * from './exceptions/http-validation-exception';
+
 // types
 export * from './types/batch-payload.interface';
 export * from './types/jwt-payload.interface';

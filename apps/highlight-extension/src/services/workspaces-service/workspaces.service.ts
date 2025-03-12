@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 
 import { CreateWorkspaceDto, UpdateWorkspaceDto } from '~libs/dto/highlight-extension';
-import { HTTPError } from '~libs/express-core';
+import { HttpException } from '~libs/common';
 
 import { TYPES } from '~/highlight-extension/common/constants/types';
 import { IWorkspacesRepository } from '~/highlight-extension/repositories/workspaces-repository/workspaces.repository.interface';
@@ -21,7 +21,7 @@ export class WorkspacesService implements IWorkspacesService {
 	async get(id: number): Promise<WorkspaceModel> {
 		const workspace = await this.workspacesRepository.deepFindBy({ id });
 		if (!workspace) {
-			throw new HTTPError(404, `workspace #${id} not found`);
+			throw new HttpException(404, `workspace #${id} not found`);
 		}
 
 		return workspace;
