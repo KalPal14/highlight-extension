@@ -1,3 +1,7 @@
+// otp
+export * from './otp/upsert-otp.dto';
+export * from './otp/validate-otp.dto';
+
 // users
 export * from './users/login.dto';
 export * from './users/register.dto';

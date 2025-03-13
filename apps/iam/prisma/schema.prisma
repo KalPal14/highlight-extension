@@ -15,3 +15,10 @@ model UserModel {
   password          String
   passwordUpdatedAt DateTime?
 }
+
+model OtpModel {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  code      Int
+  updatedAt DateTime @updatedAt
+}
