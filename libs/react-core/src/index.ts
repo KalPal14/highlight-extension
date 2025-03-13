@@ -7,3 +7,6 @@ export * from './assets/imgs/svg/eye';
 export * from './assets/imgs/svg/eye-slash';
 export * from './assets/imgs/svg/pencil-square';
 export * from './assets/imgs/svg/trash';
+
+// hooks
+export * from './hooks/cross-browser-state/cross-browser-state-builder';
