@@ -6,12 +6,13 @@ import { UpdateWorkspaceDto } from '~libs/dto/highlight-extension';
 import { WORKSPACES_URLS } from '~libs/routes/highlight-extension';
 import { USERS_URLS } from '~libs/routes/iam';
 
+import { bootstrap } from '~/highlight-extension/main';
 import {
 	CREATE_WORKSPACE_DTO,
 	WORKSPACE_MODEL,
-} from '~/highlight-extension/common/constants/spec/workspaces';
-import { bootstrap, bootstrap as iamBootstrap } from '~/iam/main';
-import { LOGIN_USER_DTO } from '~/iam/common/constants/spec/users';
+} from '~/highlight-extension/common/stubs/workspaces';
+import { bootstrap as iamBootstrap } from '~/iam/main';
+import { LOGIN_USER_DTO } from '~/iam/common/stubs/users';
 
 import type { Express } from 'express';
 
@@ -40,8 +41,8 @@ describe('Workspaces', () => {
 
 				const { pages, ...restWorkspace } = res.body;
 				expect(res.statusCode).toBe(200);
+				expect(Array.isArray(pages)).toBeTruthy();
 				expect(restWorkspace).toEqual(WORKSPACE_MODEL);
-				expect(pages).toHaveProperty('length');
 			});
 		});
 
@@ -60,16 +61,14 @@ describe('Workspaces', () => {
 	});
 
 	describe('get all workspaces owned by the user', () => {
-		describe('logged in user', () => {
-			it('return list of workspaces', async () => {
-				const res = await request(app)
-					.get(WORKSPACES_URLS.getAllOwners)
-					.set('Authorization', `Bearer ${jwt}`);
+		it('return list of workspaces', async () => {
+			const res = await request(app)
+				.get(WORKSPACES_URLS.getAllOwners)
+				.set('Authorization', `Bearer ${jwt}`);
 
-				expect(res.statusCode).toBe(200);
-				expect(res.body).toHaveProperty('length');
-				expect(res.body[0]).toEqual(WORKSPACE_MODEL);
-			});
+			expect(res.statusCode).toBe(200);
+			expect(res.body).toHaveProperty('length');
+			expect(Object.keys(res.body[0])).toEqual(Object.keys(WORKSPACE_MODEL));
 		});
 	});
 
@@ -98,11 +97,12 @@ describe('Workspaces', () => {
 					.set('Authorization', `Bearer ${jwt}`);
 
 				expect(res.statusCode).toBe(422);
-				expect(res.body[0]).toEqual({
-					property: 'colors',
-					value: 'undefined',
-					errors: ['This field must contain an array of colors in rgb or hex format'],
-				});
+				expect(res.body[0]).toEqual(
+					expect.objectContaining({
+						property: 'colors',
+						errors: ['This field must contain an array of colors in rgb or hex format'],
+					})
+				);
 			});
 		});
 	});

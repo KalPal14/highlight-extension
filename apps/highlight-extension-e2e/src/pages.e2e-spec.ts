@@ -1,20 +1,20 @@
 import 'reflect-metadata';
 import request from 'supertest';
+import { v4 } from 'uuid';
 
 import { configEnv } from '~libs/express-core/config';
 import { GetPageDto, UpdatePageDto } from '~libs/dto/highlight-extension';
-import { random } from '~libs/common/index';
-import { HIGHLIGHTS_URLS, PAGES_URLS } from '~libs/routes/highlight-extension';
 import { USERS_URLS } from '~libs/routes/iam';
+import { PAGES_URLS, HIGHLIGHTS_URLS } from '~libs/routes/highlight-extension';
 
 import { bootstrap } from '~/highlight-extension/main';
 import { bootstrap as iamBootstrap } from '~/iam/main';
-import { LOGIN_USER_DTO } from '~/iam/common/constants/spec/users';
+import { LOGIN_USER_DTO } from '~/iam/common/stubs/users';
 import {
 	CREATE_HIGHLIGHT_DTO,
 	HIGHLIGHT_DEEP_MODEL,
-} from '~/highlight-extension/common/constants/spec/highlights';
-import { PAGE, PAGE_MODEL } from '~/highlight-extension/common/constants/spec/pages';
+} from '~/highlight-extension/common/stubs/highlights';
+import { PAGE, PAGE_MODEL } from '~/highlight-extension/common/stubs/pages';
 
 import type { Express } from 'express';
 
@@ -39,7 +39,7 @@ describe('Pages', () => {
 			it('return updated page', async () => {
 				const newHighlightRes = await request(app)
 					.post(HIGHLIGHTS_URLS.create)
-					.send({ ...CREATE_HIGHLIGHT_DTO, pageUrl: PAGE.url + random() })
+					.send({ ...CREATE_HIGHLIGHT_DTO, pageUrl: PAGE.url + v4() })
 					.set('Authorization', `Bearer ${jwt}`);
 				const pageId = newHighlightRes.body.pageId;
 				const DTO: UpdatePageDto = {
@@ -82,7 +82,7 @@ describe('Pages', () => {
 			it('return { id: null }', async () => {
 				const DTO: GetPageDto = {
 					workspaceId: PAGE.workspaceId.toString(),
-					url: PAGE.url + random(),
+					url: PAGE.url + v4(),
 				};
 
 				const res = await request(app)
