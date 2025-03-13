@@ -1,5 +1,11 @@
-import { LoginDto, RegistrationDto, UserExistenceCheckDto } from '~libs/dto/iam';
-import { IBaseUserRo, ILoginRo, IRegistrationRo, TUserExictanceCheckRo } from '~libs/ro/iam';
+import { LoginDto, RegistrationDto, UpdateUserDto, UserExistenceCheckDto } from '~libs/dto/iam';
+import {
+	IBaseUserRo,
+	ILoginRo,
+	IRegistrationRo,
+	IUpdateUserRo,
+	TUserExictanceCheckRo,
+} from '~libs/ro/iam';
 import { USERS_URLS } from '~libs/routes/iam';
 import { Exception } from '~libs/common';
 
@@ -14,6 +20,7 @@ interface IUserHookReturn {
 		registration(registrationDto: RegistrationDto): Promise<void>;
 		login(loginDto: LoginDto): Promise<void>;
 		logout(): void;
+		updateUser(dto: UpdateUserDto): Promise<void>;
 		checkUserExistence: (dto: UserExistenceCheckDto) => Promise<TUserExictanceCheckRo>;
 	};
 }
@@ -72,12 +79,19 @@ export function useUsers(): IUserHookReturn {
 		setCurrentWorkspace(null);
 	}
 
+	async function updateUser(dto: UpdateUserDto): Promise<void> {
+		const { jwt, ...user } = await api.patch<UpdateUserDto, IUpdateUserRo>(USERS_URLS.update, dto);
+
+		setCurrentUser(user);
+		if (jwt) setJwt(jwt);
+	}
+
 	function checkUserExistence(dto: UserExistenceCheckDto): Promise<TUserExictanceCheckRo> {
 		return api.get<UserExistenceCheckDto, TUserExictanceCheckRo>(USERS_URLS.exictanceCheck, dto);
 	}
 
 	return {
 		data: { currentUser },
-		actions: { registration, login, logout, checkUserExistence },
+		actions: { registration, login, logout, updateUser, checkUserExistence },
 	};
 }
