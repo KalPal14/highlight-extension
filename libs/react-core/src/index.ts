@@ -10,6 +10,7 @@ export * from './assets/imgs/svg/trash';
 
 // hooks
 export * from './hooks/cross-browser-state/cross-browser-state-builder';
+export * from './hooks/exception-handler/exception-handler-hook';
 
 // ui
 export * from './ui/toasts/toasts-options';
