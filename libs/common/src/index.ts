@@ -2,6 +2,9 @@
 export * from './constants/regexp';
 export * from './constants/role-guard-msgs';
 
+// services
+export * from './services/api-service/port/api.service';
+
 // stabs
 export * from './stabs/jwt-payload';
 export * from './stabs/jwt-payload';
