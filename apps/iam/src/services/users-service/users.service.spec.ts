@@ -71,13 +71,20 @@ describe('UsersService', () => {
 
 		describe('pass existing email or username', () => {
 			it('throw error', async () => {
-				usersRepositoryMock.findBy = jest.fn().mockReturnValue(USER_MODEL);
+				userFactory.create = jest.fn().mockReturnValue({ ...USER, password: USER_MODEL.password });
+				usersRepository.create = jest.fn().mockImplementation(() => {
+					throw new PrismaClientKnownRequestError('', {
+						clientVersion: '0',
+						code: 'P2002',
+						meta: { target: ['email'] },
+					});
+				});
 
 				try {
 					await usersService.create(CREATE_DTO);
 				} catch (err: any) {
 					expect(err).toBeInstanceOf(HttpException);
-					expect(err.message).toBe('User with this username already exists');
+					expect(err.message).toBe('User with this email already exists');
 				}
 			});
 		});

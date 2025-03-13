@@ -28,17 +28,15 @@ export class UsersService implements IUsersService {
 	}
 
 	async create(registerDto: RegistrationDto): Promise<UserModel> {
-		let existingUser = await this.usersRepository.findBy({ email: registerDto.email });
-		if (existingUser) {
-			throw new HttpException(400, 'User with this username already exists');
+		try {
+			const newUser = await this.userFactory.create(registerDto);
+			return await this.usersRepository.create(newUser);
+		} catch (err: any) {
+			if (err.code === 'P2002') {
+				throw new HttpException(400, `User with this ${err.meta.target} already exists`);
+			}
+			throw new Error();
 		}
-		existingUser = await this.usersRepository.findBy({ username: registerDto.username });
-		if (existingUser) {
-			throw new HttpException(400, 'user with this username already exists');
-		}
-
-		const newUser = await this.userFactory.create(registerDto);
-		return this.usersRepository.create(newUser);
 	}
 
 	async validate({ userIdentifier, password }: LoginDto): Promise<UserModel> {
