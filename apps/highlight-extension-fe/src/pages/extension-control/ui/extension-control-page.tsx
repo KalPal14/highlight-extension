@@ -7,10 +7,15 @@ import { CogSVG } from '~libs/react-core';
 import { openTab } from '~libs/client-core';
 
 import { LinkToLogin } from '~/highlight-extension-fe/widgets/link-to-login';
+import { useUsers } from '~/highlight-extension-fe/entities/user';
 import { useSidePanel } from '~/highlight-extension-fe/entities/browser';
+import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
 
 export function ExtensionControlPage(): JSX.Element {
+	const [jwt] = useCrossBrowserState('jwt');
+
 	const { openSidePanel } = useSidePanel().actions;
+	const { logout } = useUsers().actions;
 
 	return (
 		<div className="extensionControlPage">
@@ -37,7 +42,15 @@ export function ExtensionControlPage(): JSX.Element {
 				>
 					Open sidebar
 				</Button>
-				<LinkToLogin />
+				{!jwt && <LinkToLogin />}
+				{jwt && (
+					<Button
+						onClick={logout}
+						colorScheme="teal"
+					>
+						Log out
+					</Button>
+				)}
 			</main>
 		</div>
 	);

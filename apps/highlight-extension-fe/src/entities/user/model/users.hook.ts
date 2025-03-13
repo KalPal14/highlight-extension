@@ -13,6 +13,7 @@ interface IUserHookReturn {
 	actions: {
 		registration(registrationDto: RegistrationDto): Promise<void>;
 		login(loginDto: LoginDto): Promise<void>;
+		logout(): void;
 		checkUserExistence: (dto: UserExistenceCheckDto) => Promise<TUserExictanceCheckRo>;
 	};
 }
@@ -65,12 +66,18 @@ export function useUsers(): IUserHookReturn {
 		setCurrentUser(userData);
 	}
 
+	function logout(): void {
+		setJwt(null);
+		setCurrentUser(null);
+		setCurrentWorkspace(null);
+	}
+
 	function checkUserExistence(dto: UserExistenceCheckDto): Promise<TUserExictanceCheckRo> {
 		return api.get<UserExistenceCheckDto, TUserExictanceCheckRo>(USERS_URLS.exictanceCheck, dto);
 	}
 
 	return {
 		data: { currentUser },
-		actions: { registration, login, checkUserExistence },
+		actions: { registration, login, logout, checkUserExistence },
 	};
 }
