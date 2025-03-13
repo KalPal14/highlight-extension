@@ -6,3 +6,4 @@ export * from './otp/validate-otp.dto';
 export * from './users/login.dto';
 export * from './users/register.dto';
 export * from './users/update-user.dto';
+export * from './users/user-existence-check.dto';

@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 
-import { IJwtPayload, HttpException } from '~libs/common';
-import { UpdateUserDto, LoginDto, RegistrationDto } from '~libs/dto/iam';
+import { LoginDto, RegistrationDto, UpdateUserDto } from '~libs/dto/iam';
+import { HttpException, IJwtPayload } from '~libs/common';
 
 import { UserModel } from '~/iam/prisma/client';
 import { TYPES } from '~/iam/common/constants/types';
@@ -25,6 +25,10 @@ export class UsersService implements IUsersService {
 		}
 
 		return user;
+	}
+
+	async find(data: Partial<UserModel>): Promise<UserModel | null> {
+		return this.usersRepository.findBy(data);
 	}
 
 	async create(registerDto: RegistrationDto): Promise<UserModel> {
