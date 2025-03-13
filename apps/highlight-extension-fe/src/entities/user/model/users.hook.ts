@@ -9,6 +9,7 @@ interface IUserHookReturn {
 	data: { currentUser: IBaseUserRo | null };
 	actions: {
 		login(loginDto: LoginDto): Promise<void>;
+		checkUserExistence: (dto: UserExistenceCheckDto) => Promise<TUserExictanceCheckRo>;
 	};
 }
 
@@ -23,8 +24,12 @@ export function useUsers(): IUserHookReturn {
 		setCurrentUser(userData);
 	}
 
+	function checkUserExistence(dto: UserExistenceCheckDto): Promise<TUserExictanceCheckRo> {
+		return api.get<UserExistenceCheckDto, TUserExictanceCheckRo>(USERS_URLS.exictanceCheck, dto);
+	}
+
 	return {
 		data: { currentUser },
-		actions: { login },
+		actions: { login, checkUserExistence },
 	};
 }
