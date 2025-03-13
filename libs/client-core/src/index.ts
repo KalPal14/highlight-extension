@@ -6,4 +6,6 @@ export * from './adapters/browser/browser.adapter';
 export * from './services/api-service/infrastracture/browser-storage-base-api.service';
 
 // utils/helper-functions
+export * from './utils/helper-functions/get-url-search-param';
 export * from './utils/helper-functions/open-tab';
+export * from './utils/helper-functions/set-url-search-param';
