@@ -3,11 +3,17 @@
 # compiled output
 dist
 
+# jest
+coverage
+
 # dependencies
 node_modules
 
 # .env
 .env*
+
+# prisma
+**/prisma/client
 
 # IDE - VSCode
 .vscode/*
