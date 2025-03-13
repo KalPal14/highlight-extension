@@ -6,7 +6,7 @@ import express, { Express } from 'express';
 import { inject, injectable } from 'inversify';
 import bodyParser from 'body-parser';
 
-import { ILogger, IConfigService, IExceptionFilter, JwtAuthMiddleware } from '~libs/express-core';
+import { ILogger, IExceptionFilter, IMiddleware, IConfigService } from '~libs/express-core';
 import {
 	HIGHLIGHTS_BASE_ROUTE,
 	PAGES_BASE_ROUTE,
@@ -32,13 +32,13 @@ export default class App {
 		@inject(TYPES.PrismaService) private prismaService: TPrismaService,
 		@inject(TYPES.ConfigService) private configService: IConfigService,
 		@inject(TYPES.HighlightsController) private highlightsController: IHighlightsController,
-		@inject(TYPES.PagesController) private pagesController: IPagesController
+		@inject(TYPES.PagesController) private pagesController: IPagesController,
+		@inject(TYPES.JwtAuthMiddleware) private jwtAuthMiddleware: IMiddleware
 	) {
 		this.app = express();
 	}
 
 	useMiddleware(): void {
-		const jwtSecret = this.configService.get('JWT_KEY');
 		const clientUrls = this.configService.get('H_EXT_FE_URLS').split(', ');
 
 		this.app.use(
@@ -50,8 +50,7 @@ export default class App {
 		);
 		this.app.use(bodyParser.json());
 
-		const jwtAuthMiddleware = new JwtAuthMiddleware(jwtSecret);
-		this.app.use(jwtAuthMiddleware.use.bind(jwtAuthMiddleware));
+		this.app.use(this.jwtAuthMiddleware.use.bind(this.jwtAuthMiddleware));
 	}
 
 	useRoutes(): void {
