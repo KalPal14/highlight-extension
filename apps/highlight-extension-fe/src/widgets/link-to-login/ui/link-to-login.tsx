@@ -3,11 +3,13 @@ import { Button, Text } from '@chakra-ui/react';
 
 import { openTab } from '~libs/client-core';
 
+import { FULL_TABS_ROUTES } from '~/highlight-extension-fe/shared/ui';
+
 export function LinkToLogin(): JSX.Element {
 	return (
 		<section>
 			<Button
-				onClick={() => openTab('tabs.html')}
+				onClick={() => openTab(FULL_TABS_ROUTES.login)}
 				colorScheme="teal"
 				w="100%"
 			>
@@ -19,7 +21,7 @@ export function LinkToLogin(): JSX.Element {
 			>
 				Don't have an account?{' '}
 				<Text
-					onClick={() => openTab('tabs.html')}
+					onClick={() => openTab(FULL_TABS_ROUTES.registration)}
 					color="teal.500"
 					as="u"
 					cursor="pointer"
