@@ -28,6 +28,11 @@
 			"js": ["highlights.js"]
 		}
 	],
+	"background": {
+		"scripts": ["service_worker.js"],
+		"service_worker": "service_worker.js",
+		"type": "module"
+	},
 	"host_permissions": ["<all_urls>"],
 	"browser_specific_settings": {
 		"gecko": {
