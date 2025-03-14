@@ -8,7 +8,7 @@ import { FULL_OPTIONS_ROUTES } from '~/highlight-extension-fe/shared/ui';
 import { LinkToLogin } from '~/highlight-extension-fe/widgets/link-to-login';
 import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
 
-import './styles.scss';
+import { HighlightsListTabs } from './highlights-list-tabs';
 
 export function ActiveTabHighlightsPage(): JSX.Element {
 	const [jwt] = useCrossBrowserState('jwt');
@@ -45,7 +45,7 @@ export function ActiveTabHighlightsPage(): JSX.Element {
 						<LinkToLogin />
 					</>
 				)}
-				{Boolean(jwt) && <h1>HighlightsListTabs</h1>}
+				{Boolean(jwt) && <HighlightsListTabs />}
 			</main>
 		</div>
 	);
