@@ -8,6 +8,7 @@ import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
 import { useHighlighter } from '../model/highlighter.hook';
 
 import { CreateHighlight } from './create-highlight';
+import { InteractionWithHighlight } from './interaction-with-highlight';
 import styles from './styles.shadow-dom.scss';
 
 export function HighlighterPage(): JSX.Element {
@@ -61,6 +62,7 @@ export function HighlighterPage(): JSX.Element {
 					<>
 						<Toaster position="bottom-center" />
 						<CreateHighlight />
+						<InteractionWithHighlight />
 					</>
 				)}
 			</main>
