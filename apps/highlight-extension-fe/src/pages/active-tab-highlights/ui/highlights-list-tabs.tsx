@@ -1,16 +1,20 @@
 import { Alert, AlertIcon, Heading, Tabs } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 import { browserAdapter } from '~libs/client-core';
+import { IBaseHighlightRo } from '~libs/ro/highlight-extension';
 import { useTabs as useUITabs } from '~libs/react-core';
 
-import { useHighlights } from '~/highlight-extension-fe/entities/highlight';
+import { useHighlights, THighlightStatus } from '~/highlight-extension-fe/entities/highlight';
 import { useTabs } from '~/highlight-extension-fe/entities/browser';
 import { useWorkspaces } from '~/highlight-extension-fe/entities/workspace';
 
 import './styles.scss';
 
+import { IChangeHighlightForm } from './types/change-highlight-form.interface';
 import { highlightsTabs } from './constants/highlights-tabs';
+import { HighlightsList } from './highlights-list';
 
 export function HighlightsListTabs(): JSX.Element {
 	const { currentWorkspace } = useWorkspaces().data;
@@ -21,9 +25,22 @@ export function HighlightsListTabs(): JSX.Element {
 	} = useTabs();
 	const {
 		actions: { getPageHighlights },
+		selectors: { selectHighlightsByStatus },
 	} = useHighlights();
 
 	const { activeTabIndex, tabList, tabPanels } = useUITabs(highlightsTabs);
+
+	const formControls = useForm<IChangeHighlightForm>({
+		values: {
+			highlights: [],
+		},
+	});
+	const { control, setValue } = formControls;
+	const highlightsFieldControls = useFieldArray({
+		control,
+		name: 'highlights',
+	});
+	const { fields } = highlightsFieldControls;
 
 	useEffect(() => {
 		onTabChange();
@@ -51,8 +68,18 @@ export function HighlightsListTabs(): JSX.Element {
 
 	async function setHighlightsFields(): Promise<void> {
 		const highlights = await getPageHighlights(getActiveTabUrl()).catch(() => []);
-		console.log(highlights);
+		setValue(
+			'highlights',
+			highlights.map((highlight) => ({ highlight }))
+		);
 	}
+
+	const filterHighlightsByTab = (status: THighlightStatus): IBaseHighlightRo[] =>
+		selectHighlightsByStatus(
+			status,
+			getActiveTabUrl(),
+			fields.map(({ highlight }) => highlight)
+		);
 
 	if (!canUseContentScriptInTab) {
 		return (
@@ -76,6 +103,16 @@ export function HighlightsListTabs(): JSX.Element {
 		);
 	}
 
+	if (!filterHighlightsByTab('unfound').length) {
+		return (
+			<HighlightsList
+				formControls={formControls}
+				highlightsFieldControls={highlightsFieldControls}
+				activeTabUrl={getActiveTabUrl()}
+			/>
+		);
+	}
+
 	return (
 		<Tabs
 			variant="soft-rounded"
@@ -84,7 +121,17 @@ export function HighlightsListTabs(): JSX.Element {
 			index={activeTabIndex}
 		>
 			<div className="highlightsList_tabsListContainer">{tabList}</div>
-			{tabPanels(highlightsTabs.map(({ name }) => <h1>{getActiveTabUrl()}</h1>))}
+			{tabPanels(
+				highlightsTabs.map(({ name }) => (
+					<HighlightsList
+						key={name}
+						formControls={formControls}
+						highlightsFieldControls={highlightsFieldControls}
+						highlights={filterHighlightsByTab(name)}
+						activeTabUrl={getActiveTabUrl()}
+					/>
+				))
+			)}
 		</Tabs>
 	);
 }
