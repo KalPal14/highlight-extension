@@ -31,6 +31,7 @@ interface IHighligtsHookReturn {
 		createdHighlight: ICrossBrowserStateDescriptor['createdHighlight'];
 		deletedHighlight: ICrossBrowserStateDescriptor['deletedHighlight'];
 		updatedHighlight: ICrossBrowserStateDescriptor['updatedHighlight'];
+		scrollHighlightId: `web-highlight-${number}` | null;
 		unfoundHighlightsIds: Record<string, number[] | undefined>;
 	};
 	actions: {
@@ -43,6 +44,7 @@ interface IHighligtsHookReturn {
 			pageUrl?: string
 		): Promise<IUpdateHighlightRo>;
 		updateHighlightsOrder: (highlights: IBaseHighlightRo[]) => Promise<void>;
+		setScrollHighlight(highlightId: number): Promise<void>;
 		appendHighlightField: (
 			pageUrl: string,
 			append: UseFieldArrayAppend<IChangeHighlightForm, 'highlights'>
@@ -71,6 +73,7 @@ export function useHighlights(): IHighligtsHookReturn {
 	const [createdHighlight, setCreatedHighlight] = useCrossBrowserState('createdHighlight');
 	const [deletedHighlight, setDeletedHighlight] = useCrossBrowserState('deletedHighlight');
 	const [updatedHighlight, setUpdatedHighlight] = useCrossBrowserState('updatedHighlight');
+	const [scrollHighlightId, setScrollHighlightId] = useCrossBrowserState('scrollHighlightId');
 	const [unfoundHighlightsIds] = useCrossBrowserState('unfoundHighlightsIds');
 
 	const { getPage } = usePages().actions;
@@ -134,6 +137,10 @@ export function useHighlights(): IHighligtsHookReturn {
 		);
 	}
 
+	async function setScrollHighlight(id: number): Promise<void> {
+		setScrollHighlightId(`web-highlight-${id}`);
+	}
+
 	function appendHighlightField(
 		pageUrl: string,
 		append: UseFieldArrayAppend<IChangeHighlightForm, 'highlights'>
@@ -189,6 +196,7 @@ export function useHighlights(): IHighligtsHookReturn {
 			createdHighlight,
 			deletedHighlight,
 			updatedHighlight,
+			scrollHighlightId,
 			unfoundHighlightsIds,
 		},
 
@@ -198,6 +206,7 @@ export function useHighlights(): IHighligtsHookReturn {
 			deleteHighlight,
 			updateHighlight,
 			updateHighlightsOrder,
+			setScrollHighlight,
 			appendHighlightField,
 			removeHighlightField,
 			updeteHighlightField,

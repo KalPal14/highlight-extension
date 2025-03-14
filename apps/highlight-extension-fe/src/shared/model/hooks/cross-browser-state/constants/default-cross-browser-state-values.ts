@@ -8,6 +8,7 @@ export const defaultCrossBrowserStateValues: ICrossBrowserStateDescriptor = {
 	createdHighlight: null,
 	deletedHighlight: null,
 	updatedHighlight: null,
+	scrollHighlightId: null,
 	unfoundHighlightsIds: {},
 	updatedPages: { urls: [] },
 };

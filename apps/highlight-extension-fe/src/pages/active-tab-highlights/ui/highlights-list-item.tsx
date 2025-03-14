@@ -26,6 +26,7 @@ export function HighlightsListItem({
 }: IHighlightsListItemProps): JSX.Element {
 	const {
 		data: { unfoundHighlightsIds },
+		actions: { setScrollHighlight },
 	} = useHighlights();
 
 	const unfoundHighlight = unfoundHighlightsIds[activeTabUrl]?.includes(highlight.id);
@@ -43,6 +44,7 @@ export function HighlightsListItem({
 				</Tooltip>
 			)}
 			<Text
+				onClick={() => setScrollHighlight(highlight.id)}
 				className={cl('highlightsList_itemContentText', browserAdapter.browserName, {
 					found: !unfoundHighlight,
 				})}

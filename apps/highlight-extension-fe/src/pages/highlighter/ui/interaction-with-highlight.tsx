@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 
 import { getPageUrl } from '~libs/client-core';
 
+import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
 import { useHighlights } from '~/highlight-extension-fe/entities/highlight';
 
 import { useHighlighter } from '../model/highlighter.hook';
+import { scrollToHighlight } from '../model/dom-interactions/scroll-to-highlight';
 
 import { Highlighter } from './highlighter';
 
@@ -23,6 +25,8 @@ export function InteractionWithHighlight(): JSX.Element {
 		actions: { deleteHighlight },
 	} = useHighlights();
 
+	const [scrollHighlightId, setScrollHighlightId] = useCrossBrowserState('scrollHighlightId');
+
 	useEffect(() => {
 		document.addEventListener('click', handleHighlightClick);
 		return (): void => {
@@ -34,6 +38,10 @@ export function InteractionWithHighlight(): JSX.Element {
 		if (!deletedHighlight || deletedHighlight.pageUrl !== getPageUrl()) return;
 		wipeHighlight(deletedHighlight.highlight);
 	}, [deletedHighlight]);
+
+	useEffect(() => {
+		scrollToHighlight(scrollHighlightId, () => setScrollHighlightId(null));
+	}, [scrollHighlightId]);
 
 	if (currentHighlight) {
 		return (
