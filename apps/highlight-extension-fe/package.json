@@ -23,6 +23,7 @@
 		"react-dom": "^18.1.0",
 		"sass": "^1.71.1",
 		"sass-loader": "^16.0.2",
+		"sass-to-string": "^1.6.4",
 		"style-loader": "^3.3.1",
 		"ts-loader": "^9.5.1",
 		"webpack": "^5.72.1",
@@ -31,6 +32,7 @@
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^2.8.2",
+		"@custom-react-hooks/use-element-size": "^1.5.1",
 		"@emotion/react": "^11.11.4",
 		"@emotion/styled": "^11.11.0",
 		"bootstrap": "^5.3.3",
@@ -38,6 +40,8 @@
 		"date-and-time": "^3.1.1",
 		"react-hook-form": "^7.51.0",
 		"react-router-dom": "6.2",
+		"react-shadow-root": "^6.2.0",
+		"react-textarea-autosize": "^8.5.3",
 		"react-timer-hook": "^3.0.8"
 	}
 }

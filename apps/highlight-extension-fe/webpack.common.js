@@ -28,6 +28,21 @@ module.exports = {
 				exclude: [/\.shadow-dom.scss$/, /node_modules/],
 			},
 			{
+				test: /\.shadow-dom.scss$/,
+				exclude: /node_modules/,
+				use: [
+					'sass-to-string',
+					{
+						loader: 'sass-loader',
+						options: {
+							sassOptions: {
+								outputStyle: 'compressed',
+							},
+						},
+					},
+				],
+			},
+			{
 				type: 'assets/imgs',
 				test: /\.(png|jpg|jpeg|gif|woff|woff2|tff|eot)$/,
 			},
