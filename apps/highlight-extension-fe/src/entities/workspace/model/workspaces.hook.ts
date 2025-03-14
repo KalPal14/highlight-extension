@@ -1,10 +1,12 @@
 import {
 	IBaseWorkspaceRo,
 	ICreateWorkspaceRo,
+	IUpdateWorkspaceRo,
 	TGetOwnersWorkspacesRo,
 } from '~libs/ro/highlight-extension';
-import { CreateWorkspaceDto } from '~libs/dto/highlight-extension';
+import { CreateWorkspaceDto, UpdateWorkspaceDto } from '~libs/dto/highlight-extension';
 import { WORKSPACES_URLS } from '~libs/routes/highlight-extension';
+import { Exception } from '~libs/common';
 
 import { useCrossBrowserState } from '~/highlight-extension-fe/shared/model';
 import { api } from '~/highlight-extension-fe/shared/api';
@@ -16,6 +18,7 @@ interface IWorkspacesHookReturn {
 	actions: {
 		getWorkspaces(jwt?: string): Promise<TGetOwnersWorkspacesRo>;
 		createWorkspace(dto: CreateWorkspaceDto, jwt?: string): Promise<ICreateWorkspaceRo>;
+		updateWorkspace(dto: UpdateWorkspaceDto): Promise<IUpdateWorkspaceRo>;
 	};
 }
 
@@ -39,8 +42,19 @@ export function useWorkspaces(): IWorkspacesHookReturn {
 		return workspace;
 	}
 
+	async function updateWorkspace(dto: UpdateWorkspaceDto): Promise<IUpdateWorkspaceRo> {
+		if (!currentWorkspace) throw new Exception('User not authorized');
+
+		const workspace = await api.patch<UpdateWorkspaceDto, IUpdateWorkspaceRo>(
+			WORKSPACES_URLS.update(currentWorkspace.id),
+			dto
+		);
+		setCurrentWorkspace(workspace);
+		return workspace;
+	}
+
 	return {
 		data: { currentWorkspace },
-		actions: { getWorkspaces, createWorkspace },
+		actions: { getWorkspaces, createWorkspace, updateWorkspace },
 	};
 }
