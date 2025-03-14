@@ -4,6 +4,7 @@ export const defaultCrossBrowserStateValues: ICrossBrowserStateDescriptor = {
 	jwt: null,
 	currentUser: null,
 	currentWorkspace: null,
+	isExtActive: true,
 	createdHighlight: null,
 	deletedHighlight: null,
 	updatedHighlight: null,
