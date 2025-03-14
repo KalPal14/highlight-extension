@@ -1,0 +1,51 @@
+.draggableFields {
+	padding-left: 0;
+	margin-bottom: 0.5rem;
+	background-color: #d3d3d3;
+
+	&_item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		list-style-type: none;
+		padding: 1rem 0.5rem;
+		background-color: #fff;
+		border: 0.0625rem solid #d3d3d3;
+		border-top: none;
+		box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.2);
+
+		&:first-child {
+			border-top: 0.0625rem solid #d3d3d3;
+		}
+
+		&:active {
+			box-shadow: rgba(0, 0, 0, 0.24) 0px 0.25rem 0.5rem;
+		}
+	}
+
+	&_itemLeftBox {
+		width: 100%;
+		display: flex;
+		align-items: center;
+	}
+
+	&_itemRightBox {
+		display: flex;
+	}
+
+	&_customContentBox {
+		width: 100%;
+	}
+
+	.svg {
+		width: 1.5rem;
+		height: 1.5rem;
+		padding: 0.25rem;
+		border-radius: 0.125rem;
+		cursor: pointer;
+
+		&:hover {
+			background-color: #f0f0f0;
+		}
+	}
+}

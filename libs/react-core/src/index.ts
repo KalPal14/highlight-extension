@@ -20,6 +20,7 @@ export * from './hooks/tabs/tabs-hook';
 export * from './ui/alerts/high-alert';
 export * from './ui/alerts/outside-click-alert';
 export * from './ui/fields/color-field';
+export * from './ui/fields/draggable-fields/draggable-fields';
 export * from './ui/fields/text-field';
 export * from './ui/forms/accordion-form';
 export * from './ui/toasts/toasts-options';
