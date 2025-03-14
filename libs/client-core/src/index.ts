@@ -14,6 +14,7 @@ export * from './types/document-point.interface';
 
 // utils/helper-functions
 export * from './utils/helper-functions/calc-popup-position';
+export * from './utils/helper-functions/get-page-url';
 export * from './utils/helper-functions/get-url-search-param';
 export * from './utils/helper-functions/open-tab';
 export * from './utils/helper-functions/set-url-search-param';
