@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 
+import { useExceptionHandler } from '~libs/react-core';
+
 import { useHighlighter } from '../model/highlighter.hook';
 
 import { Highlighter } from './highlighter';
@@ -7,8 +9,9 @@ import { Highlighter } from './highlighter';
 export function CreateHighlight(): JSX.Element {
 	const {
 		data: { selectedRanges, mouseCoordinates },
-		actions: { handleTextSelection },
+		actions: { handleTextSelection, createAndDrawHighlight },
 	} = useHighlighter();
+	const { toastContentScriptsException } = useExceptionHandler();
 
 	useEffect(() => {
 		document.addEventListener('mouseup', handleTextSelection);
@@ -17,16 +20,22 @@ export function CreateHighlight(): JSX.Element {
 		};
 	}, []);
 
+	async function drawHighlight(color: string, note?: string): Promise<void> {
+		try {
+			await createAndDrawHighlight(color, note);
+		} catch (err) {
+			toastContentScriptsException(err);
+		}
+	}
+
 	if (selectedRanges.length) {
 		return (
 			<Highlighter
 				startingPoint={mouseCoordinates}
-				onSelectColor={(color, note) =>
-					console.log(`draw highlight with color ${color} and note ${note}`)
-				}
+				onSelectColor={drawHighlight}
 				onControllerClose={async (color, note) => {
 					if (!note) return;
-					console.log(`draw highlight with color ${color} and note ${note}`);
+					await drawHighlight(color, note);
 				}}
 			/>
 		);
