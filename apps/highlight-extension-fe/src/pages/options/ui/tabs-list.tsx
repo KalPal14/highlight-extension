@@ -4,6 +4,7 @@ import { ITab } from '~libs/react-core';
 
 import { UserInfoTab } from './user-info-tab';
 import { ColorsTab } from './colors-tab';
+import { PagesTab } from './pages-tab';
 
 export const tabsList: ITab[] = [
 	{
@@ -15,5 +16,10 @@ export const tabsList: ITab[] = [
 		label: 'Colors',
 		name: 'colors',
 		element: <ColorsTab />,
+	},
+	{
+		label: 'Pages',
+		name: 'pages',
+		element: <PagesTab />,
 	},
 ];
